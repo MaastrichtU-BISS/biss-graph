@@ -1,17 +1,26 @@
 <template>
     <div id="graph-container">
     </div>
-    <div id="info-bar">
-        {{ selectedNodeInfo }}
-    </div>
+    <template>
+        <div class="card flex justify-content-center">
+            <Dialog v-model:visible="visibleModal" modal header="Header" :style="{ width: '50vw' }"
+                :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
+                <p class="m-0">
+                    {{ selectedNodeInfo }}
+                </p>
+            </Dialog>
+        </div>
+    </template>
 </template>
 <script setup lang="ts">
 import * as d3 from "d3";
 import { ref, onMounted } from 'vue';
+import Dialog from 'primevue/dialog';
 
 const dataLocation: string = "/graph.json";
 const data = ref<{ nodes: any[], links: any[] }>();
 const selectedNodeInfo = ref();
+const visibleModal = ref(false);
 
 const loadData = async (): Promise<any> => {
     return (await fetch(dataLocation)).json();
@@ -81,17 +90,16 @@ const initializeD3Graph = () => {
 
     function clickedNode(e: PointerEvent, d: any) {
         selectedNodeInfo.value = JSON.stringify(d);
+        visibleModal.value = true;
     }
 
-
     // Zoom functionalities
-
     svg.call(d3.zoom()
         .extent([[0, 0], [width, height]])
         .scaleExtent([1, 8])
         .on("zoom", zoomed));
 
-    function zoomed({transform}: any) {
+    function zoomed({ transform }: any) {
         node.attr("transform", transform);
         link.attr("transform", transform);
     }
@@ -147,11 +155,7 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-#graph-container {
-  
-}
+#graph-container {}
 
-#info-bar {
-   
-}
+#info-bar {}
 </style>

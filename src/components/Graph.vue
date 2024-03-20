@@ -3,7 +3,7 @@
     </div>
     <template>
         <div class="card flex justify-content-center">
-            <Dialog v-model:visible="visibleModal" modal header="Header" :style="{ width: '50vw' }"
+            <Dialog v-model:visible="visibleModal" modal header="Header" :style="{ width: '50vw' }" dismissableMask
                 :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
                 <p class="m-0">
                     {{ selectedNodeInfo }}
@@ -56,7 +56,7 @@ const initializeD3Graph = () => {
         .attr("width", width)
         .attr("height", height)
         .attr("viewBox", [-width / 2, -height / 2, width, height])
-        .attr("style", "max-width: 100%; height: auto; border: solid 1px black");
+        .attr("style", "width: 100vw; height: 100vh; border: dotted 1px black");
 
     // Add a line for each link, and a circle for each node.
     const link = svg.append("g")
@@ -153,9 +153,3 @@ onMounted(async () => {
     document.getElementById("graph-container")?.append(svg);
 })
 </script>
-
-<style scoped>
-#graph-container {}
-
-#info-bar {}
-</style>

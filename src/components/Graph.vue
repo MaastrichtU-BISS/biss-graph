@@ -47,7 +47,7 @@ const initializeD3Graph = () => {
         .attr("width", width)
         .attr("height", height)
         .attr("viewBox", [-width / 2, -height / 2, width, height])
-        .attr("style", "max-width: 100%; height: auto;");
+        .attr("style", "max-width: 100%; height: auto; border: solid 1px black");
 
     // Add a line for each link, and a circle for each node.
     const link = svg.append("g")
@@ -77,9 +77,24 @@ const initializeD3Graph = () => {
         .on("end", dragended));
 
     // Add click node behavior
-    node.on("click", (e: PointerEvent, d: any) => {
+    node.on("click", clickedNode);
+
+    function clickedNode(e: PointerEvent, d: any) {
         selectedNodeInfo.value = JSON.stringify(d);
-    });
+    }
+
+
+    // Zoom functionalities
+
+    svg.call(d3.zoom()
+        .extent([[0, 0], [width, height]])
+        .scaleExtent([1, 8])
+        .on("zoom", zoomed));
+
+    function zoomed({transform}: any) {
+        node.attr("transform", transform);
+        link.attr("transform", transform);
+    }
 
     // Set the position attributes of links and nodes each time the simulation ticks.
     simulation.on("tick", () => {
@@ -131,4 +146,12 @@ onMounted(async () => {
 })
 </script>
 
-<style scoped></style>
+<style scoped>
+#graph-container {
+  
+}
+
+#info-bar {
+   
+}
+</style>

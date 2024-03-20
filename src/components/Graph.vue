@@ -6,7 +6,7 @@
     </div>
 </template>
 <script setup lang="ts">
-import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
+import * as d3 from "d3";
 import { ref, onMounted } from 'vue';
 
 const dataLocation: string = "/graph.json";

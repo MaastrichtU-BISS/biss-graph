@@ -1,6 +1,13 @@
 <template>
-    <div id="graph-container">
+    <div class="h-[40px]">
+        <div class="pt-4 mx-auto w-fit">
+            <IconField>
+                <InputIcon class="pi pi-search" />
+                <InputText v-model="toSearch" placeholder="Search" />
+            </IconField>
+        </div>
     </div>
+    <div id="graph-container"></div>
     <template>
         <div class="card flex justify-content-center">
             <Dialog v-model:visible="visibleModal" modal header="Header" :style="{ width: '50vw' }" dismissableMask
@@ -16,11 +23,15 @@
 import * as d3 from "d3";
 import { ref, onMounted } from 'vue';
 import Dialog from 'primevue/dialog';
+import IconField from 'primevue/iconfield';
+import InputIcon from 'primevue/inputicon';
+import InputText from 'primevue/inputtext';
 
 const dataLocation: string = "/graph.json";
 const data = ref<{ nodes: any[], links: any[] }>();
 const selectedNodeInfo = ref();
 const visibleModal = ref(false);
+const toSearch = ref<string>("");
 
 const loadData = async (): Promise<any> => {
     return (await fetch(dataLocation)).json();
@@ -56,7 +67,7 @@ const initializeD3Graph = () => {
         .attr("width", width)
         .attr("height", height)
         .attr("viewBox", [-width / 2, -height / 2, width, height])
-        .attr("style", "width: 100vw; height: 100vh; border: dotted 1px black");
+        .attr("style", "width: 100vw; height: calc(100vh - 40px)");
 
     // Add a line for each link, and a circle for each node.
     const link = svg.append("g")
@@ -97,21 +108,21 @@ const initializeD3Graph = () => {
 
         //clear previously highlighted nodes 
         d3
-        .selectAll("circle")
-        .style("fill", (d: any) => color(d.group));
+            .selectAll("circle")
+            .style("fill", (d: any) => color(d.group));
 
         // highlight selected node and its neighbours
         const neighbours_id: string[] = [d.id];
 
         links.map((e: any) => {
-            if(e.target.id == d.id) {
+            if (e.target.id == d.id) {
                 neighbours_id.push(e.source.id);
-            } else if(e.source.id == d.id) {
+            } else if (e.source.id == d.id) {
                 neighbours_id.push(e.target.id);
             }
         });
-        
-        d3.selectAll("circle").filter((n: any) => 
+
+        d3.selectAll("circle").filter((n: any) =>
             neighbours_id.includes(n.id)
         ).style("fill", 'red');
     }
@@ -169,7 +180,6 @@ const initializeD3Graph = () => {
 
     return svg.node();
 }
-
 
 onMounted(async () => {
     data.value = await loadData();

@@ -6,5 +6,5 @@ import 'primevue/resources/themes/aura-light-green/theme.css'
 import 'primeicons/primeicons.css'
 
 const app = createApp(App);
-app.mount('#app');
 app.use(PrimeVue);
+app.mount('#app');

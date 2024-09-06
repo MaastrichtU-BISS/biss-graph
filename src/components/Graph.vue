@@ -74,6 +74,7 @@ const initializeD3Graph = () => {
         .data(nodes)
         .join("circle")
         .attr("r", 5)
+        .attr("id", (d: any) => d.id)
         .attr("fill", (d: any) => color(d.group));
 
     node.append("title")
@@ -89,9 +90,32 @@ const initializeD3Graph = () => {
     node.on("click", clickedNode);
 
     function clickedNode(e: PointerEvent, d: any) {
+
+        //open modal
         selectedNodeInfo.value = JSON.stringify(d);
         visibleModal.value = true;
+
+        //clear previously highlighted nodes 
+        d3
+        .selectAll("circle")
+        .style("fill", (d: any) => color(d.group));
+
+        // highlight selected node and its neighbours
+        const neighbours_id: string[] = [d.id];
+
+        links.map((e: any) => {
+            if(e.target.id == d.id) {
+                neighbours_id.push(e.source.id);
+            } else if(e.source.id == d.id) {
+                neighbours_id.push(e.target.id);
+            }
+        });
+        
+        d3.selectAll("circle").filter((n: any) => 
+            neighbours_id.includes(n.id)
+        ).style("fill", 'red');
     }
+
 
     // Zoom functionalities
     svg.call(d3.zoom()

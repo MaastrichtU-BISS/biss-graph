@@ -14,8 +14,10 @@
             <Dialog v-model:visible="visibleModal" modal header="Node Info" :style="{ width: '50vw' }" dismissableMask
                 :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
                 <p class="m-0">
-                    <h1>ID:</h1>
-                    {{ selectedNodeInfo.id }}
+                    <h3 >Id:</h3> {{ selectedNodeInfo.id }}
+                    <h3>Group:</h3>{{ selectedNodeInfo.group }}
+                    <h3>Radius:</h3>{{ selectedNodeInfo.radius }}
+                    <h3>Citing_patents_count:</h3>{{ selectedNodeInfo.citing_patents_count }}
                 </p>
             </Dialog>
         </div>

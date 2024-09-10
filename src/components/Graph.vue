@@ -1,4 +1,5 @@
 <template>
+    <button @click="updateGraphNodes">Update</button>
     <div class="h-[40px]">
         <div class="pt-4 mx-auto w-fit">
             <IconField>
@@ -10,10 +11,11 @@
     <div id="graph-container"></div>
     <template>
         <div class="card flex justify-content-center">
-            <Dialog v-model:visible="visibleModal" modal header="Header" :style="{ width: '50vw' }" dismissableMask
+            <Dialog v-model:visible="visibleModal" modal header="Node Info" :style="{ width: '50vw' }" dismissableMask
                 :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
                 <p class="m-0">
-                    {{ selectedNodeInfo }}
+                    <h1>ID:</h1>
+                    {{ selectedNodeInfo.id }}
                 </p>
             </Dialog>
         </div>
@@ -21,7 +23,7 @@
 </template>
 <script setup lang="ts">
 import * as d3 from "d3";
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import Dialog from 'primevue/dialog';
 import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
@@ -29,6 +31,7 @@ import InputText from 'primevue/inputtext';
 
 const dataLocation: string = "/graph.json";
 const data = ref<{ nodes: any[], links: any[] }>();
+const d3Simulation = ref();
 const selectedNodeInfo = ref();
 const visibleModal = ref(false);
 const toSearch = ref<string>("");
@@ -37,7 +40,7 @@ const loadData = async (): Promise<any> => {
     return (await fetch(dataLocation)).json();
 }
 
-const initializeD3Graph = () => {
+const initializeD3Graph = (dataNodes: any[], dataLinks: any[]) => {
 
     if (!data.value) {
         throw new Error("Data has not been loaded");
@@ -52,8 +55,8 @@ const initializeD3Graph = () => {
 
     // The force simulation mutates links and nodes, so create a copy
     // so that re-evaluating this cell produces the same result.
-    const links = data.value.links.map(d => ({ ...d }));
-    const nodes = data.value.nodes.map(d => ({ ...d }));
+    const links = dataLinks.map(d => ({ ...d }));
+    const nodes = dataNodes.map(d => ({ ...d }));
 
     // Create a simulation with several forces.
     const simulation = d3.forceSimulation(nodes)
@@ -61,6 +64,11 @@ const initializeD3Graph = () => {
         .force("charge", d3.forceManyBody())
         .force("x", d3.forceX())
         .force("y", d3.forceY());
+    
+    d3Simulation.value = simulation;
+
+    console.log(d3Simulation.value)
+    
 
     // Create the SVG container.
     const svg = d3.create("svg")
@@ -103,7 +111,7 @@ const initializeD3Graph = () => {
     function clickedNode(e: PointerEvent, d: any) {
 
         //open modal
-        selectedNodeInfo.value = JSON.stringify(d);
+        selectedNodeInfo.value = d;
         visibleModal.value = true;
 
         //clear previously highlighted nodes 
@@ -181,9 +189,29 @@ const initializeD3Graph = () => {
     return svg.node();
 }
 
+const updateGraphNodes = async () => {
+    data.value = await loadData();
+    if(!data.value) return;
+    const svg = initializeD3Graph([], []);
+    document.getElementById("graph-container")?.append(svg);
+};
+
+// function updateGraphNodes(nodes: any[]) {
+
+// }
+
+
+// filter logic
+const filteredNodesList = computed(() => {
+    return data.value?.nodes.filter((node: any) => {
+        return node.id.toLowerCase().startsWith(toSearch.value.toLowerCase());
+    })
+});
+
 onMounted(async () => {
     data.value = await loadData();
-    const svg = initializeD3Graph();
+    if(!data.value) return;
+    const svg = initializeD3Graph(data.value?.nodes, data.value?.links);
     document.getElementById("graph-container")?.append(svg);
 })
 </script>

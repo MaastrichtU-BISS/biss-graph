@@ -18,8 +18,6 @@
                     <h3>Group:</h3>{{ selectedNodeInfo.group }}
                     <h3>Radius:</h3>{{ selectedNodeInfo.radius }}
                     <h3>Citing_patents_count:</h3>{{ selectedNodeInfo.citing_patents_count }}
-                <h1>ID:</h1>
-                {{ selectedNodeInfo.id }}
                 </p>
             </Dialog>
         </div>

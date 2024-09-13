@@ -1,5 +1,4 @@
 <template>
-    <button @click="updateGraphNodes">Update</button>
     <div class="h-[40px]">
         <div class="pt-4 mx-auto w-fit">
             <IconField>
@@ -8,7 +7,8 @@
             </IconField>
         </div>
     </div>
-    <div id="graph-container"></div>
+    <div id="graph-container">
+    </div>
     <template>
         <div class="card flex justify-content-center">
             <Dialog v-model:visible="visibleModal" modal header="Node Info" :style="{ width: '50vw' }" dismissableMask
@@ -18,6 +18,8 @@
                     <h3>Group:</h3>{{ selectedNodeInfo.group }}
                     <h3>Radius:</h3>{{ selectedNodeInfo.radius }}
                     <h3>Citing_patents_count:</h3>{{ selectedNodeInfo.citing_patents_count }}
+                <h1>ID:</h1>
+                {{ selectedNodeInfo.id }}
                 </p>
             </Dialog>
         </div>
@@ -25,28 +27,29 @@
 </template>
 <script setup lang="ts">
 import * as d3 from "d3";
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import Dialog from 'primevue/dialog';
 import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 import InputText from 'primevue/inputtext';
+import  {Graph, type Node, type Link} from "../types/graph.ts";
 
 //Hello world
 
 const dataLocation: string = "/graph.json";
-const data = ref<{ nodes: any[], links: any[] }>();
+const graph = ref<Graph>(new Graph([],[]));
 const d3Simulation = ref();
 const selectedNodeInfo = ref();
 const visibleModal = ref(false);
 const toSearch = ref<string>("");
 
-const loadData = async (): Promise<any> => {
+const loadData = async (): Promise<{nodes: Node[]; links: Link[]}> => {
     return (await fetch(dataLocation)).json();
 }
 
 const initializeD3Graph = (dataNodes: any[], dataLinks: any[]) => {
 
-    if (!data.value) {
+    if (!graph.value) {
         throw new Error("Data has not been loaded");
     }
 
@@ -68,11 +71,9 @@ const initializeD3Graph = (dataNodes: any[], dataLinks: any[]) => {
         .force("charge", d3.forceManyBody())
         .force("x", d3.forceX())
         .force("y", d3.forceY());
-    
+
     d3Simulation.value = simulation;
 
-    console.log(d3Simulation.value)
-    
 
     // Create the SVG container.
     const svg = d3.create("svg")
@@ -193,29 +194,33 @@ const initializeD3Graph = (dataNodes: any[], dataLinks: any[]) => {
     return svg.node();
 }
 
-const updateGraphNodes = async () => {
-    data.value = await loadData();
-    if(!data.value) return;
-    const svg = initializeD3Graph([], []);
+// filter logic
+const filteredGraph = computed((): Graph => {
+    if(toSearch.value?.length) {
+        const filteredNodes = graph.value?.getNodes.filter((n: Node) => {
+            return n.id.toLowerCase().startsWith(toSearch.value.toLowerCase());
+        }).map((n: Node) => n.id) || [];
+
+        return graph.value?.subGraph(filteredNodes);
+    } 
+    
+    return new Graph(graph.value.getNodes, graph.value?.getLinks);
+});
+
+const updateGraph = async () => {
+    if(!graph.value) return
+    const svg = initializeD3Graph(filteredGraph.value.getNodes, filteredGraph.value.getLinks);
+    document.getElementById("graph-container")?.replaceChildren();
     document.getElementById("graph-container")?.append(svg);
 };
 
-// function updateGraphNodes(nodes: any[]) {
-
-// }
-
-
-// filter logic
-const filteredNodesList = computed(() => {
-    return data.value?.nodes.filter((node: any) => {
-        return node.id.toLowerCase().startsWith(toSearch.value.toLowerCase());
-    })
-});
+watch(filteredGraph, () => {
+    updateGraph();
+})
 
 onMounted(async () => {
-    data.value = await loadData();
-    if(!data.value) return;
-    const svg = initializeD3Graph(data.value?.nodes, data.value?.links);
-    document.getElementById("graph-container")?.append(svg);
+    const data = await loadData();
+    graph.value = new Graph(data.nodes, data.links);
+    updateGraph();
 })
 </script>

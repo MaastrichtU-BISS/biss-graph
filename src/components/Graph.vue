@@ -1,8 +1,9 @@
 <template>
     <div class="h-[40px]">
         <div class="pt-4 mx-auto w-fit">
-            <Dropdown v-model="selectedNode" :options="nodesGroups" filter optionLabel="label" optionGroupLabel="label"
-                optionGroupChildren="items" placeholder="Select an option" class="w-full md:w-80" showClear></Dropdown>
+            <Dropdown v-model="selectedNode" :options="filteredNodesGroups" optionLabel="label" optionGroupLabel="label"
+                optionGroupChildren="items" placeholder="Search" class="w-full md:w-80" showClear editable>
+            </Dropdown>
         </div>
     </div>
     <div id="graph-container">
@@ -19,13 +20,12 @@ import { Graph, type GraphNode, type GraphLink } from "../types/graph.ts";
 import TeamMemberModal from "./TeamMemberModal.vue";
 import { NodeType } from "../types/graph";
 
-const selectedNode = ref();
+const selectedNode = ref("");
 
 const dataLocation: string = "/biss-graph.json";
 const graph = ref<Graph>(new Graph([], []));
 const selectedNodeInfo = ref();
 const modalIsVisible = ref<boolean>(false);
-const toSearch = ref<string>("");
 const svg = ref();
 
 
@@ -193,7 +193,7 @@ const initializeD3Graph = (dataNodes: any[], dataLinks: any[]) => {
 const filteredGraph = computed((): Graph => {
     if (toSearch.value?.length) {
         const filteredNodes = graph.value?.getNodes.filter((n: GraphNode) => {
-            return n.id.toLowerCase().startsWith(toSearch.value.toLowerCase());
+            return n.id.toLowerCase().startsWith(toSearch.value?.toLowerCase());
         }).map((n: GraphNode) => n.id) || [];
 
         return graph.value?.subGraph(filteredNodes);
@@ -202,15 +202,27 @@ const filteredGraph = computed((): Graph => {
     return new Graph(graph.value.getNodes, graph.value?.getLinks);
 });
 
-const nodesGroups = computed(() => {
-    const result: { label: NodeType; items: { label: string; value: string }[] }[] = [{ label: NodeType.PROJECT, items: [] }, { label: NodeType.TEAM_MEMBER, items: [] }];
+const toSearch = computed(() => {
+    if(selectedNode.value?.value) {
+        return selectedNode.value.value;
+    }
+    return selectedNode.value;
+});
 
-    graph.value.getNodes.map((n: GraphNode) => {
+const filteredNodesGroups = computed(() => {
+
+    const nodesGroups: { label: NodeType; items: { label: string; value: string }[] }[] = [{ label: NodeType.PROJECT, items: [] }, { label: NodeType.TEAM_MEMBER, items: [] }];
+
+    const filteredList = toSearch.value?.length > 1 ? graph.value.getNodes.filter((n: any) => {
+        return n.id.toLowerCase().startsWith(toSearch.value?.toLowerCase());
+    }) : graph.value.getNodes;
+
+    filteredList.map((n: GraphNode) => {
         const group = n.group == NodeType.PROJECT;
-        result[group ? 0 : 1].items.push({ label: n.name, value: n.id });
+        nodesGroups[group ? 0 : 1].items.push({ label: n.name, value: n.id });
     });
 
-    return result;
+    return nodesGroups;
 });
 
 const updateGraph = async () => {
@@ -222,7 +234,7 @@ const updateGraph = async () => {
 
 watch(filteredGraph, () => {
     updateGraph();
-})
+});
 
 onMounted(async () => {
     const data = await loadData();

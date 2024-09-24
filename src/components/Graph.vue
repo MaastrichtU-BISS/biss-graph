@@ -101,7 +101,16 @@ const initializeD3Graph = (dataNodes: any[], dataLinks: any[]) => {
 
     // Zoom functionalities
 
-    svg.call(d3.zoom()
+    // svg.call(d3.zoom()
+    //     .extent([[0, 0], [width, height]])
+    //     .scaleExtent([1, 8])
+    //     .on("zoom", zoomed));
+
+    var zoom = d3.zoom()
+    .scaleExtent([1, 8])
+    .on("zoom", zoomed); 
+    
+    svg.call(zoom
         .extent([[0, 0], [width, height]])
         .scaleExtent([1, 8])
         .on("zoom", zoomed));

@@ -1,5 +1,10 @@
 <template>
     <div class="h-[40px]">
+          <!-- <template> -->
+                <div class="card flex justify-content-center">
+                <TeamMemberModal v-model:nodeInfo="selectedNodeInfo" v-model:isVisible="modalIsVisible"></TeamMemberModal>
+            </div>
+        <!-- </template> -->
         <div class="pt-4 mx-auto w-fit">
             <IconField>
                 <InputIcon class="pi pi-search" />
@@ -9,32 +14,22 @@
     </div>
     <div id="graph-container">
     </div>
-    <template>
-        <div class="card flex justify-content-center">
-            <Dialog v-model:visible="visibleModal" modal header="Node Info" :style="{ width: '50vw' }" dismissableMask
-                :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
-                <p class="m-0">
-                {{ selectedNodeInfo }}
-                </p>
-            </Dialog>
-        </div>
-    </template>
 </template>
 <script setup lang="ts">
 import * as d3 from "d3";
 import { ref, onMounted, computed, watch } from 'vue';
-import Dialog from 'primevue/dialog';
 import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 import InputText from 'primevue/inputtext';
 import  {Graph, type Node, type Link} from "../types/graph.ts";
+import TeamMemberModal from "./TeamMemberModal.vue";
 
 //Hello world
 
 const dataLocation: string = "/biss-graph.json";
 const graph = ref<Graph>(new Graph([],[]));
 const selectedNodeInfo = ref();
-const visibleModal = ref(false);
+const modalIsVisible = ref<boolean>(false);
 const toSearch = ref<string>("");
 const svg = ref();
 
@@ -122,7 +117,7 @@ const initializeD3Graph = (dataNodes: any[], dataLinks: any[]) => {
 
         //open modal
         selectedNodeInfo.value = d;
-        visibleModal.value = true;
+        modalIsVisible.value = true;
 
         //clear previously highlighted nodes 
         d3

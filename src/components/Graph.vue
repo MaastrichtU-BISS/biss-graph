@@ -14,8 +14,7 @@
             <Dialog v-model:visible="visibleModal" modal header="Node Info" :style="{ width: '50vw' }" dismissableMask
                 :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
                 <p class="m-0">
-                <h1>ID:</h1>
-                {{ selectedNodeInfo.id }}
+                {{ selectedNodeInfo }}
                 </p>
             </Dialog>
         </div>
@@ -32,12 +31,12 @@ import  {Graph, type Node, type Link} from "../types/graph.ts";
 
 //Hello world
 
-const dataLocation: string = "/graph.json";
+const dataLocation: string = "/biss-graph.json";
 const graph = ref<Graph>(new Graph([],[]));
-const d3Simulation = ref();
 const selectedNodeInfo = ref();
 const visibleModal = ref(false);
 const toSearch = ref<string>("");
+const svg = ref();
 
 const loadData = async (): Promise<{nodes: Node[]; links: Link[]}> => {
     return (await fetch(dataLocation)).json();
@@ -52,6 +51,7 @@ const initializeD3Graph = (dataNodes: any[], dataLinks: any[]) => {
     // Specify the dimensions of the chart.
     const width = 928;
     const height = 680;
+    const radius = 7;
 
     // Specify the color scale.
     const color = d3.scaleOrdinal(d3.schemeCategory10);
@@ -68,9 +68,6 @@ const initializeD3Graph = (dataNodes: any[], dataLinks: any[]) => {
         .force("x", d3.forceX())
         .force("y", d3.forceY());
 
-    d3Simulation.value = simulation;
-
-
     // Create the SVG container.
     const svg = d3.create("svg")
         .attr("width", width)
@@ -85,7 +82,7 @@ const initializeD3Graph = (dataNodes: any[], dataLinks: any[]) => {
         .selectAll("line")
         .data(links)
         .join("line")
-        .attr("stroke-width", (d: any) => Math.sqrt(d.value));
+        .attr("stroke-width", (d: any) => 2);
 
     const node = svg.append("g")
         .attr("stroke", "#fff")
@@ -93,12 +90,12 @@ const initializeD3Graph = (dataNodes: any[], dataLinks: any[]) => {
         .selectAll("circle")
         .data(nodes)
         .join("circle")
-        .attr("r", 5)
+        .attr("r", radius)
         .attr("id", (d: any) => d.id)
         .attr("fill", (d: any) => color(d.group));
 
     node.append("title")
-        .text((d: any) => d.id);
+        .text((d: any) => d.group == "project" ? d.title : d.full_name);
 
     // Add a drag behavior.
     node.call(d3.drag()
@@ -108,6 +105,18 @@ const initializeD3Graph = (dataNodes: any[], dataLinks: any[]) => {
 
     // Add click node behavior
     node.on("click", clickedNode);
+
+    // Zoom functionalities
+    
+    svg.call(d3.zoom()
+        .extent([[0, 0], [width, height]])
+        .scaleExtent([1, 8])
+        .on("zoom", zoomed));
+    
+    function zoomed({ transform }: any) {
+        node.attr("transform", transform);
+        link.attr("transform", transform);
+    }
 
     function clickedNode(e: PointerEvent, d: any) {
 
@@ -134,18 +143,6 @@ const initializeD3Graph = (dataNodes: any[], dataLinks: any[]) => {
         d3.selectAll("circle").filter((n: any) =>
             neighbours_id.includes(n.id)
         ).style("fill", 'red');
-    }
-
-
-    // Zoom functionalities
-    svg.call(d3.zoom()
-        .extent([[0, 0], [width, height]])
-        .scaleExtent([1, 8])
-        .on("zoom", zoomed));
-
-    function zoomed({ transform }: any) {
-        node.attr("transform", transform);
-        link.attr("transform", transform);
     }
 
     // Set the position attributes of links and nodes each time the simulation ticks.
@@ -187,7 +184,7 @@ const initializeD3Graph = (dataNodes: any[], dataLinks: any[]) => {
     // stop naturally, but it’s a good practice.)
     // invalidation.then(() => simulation.stop());
 
-    return svg.node();
+    return svg;
 }
 
 // filter logic
@@ -205,9 +202,9 @@ const filteredGraph = computed((): Graph => {
 
 const updateGraph = async () => {
     if(!graph.value) return
-    const svg = initializeD3Graph(filteredGraph.value.getNodes, filteredGraph.value.getLinks);
+    svg.value = initializeD3Graph(filteredGraph.value.getNodes, filteredGraph.value.getLinks);
     document.getElementById("graph-container")?.replaceChildren();
-    document.getElementById("graph-container")?.append(svg);
+    document.getElementById("graph-container")?.append(svg.value.node());
 };
 
 watch(filteredGraph, () => {

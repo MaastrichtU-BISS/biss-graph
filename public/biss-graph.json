@@ -1,0 +1,247 @@
+{
+    "nodes": [
+        {
+            "id": "carlos",
+            "group": "team_member",
+            "full_name": "Carlos Eduardo Aguilera Medina"
+        },
+        {
+            "id": "chris",
+            "group": "team_member",
+            "full_name": "Chris van der Lans"
+        },
+        {
+            "id": "shashank",
+            "group": "team_member",
+            "full_name": "Shashank Chakravarthy"
+        },
+        {
+            "id": "sander",
+            "group": "team_member",
+            "full_name": "Sander van Essel"
+        },
+        {
+            "id": "gijs",
+            "group": "team_member",
+            "full_name": "Gijs van Dijck"
+        },
+        {
+            "id": "yeni",
+            "group": "team_member",
+            "full_name": "Yenisel Plasencia"
+        },
+        {
+            "id": "bastian",
+            "group": "team_member",
+            "full_name": "Bastian Küppers"
+        },
+        {
+            "id": "minou",
+            "group": "team_member",
+            "full_name": "Minou van der Werf"
+        },
+        {
+            "id": "lisa",
+            "group": "team_member",
+            "full_name": "Lisa Brüggen"
+        },
+        {
+            "id": "robert",
+            "group": "team_member",
+            "full_name": "Robert Gianni"
+        },
+        {
+            "id": "stefan",
+            "group": "team_member",
+            "full_name": "Stefan Bos"
+        },
+        {
+            "id": "cassy",
+            "group": "team_member",
+            "full_name": "Cassy Juhasz"
+        },
+        {
+            "id": "max",
+            "group": "team_member",
+            "full_name": "Max Louwerse"
+        },
+        {
+            "id": "darian",
+            "group": "team_member",
+            "full_name": "Darian Meacham"
+        },
+        {
+            "id": "johan",
+            "group": "team_member",
+            "full_name": "Johan van Soest"
+        },
+        {
+            "id": "elia",
+            "group": "team_member",
+            "full_name": "Elia Formisano"
+        },
+        {
+            "id": "anna",
+            "group": "team_member",
+            "full_name": "Anna Wilbik"
+        },
+        {
+            "id": "ali",
+            "group": "team_member",
+            "full_name": "Ali Reza Ghavamipour"
+        },
+        {
+            "id": "rudolph",
+            "group": "team_member",
+            "full_name": "Rudolph Müller"
+        },
+        {
+            "id": "andre",
+            "group": "team_member",
+            "full_name": "André Dekker"
+        },
+        {
+            "id": "vivianne",
+            "group": "team_member",
+            "full_name": "Vivianne Curvers"
+        },
+        {
+            "id": "aleksandra",
+            "group": "team_member",
+            "full_name": "Aleksandra Draper"
+        },
+        {
+            "id": "judith",
+            "group": "team_member",
+            "full_name": "Judith Kamalski"
+        },
+        {
+            "id": "lawnotation",
+            "group": "project",
+            "title": "Lawnotation",
+            "description": ""
+        },
+        {
+            "id": "techalliance",
+            "group": "project",
+            "title": "Tech Alliance",
+            "description": ""
+        },
+        {
+            "id": "flying-forward",
+            "group": "project",
+            "title": "Flying Forward",
+            "description": ""
+        },
+        {
+            "id": "elsa",
+            "group": "project",
+            "title": "ELSA",
+            "description": ""
+        },
+        {
+            "id": "audio-to-semantics",
+            "group": "project",
+            "title": "Audio to Semantics",
+            "description": ""
+        }
+    ], 
+    "links": [
+        {
+            "source": "carlos",
+            "target": "lawnotation"
+        },
+        {
+            "source": "chris",
+            "target": "lawnotation"
+        },
+        {
+            "source": "shashank",
+            "target": "lawnotation"
+        },
+        {
+            "source": "sander",
+            "target": "lawnotation"
+        },
+        {
+            "source": "gijs",
+            "target": "lawnotation"
+        },
+        {
+            "source": "chris",
+            "target": "techalliance"
+        },
+        {
+            "source": "sander",
+            "target": "techalliance"
+        },
+        {
+            "source": "yeni",
+            "target": "techalliance"
+        },
+        {
+            "source": "bastian",
+            "target": "techalliance"
+        },
+        {
+            "source": "gijs",
+            "target": "flying-forward"
+        },
+        {
+            "source": "carlos",
+            "target": "flying-forward"
+        },
+        {
+            "source": "shashank",
+            "target": "flying-forward"
+        },
+        {
+            "source": "gijs",
+            "target": "elsa"
+        },
+        {
+            "source": "minou",
+            "target": "elsa"
+        },
+        {
+            "source": "yeni",
+            "target": "elsa"
+        },
+        {
+            "source": "lisa",
+            "target": "elsa"
+        },
+        {
+            "source": "robert",
+            "target": "elsa"
+        },
+        {
+            "source": "stefan",
+            "target": "elsa"
+        },
+        {
+            "source": "cassy",
+            "target": "elsa"
+        },
+        {
+            "source": "max",
+            "target": "elsa"
+        },
+        {
+            "source": "darian",
+            "target": "elsa"
+        },
+        {
+            "source": "johan",
+            "target": "elsa"
+        },
+        {
+            "source": "elia",
+            "target": "audio-to-semantics"
+        },
+        {
+            "source": "chris",
+            "target": "audio-to-semantics"
+        }
+    ]
+}

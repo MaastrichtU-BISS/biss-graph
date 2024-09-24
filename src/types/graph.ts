@@ -19,8 +19,10 @@ export class Graph {
     links.map((l: Link) => {
       if (this.graph.has(l.source)) {
         this.graph.get(l.source)?.push(l.target);
+        this.graph.get(l.target)?.push(l.source);
       }
       this.links.set(`${l.source},${l.target}`, l);
+      this.links.set(`${l.target},${l.source}`, l);
     });
   }
 

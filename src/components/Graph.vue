@@ -1,10 +1,5 @@
 <template>
     <div class="h-[40px]">
-          <!-- <template> -->
-                <div class="card flex justify-content-center">
-                <TeamMemberModal v-model:nodeInfo="selectedNodeInfo" v-model:isVisible="modalIsVisible"></TeamMemberModal>
-            </div>
-        <!-- </template> -->
         <div class="pt-4 mx-auto w-fit">
             <IconField>
                 <InputIcon class="pi pi-search" />
@@ -14,6 +9,9 @@
     </div>
     <div id="graph-container">
     </div>
+    <template>
+        <TeamMemberModal :nodeInfo="selectedNodeInfo" v-model:isVisible="modalIsVisible"></TeamMemberModal>
+    </template>
 </template>
 <script setup lang="ts">
 import * as d3 from "d3";
@@ -21,19 +19,19 @@ import { ref, onMounted, computed, watch } from 'vue';
 import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 import InputText from 'primevue/inputtext';
-import  {Graph, type Node, type Link} from "../types/graph.ts";
+import { Graph, type GraphNode, type GraphLink } from "../types/graph.ts";
 import TeamMemberModal from "./TeamMemberModal.vue";
 
 //Hello world
 
 const dataLocation: string = "/biss-graph.json";
-const graph = ref<Graph>(new Graph([],[]));
+const graph = ref<Graph>(new Graph([], []));
 const selectedNodeInfo = ref();
 const modalIsVisible = ref<boolean>(false);
 const toSearch = ref<string>("");
 const svg = ref();
 
-const loadData = async (): Promise<{nodes: Node[]; links: Link[]}> => {
+const loadData = async (): Promise<{ nodes: GraphNode[]; links: GraphLink[] }> => {
     return (await fetch(dataLocation)).json();
 }
 
@@ -102,12 +100,12 @@ const initializeD3Graph = (dataNodes: any[], dataLinks: any[]) => {
     node.on("click", clickedNode);
 
     // Zoom functionalities
-    
+
     svg.call(d3.zoom()
         .extent([[0, 0], [width, height]])
         .scaleExtent([1, 8])
         .on("zoom", zoomed));
-    
+
     function zoomed({ transform }: any) {
         node.attr("transform", transform);
         link.attr("transform", transform);
@@ -184,19 +182,19 @@ const initializeD3Graph = (dataNodes: any[], dataLinks: any[]) => {
 
 // filter logic
 const filteredGraph = computed((): Graph => {
-    if(toSearch.value?.length) {
-        const filteredNodes = graph.value?.getNodes.filter((n: Node) => {
+    if (toSearch.value?.length) {
+        const filteredNodes = graph.value?.getNodes.filter((n: GraphNode) => {
             return n.id.toLowerCase().startsWith(toSearch.value.toLowerCase());
-        }).map((n: Node) => n.id) || [];
+        }).map((n: GraphNode) => n.id) || [];
 
         return graph.value?.subGraph(filteredNodes);
-    } 
-    
+    }
+
     return new Graph(graph.value.getNodes, graph.value?.getLinks);
 });
 
 const updateGraph = async () => {
-    if(!graph.value) return
+    if (!graph.value) return
     svg.value = initializeD3Graph(filteredGraph.value.getNodes, filteredGraph.value.getLinks);
     document.getElementById("graph-container")?.replaceChildren();
     document.getElementById("graph-container")?.append(svg.value.node());

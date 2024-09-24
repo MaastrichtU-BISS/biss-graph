@@ -2,148 +2,143 @@
     "nodes": [
         {
             "id": "carlos-aguilera",
-            "group": "team_member",
-            "full_name": "Carlos Eduardo Aguilera Medina"
+            "group": "Team Member",
+            "name": "Carlos Eduardo Aguilera Medina"
         },
         {
             "id": "chris-van-der-lans",
-            "group": "team_member",
-            "full_name": "Chris van der Lans"
+            "group": "Team Member",
+            "name": "Chris van der Lans"
         },
         {
             "id": "shashank-chakravarthy",
-            "group": "team_member",
-            "full_name": "Shashank Chakravarthy"
+            "group": "Team Member",
+            "name": "Shashank Chakravarthy"
         },
         {
             "id": "sander-van-essel",
-            "group": "team_member",
-            "full_name": "Sander van Essel"
+            "group": "Team Member",
+            "name": "Sander van Essel"
         },
         {
             "id": "gijs-van-dijck",
-            "group": "team_member",
-            "full_name": "Gijs van Dijck"
+            "group": "Team Member",
+            "name": "Gijs van Dijck"
         },
         {
             "id": "yenisel-plasencia",
-            "group": "team_member",
-            "full_name": "Yenisel Plasencia"
+            "group": "Team Member",
+            "name": "Yenisel Plasencia"
         },
         {
             "id": "bastian-kuppers",
-            "group": "team_member",
-            "full_name": "Bastian Küppers"
+            "group": "Team Member",
+            "name": "Bastian Küppers"
         },
         {
             "id": "minou-van-der-werf",
-            "group": "team_member",
-            "full_name": "Minou van der Werf"
+            "group": "Team Member",
+            "name": "Minou van der Werf"
         },
         {
             "id": "lisa-bruggen",
-            "group": "team_member",
-            "full_name": "Lisa Brüggen"
+            "group": "Team Member",
+            "name": "Lisa Brüggen"
         },
         {
             "id": "robert-gianni",
-            "group": "team_member",
-            "full_name": "Robert Gianni"
+            "group": "Team Member",
+            "name": "Robert Gianni"
         },
         {
             "id": "stefan-bos",
-            "group": "team_member",
-            "full_name": "Stefan Bos"
+            "group": "Team Member",
+            "name": "Stefan Bos"
         },
         {
             "id": "cassy-juhasz",
-            "group": "team_member",
-            "full_name": "Cassy Juhasz"
+            "group": "Team Member",
+            "name": "Cassy Juhasz"
         },
         {
             "id": "max-louwerse",
-            "group": "team_member",
-            "full_name": "Max Louwerse"
+            "group": "Team Member",
+            "name": "Max Louwerse"
         },
         {
             "id": "darian-meacham",
-            "group": "team_member",
-            "full_name": "Darian Meacham"
+            "group": "Team Member",
+            "name": "Darian Meacham"
         },
         {
             "id": "johan-van-soest",
-            "group": "team_member",
-            "full_name": "Johan van Soest"
+            "group": "Team Member",
+            "name": "Johan van Soest"
         },
         {
             "id": "elia-formisano",
-            "group": "team_member",
-            "full_name": "Elia Formisano"
+            "group": "Team Member",
+            "name": "Elia Formisano"
         },
         {
             "id": "anna-wilbik",
-            "group": "team_member",
-            "full_name": "Anna Wilbik"
+            "group": "Team Member",
+            "name": "Anna Wilbik"
         },
         {
             "id": "ali-reza-ghavamipour",
-            "group": "team_member",
-            "full_name": "Ali Reza Ghavamipour"
+            "group": "Team Member",
+            "name": "Ali Reza Ghavamipour"
         },
         {
             "id": "rudolf-muller",
-            "group": "team_member",
-            "full_name": "Rudolf Müller"
+            "group": "Team Member",
+            "name": "Rudolf Müller"
         },
         {
             "id": "andre-dekker",
-            "group": "team_member",
-            "full_name": "André Dekker"
+            "group": "Team Member",
+            "name": "André Dekker"
         },
         {
             "id": "vivienne-curvers",
-            "group": "team_member",
-            "full_name": "Vivienne Curvers"
+            "group": "Team Member",
+            "name": "Vivienne Curvers"
         },
         {
             "id": "aleksandra-draper",
-            "group": "team_member",
-            "full_name": "Aleksandra Draper"
+            "group": "Team Member",
+            "name": "Aleksandra Draper"
         },
         {
             "id": "judith-kamalski",
-            "group": "team_member",
-            "full_name": "Judith Kamalski"
+            "group": "Team Member",
+            "name": "Judith Kamalski"
         },
         {
             "id": "lawnotation",
-            "group": "project",
-            "title": "Lawnotation",
-            "description": ""
+            "group": "Project",
+            "name": "Lawnotation"
         },
         {
             "id": "techalliance",
-            "group": "project",
-            "title": "Tech Alliance",
-            "description": ""
+            "group": "Project",
+            "name": "Tech Alliance"
         },
         {
             "id": "flying-forward",
-            "group": "project",
-            "title": "Flying Forward",
-            "description": ""
+            "group": "Project",
+            "name": "Flying Forward"
         },
         {
             "id": "elsa",
-            "group": "project",
-            "title": "ELSA",
-            "description": ""
+            "group": "Project",
+            "name": "ELSA"
         },
         {
             "id": "audio-to-semantics",
-            "group": "project",
-            "title": "Audio to Semantics",
-            "description": ""
+            "group": "Project",
+            "name": "Audio to Semantics"
         }
     ], 
     "links": [

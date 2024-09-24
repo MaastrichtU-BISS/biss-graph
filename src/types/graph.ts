@@ -74,9 +74,9 @@ export class Graph {
 
 export type GraphNode = {
   id: string;
-  group: "project" | "team_member";
+  group: NodeType;
+  name: string;
   radius: number;
-  citing_patents_count: number;
 };
 
 export type GraphLink = {
@@ -84,3 +84,8 @@ export type GraphLink = {
   target: string;
   value: number;
 };
+
+export enum NodeType {
+  PROJECT = "Project",
+  TEAM_MEMBER = "Team Member"
+}

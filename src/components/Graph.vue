@@ -1,10 +1,8 @@
 <template>
     <div class="h-[40px]">
         <div class="pt-4 mx-auto w-fit">
-            <IconField>
-                <InputIcon class="pi pi-search" />
-                <InputText v-model="toSearch" placeholder="Search" />
-            </IconField>
+            <Dropdown v-model="selectedNode" :options="nodesGroups" filter optionLabel="label" optionGroupLabel="label"
+                optionGroupChildren="items" placeholder="Select an option" class="w-full md:w-80" showClear></Dropdown>
         </div>
     </div>
     <div id="graph-container">
@@ -16,13 +14,12 @@
 <script setup lang="ts">
 import * as d3 from "d3";
 import { ref, onMounted, computed, watch } from 'vue';
-import IconField from 'primevue/iconfield';
-import InputIcon from 'primevue/inputicon';
-import InputText from 'primevue/inputtext';
+import Dropdown from 'primevue/dropdown'
 import { Graph, type GraphNode, type GraphLink } from "../types/graph.ts";
 import TeamMemberModal from "./TeamMemberModal.vue";
+import { NodeType } from "../types/graph";
 
-//Hello world
+const selectedNode = ref();
 
 const dataLocation: string = "/biss-graph.json";
 const graph = ref<Graph>(new Graph([], []));
@@ -30,6 +27,7 @@ const selectedNodeInfo = ref();
 const modalIsVisible = ref<boolean>(false);
 const toSearch = ref<string>("");
 const svg = ref();
+
 
 const loadData = async (): Promise<{ nodes: GraphNode[]; links: GraphLink[] }> => {
     return (await fetch(dataLocation)).json();
@@ -85,10 +83,10 @@ const initializeD3Graph = (dataNodes: any[], dataLinks: any[]) => {
         .join("circle")
         .attr("r", radius)
         .attr("id", (d: any) => d.id)
-        .attr("fill", (d: any) => d.group == "project" ? "rgb(255, 127, 14)" : "rgb(31, 119, 180)");
+        .attr("fill", (d: any) => d.group == NodeType.PROJECT ? "rgb(255, 127, 14)" : "rgb(31, 119, 180)");
 
     node.append("title")
-        .text((d: any) => d.group == "project" ? d.title : d.full_name);
+        .text((d: any) => d.name);
 
     // Add a drag behavior.
     node.call(d3.drag()
@@ -107,9 +105,9 @@ const initializeD3Graph = (dataNodes: any[], dataLinks: any[]) => {
     //     .on("zoom", zoomed));
 
     var zoom = d3.zoom()
-    .scaleExtent([1, 8])
-    .on("zoom", zoomed); 
-    
+        .scaleExtent([1, 8])
+        .on("zoom", zoomed);
+
     svg.call(zoom
         .extent([[0, 0], [width, height]])
         .scaleExtent([1, 8])
@@ -122,7 +120,7 @@ const initializeD3Graph = (dataNodes: any[], dataLinks: any[]) => {
 
     function clickedNode(e: PointerEvent, d: any) {
 
-        if(d.group == "project") return;
+        if (d.group == NodeType.PROJECT) return;
 
         //open modal
         selectedNodeInfo.value = d;
@@ -202,6 +200,17 @@ const filteredGraph = computed((): Graph => {
     }
 
     return new Graph(graph.value.getNodes, graph.value?.getLinks);
+});
+
+const nodesGroups = computed(() => {
+    const result: { label: NodeType; items: { label: string; value: string }[] }[] = [{ label: NodeType.PROJECT, items: [] }, { label: NodeType.TEAM_MEMBER, items: [] }];
+
+    graph.value.getNodes.map((n: GraphNode) => {
+        const group = n.group == NodeType.PROJECT;
+        result[group ? 0 : 1].items.push({ label: n.name, value: n.id });
+    });
+
+    return result;
 });
 
 const updateGraph = async () => {

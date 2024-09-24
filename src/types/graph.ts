@@ -74,7 +74,7 @@ export class Graph {
 
 export type GraphNode = {
   id: string;
-  group: string;
+  group: "project" | "team_member";
   radius: number;
   citing_patents_count: number;
 };

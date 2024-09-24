@@ -113,6 +113,8 @@ const initializeD3Graph = (dataNodes: any[], dataLinks: any[]) => {
 
     function clickedNode(e: PointerEvent, d: any) {
 
+        if(d.group == "project") return;
+
         //open modal
         selectedNodeInfo.value = d;
         modalIsVisible.value = true;

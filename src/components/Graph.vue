@@ -85,7 +85,7 @@ const initializeD3Graph = (dataNodes: any[], dataLinks: any[]) => {
         .join("circle")
         .attr("r", radius)
         .attr("id", (d: any) => d.id)
-        .attr("fill", (d: any) => color(d.group));
+        .attr("fill", (d: any) => d.group == "project" ? "rgb(255, 127, 14)" : "rgb(31, 119, 180)");
 
     node.append("title")
         .text((d: any) => d.group == "project" ? d.title : d.full_name);

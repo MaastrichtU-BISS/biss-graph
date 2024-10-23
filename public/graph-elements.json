@@ -1,0 +1,375 @@
+{
+    "nodes": [
+        {
+            "data": {
+                "id": "carlos-aguilera",
+                "group": "Team Member",
+                "name": "Carlos Eduardo Aguilera Medina",
+                "pfp_src": "/src/assets/images/team/judith-kamalski.jpg"
+            }
+        },
+        {
+            "data": {
+                "id": "chris-van-der-lans",
+                "group": "Team Member",
+                "name": "Chris van der Lans",
+                "pfp_src": "/src/assets/images/team/judith-kamalski.jpg"
+            }
+        },
+        {
+            "data": {
+                "id": "shashank-chakravarthy",
+                "group": "Team Member",
+                "name": "Shashank Chakravarthy",
+                "pfp_src": "/src/assets/images/team/judith-kamalski.jpg"
+            }
+        },
+        {
+            "data": {
+                "id": "sander-van-essel",
+                "group": "Team Member",
+                "name": "Sander van Essel",
+                "pfp_src": "/src/assets/images/team/judith-kamalski.jpg"
+            }
+        },
+        {
+            "data": {
+                "id": "gijs-van-dijck",
+                "group": "Team Member",
+                "name": "Gijs van Dijck",
+                "pfp_src": "/src/assets/images/team/judith-kamalski.jpg"
+            }
+        },
+        {
+            "data": {
+                "id": "yenisel-plasencia",
+                "group": "Team Member",
+                "name": "Yenisel Plasencia",
+                "pfp_src": "/src/assets/images/team/judith-kamalski.jpg"
+            }
+        },
+        {
+            "data": {
+                "id": "bastian-kuppers",
+                "group": "Team Member",
+                "name": "Bastian Küppers",
+                "pfp_src": "/src/assets/images/team/judith-kamalski.jpg"
+            }
+        },
+        {
+            "data": {
+                "id": "minou-van-der-werf",
+                "group": "Team Member",
+                "name": "Minou van der Werf",
+                "pfp_src": "/src/assets/images/team/judith-kamalski.jpg"
+            }
+        },
+        {
+            "data": {
+                "id": "lisa-bruggen",
+                "group": "Team Member",
+                "name": "Lisa Brüggen",
+                "pfp_src": "/src/assets/images/team/judith-kamalski.jpg"
+            }
+        },
+        {
+            "data": {
+                "id": "robert-gianni",
+                "group": "Team Member",
+                "name": "Robert Gianni",
+                "pfp_src": "/src/assets/images/team/judith-kamalski.jpg"
+            }
+        },
+        {
+            "data": {
+                "id": "stefan-bos",
+                "group": "Team Member",
+                "name": "Stefan Bos",
+                "pfp_src": "/src/assets/images/team/judith-kamalski.jpg"
+            }
+        },
+        {
+            "data": {
+                "id": "cassy-juhasz",
+                "group": "Team Member",
+                "name": "Cassy Juhasz",
+                "pfp_src": "/src/assets/images/team/judith-kamalski.jpg"
+            }
+        },
+        {
+            "data": {
+                "id": "max-louwerse",
+                "group": "Team Member",
+                "name": "Max Louwerse",
+                "pfp_src": "/src/assets/images/team/judith-kamalski.jpg"
+            }
+        },
+        {
+            "data": {
+                "id": "darian-meacham",
+                "group": "Team Member",
+                "name": "Darian Meacham",
+                "pfp_src": "/src/assets/images/team/judith-kamalski.jpg"
+            }
+        },
+        {
+            "data": {
+                "id": "johan-van-soest",
+                "group": "Team Member",
+                "name": "Johan van Soest",
+                "pfp_src": "/src/assets/images/team/judith-kamalski.jpg"
+            }
+        },
+        {
+            "data": {
+                "id": "elia-formisano",
+                "group": "Team Member",
+                "name": "Elia Formisano",
+                "pfp_src": "/src/assets/images/team/judith-kamalski.jpg"
+            }
+        },
+        {
+            "data": {
+                "id": "anna-wilbik",
+                "group": "Team Member",
+                "name": "Anna Wilbik",
+                "pfp_src": "/src/assets/images/team/judith-kamalski.jpg"
+            }
+        },
+        {
+            "data": {
+                "id": "ali-reza-ghavamipour",
+                "group": "Team Member",
+                "name": "Ali Reza Ghavamipour",
+                "pfp_src": "/src/assets/images/team/judith-kamalski.jpg"
+            }
+        },
+        {
+            "data": {
+                "id": "rudolf-muller",
+                "group": "Team Member",
+                "name": "Rudolf Müller",
+                "pfp_src": "/src/assets/images/team/judith-kamalski.jpg"
+            }
+        },
+        {
+            "data": {
+                "id": "andre-dekker",
+                "group": "Team Member",
+                "name": "André Dekker",
+                "pfp_src": "/src/assets/images/team/judith-kamalski.jpg"
+            }
+        },
+        {
+            "data": {
+                "id": "vivienne-curvers",
+                "group": "Team Member",
+                "name": "Vivienne Curvers",
+                "pfp_src": "/src/assets/images/team/judith-kamalski.jpg"
+            }
+        },
+        {
+            "data": {
+                "id": "aleksandra-draper",
+                "group": "Team Member",
+                "name": "Aleksandra Draper",
+                "pfp_src": "/src/assets/images/team/judith-kamalski.jpg"
+            }
+        },
+        {
+            "data": {
+                "id": "judith-kamalski",
+                "group": "Team Member",
+                "name": "Judith Kamalski",
+                "pfp_src": "/src/assets/images/team/judith-kamalski.jpg"
+            }
+        },
+        {
+            "data": {
+                "id": "lawnotation",
+                "group": "Project",
+                "name": "Lawnotation"
+            }
+        },
+        {
+            "data": {
+                "id": "techalliance",
+                "group": "Project",
+                "name": "Tech Alliance"
+            }
+        },
+        {
+            "data": {
+                "id": "flying-forward",
+                "group": "Project",
+                "name": "Flying Forward"
+            }
+        },
+        {
+            "data": {
+                "id": "elsa",
+                "group": "Project",
+                "name": "ELSA"
+            }
+        },
+        {
+            "data": {
+                "id": "audio-to-semantics",
+                "group": "Project",
+                "name": "Audio to Semantics"
+            }
+        }
+    ], 
+    "edges": [
+        {
+            "data": {
+                "source": "carlos-aguilera",
+                "target": "lawnotation"
+            }
+        },
+        {
+            "data": {
+                "source": "chris-van-der-lans",
+                "target": "lawnotation"
+            }
+        },
+        {
+            "data": {
+                "source": "shashank-chakravarthy",
+                "target": "lawnotation"
+            }
+        },
+        {
+            "data": {
+                "source": "sander-van-essel",
+                "target": "lawnotation"
+            }
+        },
+        {
+            "data": {
+                "source": "gijs-van-dijck",
+                "target": "lawnotation"
+            }
+        },
+        {
+            "data": {
+                "source": "chris-van-der-lans",
+                "target": "techalliance"
+            }
+        },
+        {
+            "data": {
+                "source": "sander-van-essel",
+                "target": "techalliance"
+            }
+        },
+        {
+            "data": {
+                "source": "yenisel-plasencia",
+                "target": "techalliance"
+            }
+        },
+        {
+            "data": {
+                "source": "bastian-kuppers",
+                "target": "techalliance"
+            }
+        },
+        {
+            "data": {
+                "source": "gijs-van-dijck",
+                "target": "flying-forward"
+            }
+        },
+        {
+            "data": {
+                "source": "carlos-aguilera",
+                "target": "flying-forward"
+            }
+        },
+        {
+            "data": {
+                "source": "shashank-chakravarthy",
+                "target": "flying-forward"
+            }
+        },
+        {
+            "data": {
+                "source": "gijs-van-dijck",
+                "target": "elsa"
+            }
+        },
+        {
+            "data": {
+                "source": "minou-van-der-werf",
+                "target": "elsa"
+            }
+        },
+        {
+            "data": {
+                "source": "yenisel-plasencia",
+                "target": "elsa"
+            }
+        },
+        {
+            "data": {
+                "source": "lisa-bruggen",
+                "target": "elsa"
+            }
+        },
+        {
+            "data": {
+                "source": "robert-gianni",
+                "target": "elsa"
+            }
+        },
+        {
+            "data": {
+                "source": "stefan-bos",
+                "target": "elsa"
+            }
+        },
+        {
+            "data": {
+                "source": "cassy-juhasz",
+                "target": "elsa"
+            }
+        },
+        {
+            "data": {
+                "source": "max-louwerse",
+                "target": "elsa"
+            }
+        },
+        {
+            "data": {
+                "source": "darian-meacham",
+                "target": "elsa"
+            }
+        },
+        {
+            "data": {
+                "source": "johan-van-soest",
+                "target": "elsa"
+            }
+        },
+        {
+            "data": {
+                "source": "andre-dekker",
+                "target": "elsa"
+            }
+        },
+        {
+            "data": {
+                "source": "elia-formisano",
+                "target": "audio-to-semantics"
+            }
+        },
+        {
+            "data": {
+                "source": "chris-van-der-lans",
+                "target": "audio-to-semantics"
+            }
+        }
+    ]
+}

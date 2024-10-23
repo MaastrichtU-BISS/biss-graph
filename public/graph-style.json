@@ -1,0 +1,37 @@
+[
+  {
+    "selector": "node",
+    "style": {
+      "label": "data(name)"
+    }
+  },
+  {
+    "selector": "node[group = 'Project']",
+    "style": {
+      "width": 50,
+      "height": 50
+    }
+  },
+  {
+    "selector": "node[group = 'Team Member']",
+    "style": {
+      "width": 30,
+      "height": 30,
+      "background-image": "data(pfp_src)",
+      "background-size": "cover",
+      "background-repeat": "no-repeat",
+      "background-position": "center center",
+      "background-fit": "cover"
+    }
+  },
+  {
+    "selector": "edge",
+    "style": {
+      "width": 3,
+      "line-color": "green",
+      "target-arrow-color": "green",
+      "target-arrow-shape": "triangle",
+      "curve-style": "bezier"
+    }
+  }
+]

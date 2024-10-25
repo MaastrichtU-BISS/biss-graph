@@ -382,7 +382,15 @@
                 "name": "Factory shutdowns",
                 "info_url": "https://www.biss-institute.com/en/posts/iframe/preventfactoryshutdowns"
             }
-        }      
+        },
+        {
+            "data": {
+                "id": "mecc-maastricht",
+                "group": "Project",
+                "name": "MECC Maastricht",
+                "info_url": ""
+            }
+        }
     ], 
     "edges": [
         {
@@ -839,6 +847,24 @@
             "data": {
                 "source": "gijs-van-dijck",
                 "target": "plurism-legal-sources"
+            }
+        },
+        {
+            "data": {
+                "source": "yenisel-plasencia",
+                "target": "mecc-maastricht"
+            }
+        },
+        {
+            "data": {
+                "source": "anna-wilbik",
+                "target": "mecc-maastricht"
+            }
+        },
+        {
+            "data": {
+                "source": "ali-reza-ghavamipour",
+                "target": "elsa"
             }
         }
     ]

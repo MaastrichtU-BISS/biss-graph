@@ -11,10 +11,6 @@
   "dependencies": {
     "cytoscape": "^3.30.2",
     "cytoscape-cise": "^2.0.0",
-    "cytoscape-cola": "^2.5.1",
-    "cytoscape-cose-bilkent": "^4.1.0",
-    "cytoscape-euler": "^1.2.3",
-    "cytoscape-spread": "^3.0.0",
     "primeicons": "^6.0.1",
     "primevue": "^3.50.0",
     "vue": "^3.4.21"

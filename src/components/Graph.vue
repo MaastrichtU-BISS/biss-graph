@@ -15,21 +15,13 @@
 </template>
 <script setup lang="ts">
 import cytoscape from 'cytoscape';
-import cola from 'cytoscape-cola';
 import cise from "cytoscape-cise";
-import spread from "cytoscape-spread";
-import coseBilkent from "cytoscape-cose-bilkent";
-import euler from "cytoscape-euler";
 import { ref, onMounted, computed } from 'vue';
 import Dropdown from 'primevue/dropdown';
 import NodeInfoModal from "./NodeInfoModal.vue";
 import { type Cytoscape, NodeType, type Graph } from "../types/graph";
 
-// cytoscape.use(cola);
-// cytoscape.use(spread);
-// cytoscape.use(cise);
-// cytoscape.use(coseBilkent);
-cytoscape.use(euler);
+cytoscape.use(cise);
 
 const selectedNode = ref();
 
@@ -50,10 +42,30 @@ const selectedNodeInfo = ref();
 const modalIsVisible = ref<boolean>(false);
 
 const initCytoscape = async (elements: Graph, style: any[], layout: any) => {
+
+    const initialCy = cytoscape({
+        container: document.getElementById('graph-container'),
+        elements: elements
+    });
+
+    const clustersSet = new Map<string, number>();
+    const clusters = initialCy.elements().markovClustering( );
+
+    clusters.forEach((cluster: any, index: number) => {
+        cluster.forEach((node: any) => {
+            clustersSet.set(node.id(), index);
+        });
+    });
+
     graph.value = {
         elements: elements,
         style: style,
-        layout: layout
+        layout: {
+            ...layout,
+            clusters: function(node: any) {
+                return clustersSet.get(node.id())
+            }
+        }
     }
 
     cy.value = cytoscape({

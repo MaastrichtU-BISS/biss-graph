@@ -37,5 +37,131 @@
     "style": {
       "line-color": "#B93C3C"
     }
+  },
+  {
+    "selector": "edge[target = 'lawnotation']",
+    "style": {
+      "line-color": "#26A64C"
+    }
+  },
+  {
+    "selector": "edge[target = 'techalliance']",
+    "style": {
+      "line-color": "#4CA8BD"
+    }
+  },
+  {
+    "selector": "edge[target = 'flying-forward']",
+    "style": {
+      "line-color": "#1C2B9C"
+    }
+  },
+  {
+    "selector": "edge[target = 'audio-to-semantics']",
+    "style": {
+      "line-color": "#FECE48"
+    }
+  },
+  {
+    "selector": "edge[target = 'plurism-legal-sources']",
+    "style": {
+      "line-color": "#9B66E1"
+    }
+  },
+  {
+    "selector": "edge[target = 'faivor']",
+    "style": {
+      "line-color": "#2FDAC6"
+    }
+  },
+  {
+    "selector": "edge[target = 'fair-ai']",
+    "style": {
+      "line-color": "#FB7923"
+    }
+  },
+  {
+    "selector": "edge[target = 'automated-essay-scoring']",
+    "style": {
+      "line-color": "#CD3CBC"
+    }
+  },
+  {
+    "selector": "edge[target = 'netspar-financial-advice']",
+    "style": {
+      "line-color": "#D4F2D2"
+    }
+  },
+  {
+    "selector": "edge[target = 'case-law-explorer']",
+    "style": {
+      "line-color": "#F865B0"
+    }
+  },
+  {
+    "selector": "edge[target = 'better']",
+    "style": {
+      "line-color": "#A40E4C"
+    }
+  },
+  {
+    "selector": "edge[target = 'gemeente-sittard-geleen']",
+    "style": {
+      "line-color": "#AEC5EB"
+    }
+  },
+  {
+    "selector": "edge[target = 'am-ai-right']",
+    "style": {
+      "line-color": "#A80874"
+    }
+  },
+  {
+    "selector": "edge[target = 'stichting-onderzoek-rechtspleging']",
+    "style": {
+      "line-color": "#D996C8"
+    }
+  },
+  {
+    "selector": "edge[target = 'strong-aya']",
+    "style": {
+      "line-color": "#FF4E4E"
+    }
+  },
+  {
+    "selector": "edge[target = 'impact-explorer']",
+    "style": {
+      "line-color": "#6EEDEB"
+    }
+  },
+  {
+    "selector": "edge[target = 'experiencing-poverty']",
+    "style": {
+      "line-color": "#FFD500"
+    }
+  },
+  {
+    "selector": "edge[target = 'priceless']",
+    "style": {
+      "line-color": "#FF1F57"
+    }
+  },
+  {
+    "selector": "edge[target = 'circular-city']",
+    "style": {
+      "line-color": "#FFB685"
+    }
+  },
+  {
+    "selector": "edge[target = 'nijsen-project']",
+    "style": {
+      "line-color": "#CC823E"
+    }
+  },
+  {
+    "selector": "edge[target = 'factory-shutdown']",
+    "style": {
+      "line-color": "#966B9D"
+    }
   }
 ]

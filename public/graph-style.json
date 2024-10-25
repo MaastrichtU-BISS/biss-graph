@@ -10,7 +10,8 @@
     "selector": "node[group = 'Project']",
     "style": {
       "width": 50,
-      "height": 50
+      "height": 50,
+      "shape": "round-rectangle"
     }
   },
   {

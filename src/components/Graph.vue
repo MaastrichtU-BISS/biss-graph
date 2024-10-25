@@ -64,8 +64,10 @@ const initCytoscape = async (elements: Graph, style: any[], layout: any) => {
     });
 
     cy.value.nodes().on('click', (e: any) => {
-        selectedNodeInfo.value = e.target.data();
-        modalIsVisible.value = true;
+        if(e.target.data().info_url?.length) {
+            selectedNodeInfo.value = e.target.data();
+            modalIsVisible.value = true;
+        }
     });
 };
 

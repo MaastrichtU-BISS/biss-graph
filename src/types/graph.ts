@@ -19,6 +19,7 @@ export type Node = {
   name: string;
   group: NodeType;
   pfp_src?: string;
+  info_url?: string;
 }
 
 export type Edge = {

@@ -1,1 +1,0 @@
-export const bissWebsiteURL = import.meta.env.VITE_BISS_WEBSITE_URL as string;

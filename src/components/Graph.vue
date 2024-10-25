@@ -10,23 +10,31 @@
     <div id="graph-container">
     </div>
     <template>
-        <TeamMemberModal :nodeInfo="selectedNodeInfo" v-model:isVisible="modalIsVisible"></TeamMemberModal>
+        <NodeInfoModal :nodeInfo="selectedNodeInfo" v-model:isVisible="modalIsVisible"></NodeInfoModal>
     </template>
 </template>
 <script setup lang="ts">
 import cytoscape from 'cytoscape';
 import cola from 'cytoscape-cola';
+import cise from "cytoscape-cise";
+import spread from "cytoscape-spread";
+import coseBilkent from "cytoscape-cose-bilkent";
+import euler from "cytoscape-euler";
 import { ref, onMounted, computed } from 'vue';
 import Dropdown from 'primevue/dropdown';
-import TeamMemberModal from "./TeamMemberModal.vue";
-import { type Cytoscape, NodeType } from "../types/graph";
+import NodeInfoModal from "./NodeInfoModal.vue";
+import { type Cytoscape, NodeType, type Graph } from "../types/graph";
 
-cytoscape.use(cola);
+// cytoscape.use(cola);
+// cytoscape.use(spread);
+// cytoscape.use(cise);
+// cytoscape.use(coseBilkent);
+cytoscape.use(euler);
 
 const selectedNode = ref();
 
 const cy = ref();
-let initialElements = { nodes: [], edges: [] };
+let initialElements: Graph = { nodes: [], edges: [] };
 let initialStyle: any[] = [];
 let initialLayout: any = {};
 const graph = ref<Cytoscape>({
@@ -41,7 +49,7 @@ const graph = ref<Cytoscape>({
 const selectedNodeInfo = ref();
 const modalIsVisible = ref<boolean>(false);
 
-const initCytoscape = async (elements: { nodes: any[], edges: any[] }, style: any[], layout: any) => {
+const initCytoscape = async (elements: Graph, style: any[], layout: any) => {
     graph.value = {
         elements: elements,
         style: style,
@@ -56,8 +64,10 @@ const initCytoscape = async (elements: { nodes: any[], edges: any[] }, style: an
     });
 
     cy.value.nodes().on('click', (e: any) => {
-        selectedNodeInfo.value = e.target.data();
-        modalIsVisible.value = true;
+        if(e.target.data().info_url?.length) {
+            selectedNodeInfo.value = e.target.data();
+            modalIsVisible.value = true;
+        }
     });
 };
 
@@ -86,7 +96,6 @@ const updateGraph = async () => {
     }
 };
 //#endregion
-
 
 onMounted(async () => {
     initialElements = await (await fetch("/graph-elements.json")).json();

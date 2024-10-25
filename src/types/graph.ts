@@ -4,10 +4,25 @@ export enum NodeType {
 }
 
 export type Cytoscape = {
-  elements: { 
-      nodes: any[];
-      edges: any[];
-  };
+  elements: Graph;
   style: any[];
   layout: any;
+}
+
+export type Graph = { 
+    nodes: Node[];
+    edges: Edge[];
+};
+
+export type Node = {
+  id: string;
+  name: string;
+  group: NodeType;
+  pfp_src?: string;
+  info_url?: string;
+}
+
+export type Edge = {
+  source: string;
+  target: string;
 }

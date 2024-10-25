@@ -2,7 +2,8 @@
   {
     "selector": "node",
     "style": {
-      "label": "data(name)"
+      "label": "data(name)",
+      "font-size": "8"
     }
   },
   {
@@ -28,10 +29,13 @@
     "selector": "edge",
     "style": {
       "width": 3,
-      "line-color": "green",
-      "target-arrow-color": "green",
-      "target-arrow-shape": "triangle",
-      "curve-style": "bezier"
+      "curve-style": "haystack"
+    }
+  },
+  {
+    "selector": "edge[target = 'elsa']",
+    "style": {
+      "line-color": "#B93C3C"
     }
   }
 ]

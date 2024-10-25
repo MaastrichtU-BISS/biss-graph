@@ -162,6 +162,91 @@
             "id": "audio-to-semantics",
             "group": "Project",
             "name": "Audio to Semantics"
+        },
+        {
+            "id": "plurism-legal-sources",
+            "group": "Project",
+            "name": "Pluralism of legal sources analyses"
+        },
+        {
+            "id": "faivor",
+            "group": "Project",
+            "name": "FAIVOR"
+        },
+        {
+            "id": "fair-ai",
+            "group": "Project",
+            "name": "FAIR4AI"
+        },
+        {
+            "id": "automated-essay-scoring",
+            "group": "Project",
+            "name": "Automated Essay Scoring"
+        },
+        {
+            "id": "netspar-financial-advice",
+            "group": "Project",
+            "name": "Netspar Automated Financial Advice"
+        },
+        {
+            "id": "case-law-explorer",
+            "group": "Project",
+            "name": "Case Law Explorer"
+        },
+        {
+            "id": "better",
+            "group": "Project",
+            "name": "BETTER"
+        },
+        {
+            "id": "gemeente-sittard-geleen",
+            "group": "Project",
+            "name": "Gemeente Sittard-Geleen"
+        },
+        {
+            "id": "am-ai-right",
+            "group": "Project",
+            "name": "Am AI right?"
+        },
+        {
+            "id": "stichting-onderzoek-rechtspleging",
+            "group": "Project",
+            "name": "Stichting Onderzoek Rechtspleging"
+        },
+        {
+            "id": "strong-aya",
+            "group": "Project",
+            "name": "Strong-AYA"
+        },
+        {
+            "id": "impact-explorer",
+            "group": "Project",
+            "name": "Impact Explorer"
+        },
+        {
+            "id": "experiencing-poverty",
+            "group": "Project",
+            "name": "Experiencing Poverty"
+        },
+        {
+            "id": "priceless",
+            "group": "Project",
+            "name": "PRICELESS"
+        },
+        {
+            "id": "circular-city",
+            "group": "Project",
+            "name": "Circular City Challenge"
+        },
+        {
+            "id": "nijsen-project",
+            "group": "Project",
+            "name": "Nijsen project"
+        },
+        {
+            "id": "factory-shutdown",
+            "group": "Project",
+            "name": "Factory shutdowns"
         }
     ], 
     "links": [
@@ -264,6 +349,14 @@
         {
             "source": "chris-van-der-lans",
             "target": "audio-to-semantics"
+        },
+        {
+            "source": "rudolf-muller",
+            "target": "factory-shutdown"
+        },
+        {
+            "source": "yenisel-plasencia",
+            "target": "factory-shutdown"
         }
     ]
 }

@@ -218,7 +218,126 @@
                 "group": "Project",
                 "name": "Audio to Semantics"
             }
-        }
+        },
+        {
+            "data": {
+                "id": "plurism-legal-sources",
+                "group": "Project",
+                "name": "Pluralism of legal sources analyses"
+            }
+        },
+        {
+            "data": {
+                "id": "faivor",
+                "group": "Project",
+                "name": "FAIVOR"
+            }
+        },
+        {
+            "data": {
+                "id": "fair-ai",
+                "group": "Project",
+                "name": "FAIR4AI"
+            }
+        },
+        {
+            "data": {
+                "id": "automated-essay-scoring",
+                "group": "Project",
+                "name": "Automated Essay Scoring"
+            }
+        },
+        {
+            "data": {
+                "id": "netspar-financial-advice",
+                "group": "Project",
+                "name": "Netspar Automated Financial Advice"
+            }
+        },
+        {
+            "data": {
+                "id": "case-law-explorer",
+                "group": "Project",
+                "name": "Case Law Explorer"
+            }
+        },
+        {
+            "data": {
+                "id": "better",
+                "group": "Project",
+                "name": "BETTER"
+            }
+        },
+        {
+            "data": {
+                "id": "gemeente-sittard-geleen",
+                "group": "Project",
+                "name": "Gemeente Sittard-Geleen"
+            }
+        },
+        {
+            "data": {
+                "id": "am-ai-right",
+                "group": "Project",
+                "name": "Am AI right?"
+            }
+        },
+        {
+            "data": {
+                "id": "stichting-onderzoek-rechtspleging",
+                "group": "Project",
+                "name": "Stichting Onderzoek Rechtspleging"
+            }
+        },
+        {
+            "data": {
+                "id": "strong-aya",
+                "group": "Project",
+                "name": "Strong-AYA"
+            }
+        },
+        {
+            "data": {
+                "id": "impact-explorer",
+                "group": "Project",
+                "name": "Impact Explorer"
+            }
+        },
+        {
+            "data": {
+                "id": "experiencing-poverty",
+                "group": "Project",
+                "name": "Experiencing Poverty"
+            }
+        },
+        {
+            "data": {
+                "id": "priceless",
+                "group": "Project",
+                "name": "PRICELESS"
+            }
+        },
+        {
+            "data": {
+                "id": "circular-city",
+                "group": "Project",
+                "name": "Circular City Challenge"
+            }
+        },
+        {
+            "data": {
+                "id": "nijsen-project",
+                "group": "Project",
+                "name": "Nijsen project"
+            }
+        },
+        {
+            "data": {
+                "id": "factory-shutdown",
+                "group": "Project",
+                "name": "Factory shutdowns"
+            }
+        }      
     ], 
     "edges": [
         {
@@ -369,6 +488,312 @@
             "data": {
                 "source": "chris-van-der-lans",
                 "target": "audio-to-semantics"
+            }
+        },
+        {
+            "data": {
+                "source": "yenisel-plasencia",
+                "target": "factory-shutdown"
+            }
+        },
+        {
+            "data": {
+                "source": "rudolf-muller",
+                "target": "factory-shutdown"
+            }
+        },
+        {
+            "data": {
+                "source": "rudolf-muller",
+                "target": "nijsen-project"
+            }
+        },
+        {
+            "data": {
+                "source": "rudolf-muller",
+                "target": "nijsen-project"
+            }
+        },
+        {
+            "data": {
+                "source": "vivienne-curvers",
+                "target": "circular-city"
+            }
+        },
+        {
+            "data": {
+                "source": "darian-meacham",
+                "target": "circular-city"
+            }
+        },
+        {
+            "data": {
+                "source": "aleksandra-draper",
+                "target": "circular-city"
+            }
+        },
+        {
+            "data": {
+                "source": "andre-dekker",
+                "target": "priceless"
+            }
+        },
+        {
+            "data": {
+                "source": "gijs-van-dijck",
+                "target": "priceless"
+            }
+        },
+        {
+            "data": {
+                "source": "johan-van-soest",
+                "target": "priceless"
+            }
+        },
+        {
+            "data": {
+                "source": "lisa-bruggen",
+                "target": "experiencing-poverty"
+            }
+        },
+        {
+            "data": {
+                "source": "minou-van-der-werf",
+                "target": "experiencing-poverty"
+            }
+        },
+        {
+            "data": {
+                "source": "max-louwerse",
+                "target": "experiencing-poverty"
+            }
+        },
+        {
+            "data": {
+                "source": "stefan-bos",
+                "target": "experiencing-poverty"
+            }
+        },
+        {
+            "data": {
+                "source": "vivienne-curvers",
+                "target": "impact-explorer"
+            }
+        },
+        {
+            "data": {
+                "source": "chris-van-der-lans",
+                "target": "impact-explorer"
+            }
+        },
+        {
+            "data": {
+                "source": "elia-formisano",
+                "target": "impact-explorer"
+            }
+        },
+        {
+            "data": {
+                "source": "darian-meacham",
+                "target": "strong-aya"
+            }
+        },
+        {
+            "data": {
+                "source": "andre-dekker",
+                "target": "strong-aya"
+            }
+        },
+        {
+            "data": {
+                "source": "johan-van-soest",
+                "target": "strong-aya"
+            }
+        },
+        {
+            "data": {
+                "source": "gijs-van-dijck",
+                "target": "stichting-onderzoek-rechtspleging"
+            }
+        },
+        {
+            "data": {
+                "source": "judith-kamalski",
+                "target": "stichting-onderzoek-rechtspleging"
+            }
+        },
+        {
+            "data": {
+                "source": "vivienne-curvers",
+                "target": "stichting-onderzoek-rechtspleging"
+            }
+        },
+        {
+            "data": {
+                "source": "aleksandra-draper",
+                "target": "stichting-onderzoek-rechtspleging"
+            }
+        },
+        {
+            "data": {
+                "source": "gijs-van-dijck",
+                "target": "am-ai-right"
+            }
+        },
+        {
+            "data": {
+                "source": "yenisel-plasencia",
+                "target": "am-ai-right"
+            }
+        },
+        {
+            "data": {
+                "source": "aleksandra-draper",
+                "target": "am-ai-right"
+            }
+        },
+        {
+            "data": {
+                "source": "lisa-bruggen",
+                "target": "gemeente-sittard-geleen"
+            }
+        },
+        {
+            "data": {
+                "source": "vivienne-curvers",
+                "target": "gemeente-sittard-geleen"
+            }
+        },
+        {
+            "data": {
+                "source": "johan-van-soest",
+                "target": "gemeente-sittard-geleen"
+            }
+        },
+        {
+            "data": {
+                "source": "minou-van-der-werf",
+                "target": "gemeente-sittard-geleen"
+            }
+        },
+        {
+            "data": {
+                "source": "chris-van-der-lans",
+                "target": "gemeente-sittard-geleen"
+            }
+        },
+        {
+            "data": {
+                "source": "johan-van-soest",
+                "target": "better"
+            }
+        },
+        {
+            "data": {
+                "source": "ali-reza-ghavamipour",
+                "target": "better"
+            }
+        },
+        {
+            "data": {
+                "source": "andre-dekker",
+                "target": "better"
+            }
+        },
+        {
+            "data": {
+                "source": "gijs-van-dijck",
+                "target": "case-law-explorer"
+            }
+        },
+        {
+            "data": {
+                "source": "chris-van-der-lans",
+                "target": "case-law-explorer"
+            }
+        },
+        {
+            "data": {
+                "source": "shashank-chakravarthy",
+                "target": "case-law-explorer"
+            }
+        },
+        {
+            "data": {
+                "source": "carlos-aguilera",
+                "target": "case-law-explorer"
+            }
+        },
+        {
+            "data": {
+                "source": "sander-van-essel",
+                "target": "case-law-explorer"
+            }
+        },
+        {
+            "data": {
+                "source": "lisa-bruggen",
+                "target": "netspar-financial-advice"
+            }
+        },
+        {
+            "data": {
+                "source": "darian-meacham",
+                "target": "netspar-financial-advice"
+            }
+        },
+        {
+            "data": {
+                "source": "robert-gianni",
+                "target": "netspar-financial-advice"
+            }
+        },
+        {
+            "data": {
+                "source": "minou-van-der-werf",
+                "target": "netspar-financial-advice"
+            }
+        },
+        {
+            "data": {
+                "source": "rudolf-muller",
+                "target": "automated-essay-scoring"
+            }
+        },
+        {
+            "data": {
+                "source": "yenisel-plasencia",
+                "target": "automated-essay-scoring"
+            }
+        },
+        {
+            "data": {
+                "source": "sander-van-essel",
+                "target": "fair-ai"
+            }
+        },
+        {
+            "data": {
+                "source": "johan-van-soest",
+                "target": "fair-ai"
+            }
+        },
+        {
+            "data": {
+                "source": "johan-van-soest",
+                "target": "faivor"
+            }
+        },
+        {
+            "data": {
+                "source": "shashank-chakravarthy",
+                "target": "plurism-legal-sources"
+            }
+        },
+        {
+            "data": {
+                "source": "gijs-van-dijck",
+                "target": "plurism-legal-sources"
             }
         }
     ]

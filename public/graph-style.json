@@ -164,5 +164,11 @@
     "style": {
       "line-color": "#966B9D"
     }
+  },
+  {
+    "selector": "edge[target = 'mecc-maastricht']",
+    "style": {
+      "line-color": "#50c53b"
+    }
   }
 ]

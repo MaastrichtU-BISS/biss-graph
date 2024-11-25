@@ -7,6 +7,9 @@ dependencies:
   cytoscape-cise:
     specifier: ^2.0.0
     version: 2.0.0(cytoscape@3.30.2)
+  cytoscape-panzoom:
+    specifier: ^2.5.3
+    version: 2.5.3(cytoscape@3.30.2)
   primeicons:
     specifier: ^6.0.1
     version: 6.0.1
@@ -739,6 +742,15 @@ packages:
       cytoscape: 3.30.2
     dev: false
 
+  /cytoscape-panzoom@2.5.3(cytoscape@3.30.2):
+    resolution: {integrity: sha512-//qLOqbbFUCGddarNKHDZArItOJHgnkQ1TvxI9nV2/8aOOl/5wuEOHmra3fL/aWSjB4AYpYTG4LX7w96uWfRTQ==}
+    peerDependencies:
+      cytoscape: ^2.0.0 || ^3.0.0
+    dependencies:
+      cytoscape: 3.30.2
+      jquery: 3.7.1
+    dev: false
+
   /cytoscape@3.30.2:
     resolution: {integrity: sha512-oICxQsjW8uSaRmn4UK/jkczKOqTrVqt5/1WL0POiJUT2EKNc9STM4hYFHv917yu55aTBMFNRzymlJhVAiWPCxw==}
     engines: {node: '>=0.10'}
@@ -953,6 +965,10 @@ packages:
     resolution: {integrity: sha512-gFqAIbuKyyso/3G2qhiO2OM6shY6EPP/R0+mkDbyspxKazh8BXDC5FiFsUjlczgdNz/vfra0da2y+aHrusLG/Q==}
     hasBin: true
     dev: true
+
+  /jquery@3.7.1:
+    resolution: {integrity: sha512-m4avr8yL8kmFN8psrbFFFmB/If14iN5o9nw/NgnnM+kybDJpRsAynV2BsfpTYrTRysYUdADVD7CkUUizgkpLfg==}
+    dev: false
 
   /layout-base@1.0.2:
     resolution: {integrity: sha512-8h2oVEZNktL4BH2JCOI90iD1yXwL6iNW7KcCKT2QZgQJR2vbqDsldCTPRU9NifTCqHZci57XvQQ15YTu+sTYPg==}

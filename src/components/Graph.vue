@@ -106,6 +106,10 @@ const updateGraph = async () => {
         currentNode.neighborhood().absoluteComplement().hide();
         currentNode.show();
     }
+
+    cy.value.animate({
+        fit: { }
+    }).delay(1000)
 };
 //#endregion
 

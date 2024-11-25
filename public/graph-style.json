@@ -2,8 +2,10 @@
   {
     "selector": "node",
     "style": {
+      "font-size": "10",
       "label": "data(name)",
-      "font-size": "8"
+      "border-width": 1,
+      "border-color": "#4f4f4f"
     }
   },
   {
@@ -307,6 +309,20 @@
     "selector": "node[id = 'mecc-maastricht']",
     "style": {
       "background-color":  "#966B9D"
+    }
+  },
+  {
+    "selector": ".highlight-node",
+    "style": {
+      "border-width": 3,
+      "border-color": "black"
+    }
+  },
+  {
+    "selector": ".highlight-edge",
+    "style": {
+      "line-color": "black",
+      "width": 3
     }
   }
 ]

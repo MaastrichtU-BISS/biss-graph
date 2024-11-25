@@ -109,10 +109,20 @@ const initCytoscape = async (elements: Graph, style: any[], layout: any) => {
     });
 
     cy.value.nodes().on('click', (e: any) => {
+
+        cy.value.elements().removeClass("highlight-node");
+        cy.value.elements().removeClass("highlight-edge");
+
         if (e.target.data().info_url?.length) {
             selectedNodeInfo.value = e.target.data();
             modalIsVisible.value = true;
         }
+
+        const currentNode = cy.value.$id(e.target.id());
+
+        currentNode.addClass("highlight-node");
+        currentNode.neighborhood().addClass('highlight-node');
+        currentNode.connectedEdges().addClass("highlight-edge");
     });
 };
 
@@ -154,10 +164,14 @@ onMounted(async () => {
     await initCytoscape(initialElements, initialStyle, initialLayout);
 })
 </script>
-<style>
+<style scoped>
 #graph-container {
     width: 100vw;
     height: calc(100vh - 54px);
     display: block;
+}
+
+.highlight {
+    background-color: aqua !important;
 }
 </style>

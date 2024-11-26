@@ -4,6 +4,20 @@
             <Dropdown v-model="selectedNode" :options="optionNodes" optionLabel="label" optionGroupLabel="label"
                 optionGroupChildren="items" placeholder="Search" class="w-full md:w-80" showClear filter autoFilterFocus
                 @change="updateGraph">
+                <template #value="slotProps">
+                    <div v-if="slotProps.value" class="flex align-items-center">
+                        <div>{{ slotProps.value.value }}</div>
+                    </div>
+                    <span v-else>
+                        {{ slotProps.placeholder }}
+                    </span>
+                </template>
+                <template #option="slotProps">
+                    <div class="flex align-items-center">
+                        <i v-if="slotProps.option.group == NodeType.PROJECT" class="pi pi-circle-fill mr-2 content-center" :style="`color: ${slotProps.option.color}`"></i>
+                        <div>{{ slotProps.option.label }}</div>
+                    </div>
+                </template>
             </Dropdown>
         </div>
     </div>
@@ -130,11 +144,11 @@ const initCytoscape = async (elements: Graph, style: any[], layout: any) => {
 const optionNodes = computed(() => {
     if (!cy.value?.nodes()) return [];
 
-    const nodesGroups: { label: NodeType; items: { label: string; value: string }[] }[] = [{ label: NodeType.PROJECT, items: [] }, { label: NodeType.TEAM_MEMBER, items: [] }];
+    const nodesGroups: { label: NodeType; items: { label: string; value: string; color: string; group: NodeType }[] }[] = [{ label: NodeType.PROJECT, items: [] }, { label: NodeType.TEAM_MEMBER, items: [] }];
 
     cy.value.nodes((n: any) => {
         const group = n.data().group == NodeType.PROJECT;
-        nodesGroups[group ? 0 : 1].items.push({ label: n.data().name, value: n.data().id });
+        nodesGroups[group ? 0 : 1].items.push({ label: n.data().name, value: n.data().id, color: n.data().color, group: n.data().group });
     });
 
     return nodesGroups;

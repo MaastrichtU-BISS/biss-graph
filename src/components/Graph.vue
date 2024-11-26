@@ -6,6 +6,7 @@
                 @change="updateGraph">
                 <template #value="slotProps">
                     <div v-if="slotProps.value" class="flex align-items-center">
+                        <i v-if="slotProps.value.group == NodeType.PROJECT" class="pi pi-circle-fill mr-2 content-center" :style="`color: ${slotProps.value.color}`"></i>
                         <div>{{ slotProps.value.value }}</div>
                     </div>
                     <span v-else>

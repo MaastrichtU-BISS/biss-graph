@@ -11,16 +11,26 @@
   {
     "selector": "node[group = 'Project']",
     "style": {
-      "width": 50,
-      "height": 50,
-      "shape": "round-rectangle"
+      "width": 60,
+      "height": 60,
+      "color": "#fff",
+      "text-outline-color": "#000",
+      "text-outline-opacity": 0.8,
+      "text-outline-width": 1.5,
+      "shape": "round-rectangle",
+      "text-valign" : "center",
+      "text-halign" : "center",
+      "text-wrap": "wrap",
+      "halignBox": "center",
+      "valignBox": "center",
+      "padding": 5
     }
   },
   {
     "selector": "node[group = 'Team Member']",
     "style": {
-      "width": 30,
-      "height": 30,
+      "width": 40,
+      "height": 40,
       "background-image": "data(pfp_src)",
       "background-size": "cover",
       "background-repeat": "no-repeat",

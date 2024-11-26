@@ -219,7 +219,7 @@
             "data": {
                 "id": "techalliance",
                 "group": "Project",
-                "name": "Tech Alliance",
+                "name": "Tech\nAlliance",
                 "info_url": "https://www.biss-institute.com/en/posts/iframe/enhancing-customer-support-with-ai"
             }
         },
@@ -227,7 +227,7 @@
             "data": {
                 "id": "flying-forward",
                 "group": "Project",
-                "name": "Flying Forward",
+                "name": "Flying\nForward",
                 "info_url": "https://www.biss-institute.com/en/posts/iframe/flying-forward"
             }
         },
@@ -243,7 +243,7 @@
             "data": {
                 "id": "audio-to-semantics",
                 "group": "Project",
-                "name": "Audio to Semantics",
+                "name": "Audio to\nSemantics",
                 "info_url": "https://www.biss-institute.com/en/posts/iframe/how-can-we-recognize-sound-when-it-is-out-of-sight"
             }
         },
@@ -251,7 +251,7 @@
             "data": {
                 "id": "plurism-legal-sources",
                 "group": "Project",
-                "name": "Pluralism of legal sources analyses",
+                "name": "Pluralism of \nlegal sources \nanalyses",
                 "info_url": ""
             }
         },
@@ -275,7 +275,7 @@
             "data": {
                 "id": "automated-essay-scoring",
                 "group": "Project",
-                "name": "Automated Essay Scoring",
+                "name": "Automated\nEssay\nScoring",
                 "info_url": ""
             }
         },
@@ -283,7 +283,7 @@
             "data": {
                 "id": "netspar-financial-advice",
                 "group": "Project",
-                "name": "Netspar Automated Financial Advice",
+                "name": "Netspar\nAutomated\nFinancial\nAdvice",
                 "info_url": "https://www.biss-institute.com/en/posts/iframe/can-automated-systems-give-good-financial-advice"
             }
         },
@@ -291,7 +291,7 @@
             "data": {
                 "id": "case-law-explorer",
                 "group": "Project",
-                "name": "Case Law Explorer",
+                "name": "Case Law\nExplorer",
                 "info_url": "https://www.biss-institute.com/en/posts/iframe/legal-research-software"
             }
         },
@@ -307,7 +307,7 @@
             "data": {
                 "id": "gemeente-sittard-geleen",
                 "group": "Project",
-                "name": "Gemeente Sittard-Geleen",
+                "name": "Gemeente\nSittard-Geleen",
                 "info_url": ""
             }
         },
@@ -315,7 +315,7 @@
             "data": {
                 "id": "am-ai-right",
                 "group": "Project",
-                "name": "Am AI right?",
+                "name": "Am AI\nright?",
                 "info_url": ""
             }
         },
@@ -323,7 +323,7 @@
             "data": {
                 "id": "stichting-onderzoek-rechtspleging",
                 "group": "Project",
-                "name": "Stichting Onderzoek Rechtspleging",
+                "name": "Stichting\nOnderzoek\nRechtspleging",
                 "info_url": ""
             }
         },
@@ -339,7 +339,7 @@
             "data": {
                 "id": "impact-explorer",
                 "group": "Project",
-                "name": "Impact Explorer",
+                "name": "Impact\nExplorer",
                 "info_url": ""
             }
         },
@@ -347,7 +347,7 @@
             "data": {
                 "id": "experiencing-poverty",
                 "group": "Project",
-                "name": "Experiencing Poverty",
+                "name": "Experiencing\nPoverty",
                 "info_url": ""
             }
         },
@@ -363,7 +363,7 @@
             "data": {
                 "id": "circular-city",
                 "group": "Project",
-                "name": "Circular City Challenge",
+                "name": "Circular City\nChallenge",
                 "info_url": ""
             }
         },
@@ -371,7 +371,7 @@
             "data": {
                 "id": "nijsen-project",
                 "group": "Project",
-                "name": "Nijsen project",
+                "name": "Nijsen\nproject",
                 "info_url": "https://www.biss-institute.com/en/posts/iframe/what-is-the-content-of-livestock-feed"
             }
         },
@@ -379,7 +379,7 @@
             "data": {
                 "id": "factory-shutdown",
                 "group": "Project",
-                "name": "Factory shutdowns",
+                "name": "Factory\nshutdowns",
                 "info_url": "https://www.biss-institute.com/en/posts/iframe/preventfactoryshutdowns"
             }
         },
@@ -387,7 +387,7 @@
             "data": {
                 "id": "mecc-maastricht",
                 "group": "Project",
-                "name": "MECC Maastricht",
+                "name": "MECC\nMaastricht",
                 "info_url": ""
             }
         }

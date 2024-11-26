@@ -236,7 +236,8 @@
                 "id": "elsa",
                 "group": "Project",
                 "name": "ELSA",
-                "info_url": "https://www.biss-institute.com/en/posts/iframe/ai-to-prevent-poverty-and-debt"
+                "info_url": "https://www.biss-institute.com/en/posts/iframe/ai-to-prevent-poverty-and-debt",
+                "color": "#26A64C"
             }
         },
         {

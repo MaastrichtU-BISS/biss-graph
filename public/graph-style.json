@@ -192,13 +192,13 @@
   {
     "selector": "edge[target = 'gemeente-sittard-geleen']",
     "style": {
-      "line-color": "#AEC5EB"
+      "line-color": "#fd8e7f"
     }
   },
   {
     "selector": "node[id = 'gemeente-sittard-geleen']",
     "style": {
-      "background-color":  "#AEC5EB"
+      "background-color":  "#fd8e7f"
     }
   },
   {

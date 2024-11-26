@@ -96,13 +96,13 @@
   {
     "selector": "edge[target = 'audio-to-semantics']",
     "style": {
-      "line-color": "#FECE48"
+      "line-color": "#d39c05"
     }
   },
   {
     "selector": "node[id = 'audio-to-semantics']",
     "style": {
-      "background-color":  "#FECE48"
+      "background-color":  "#d39c05"
     }
   },
   {
@@ -120,13 +120,13 @@
   {
     "selector": "edge[target = 'faivor']",
     "style": {
-      "line-color": "#2FDAC6"
+      "line-color": "#1389e7"
     }
   },
   {
     "selector": "node[id = 'faivor']",
     "style": {
-      "background-color":  "#2FDAC6"
+      "background-color":  "#1389e7"
     }
   },
   {
@@ -204,13 +204,13 @@
   {
     "selector": "edge[target = 'am-ai-right']",
     "style": {
-      "line-color": "#A80874"
+      "line-color": "#457553"
     }
   },
   {
     "selector": "node[id = 'am-ai-right']",
     "style": {
-      "background-color":  "#A80874"
+      "background-color":  "#457553"
     }
   },
   {
@@ -300,13 +300,13 @@
   {
     "selector": "edge[target = 'factory-shutdown']",
     "style": {
-      "line-color": "#966B9D"
+      "line-color": "#6b9d6e"
     }
   },
   {
     "selector": "node[id = 'factory-shutdown']",
     "style": {
-      "background-color":  "#966B9D"
+      "background-color":  "#6b9d6e"
     }
   },
   {

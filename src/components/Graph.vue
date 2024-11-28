@@ -31,9 +31,10 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import ForceGraph3D from '3d-force-graph';
+import * as THREE from '//unpkg.com/three/build/three.module.js';
 // import Dropdown from 'primevue/dropdown';
 // import NodeInfoModal from "./NodeInfoModal.vue";
-// import { NodeType, type Graph } from "../types/graph";
+import { NodeType } from "../types/graph";
 
 
 const graph = ref();
@@ -51,8 +52,18 @@ const initialize = async () => {
 
     graph.value = ForceGraph3D();
     graph.value(graphContainer)
-        .jsonUrl('/public/graph-elements.json')
         .nodeAutoColorBy("group")
+        .jsonUrl('/public/graph-elements.json')
+        .nodeThreeObject(node => {
+            if(node.group == NodeType.TEAM_MEMBER) {
+                const imgTexture = new THREE.TextureLoader().load(`/src/assets/images/team/${node.id}.jpg`);
+                imgTexture.colorSpace = THREE.SRGBColorSpace;
+                const material = new THREE.SpriteMaterial({ map: imgTexture });
+                const sprite = new THREE.Sprite(material);
+                sprite.scale.set(12, 12);
+                return sprite;
+            }
+        })
         .onNodeClick(node => {
           // Aim at node from outside it
           const distance = 40;

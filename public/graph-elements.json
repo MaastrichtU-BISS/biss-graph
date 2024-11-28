@@ -5,7 +5,8 @@
       "group": "Team Member",
       "name": "Carlos Eduardo Aguilera Medina",
       "pfp_src": "/src/assets/images/team/carlos-aguilera.jpg",
-      "info_url": "https://www.biss-institute.com/en/team/iframe/carlos-aguilera"
+      "info_url": "https://www.biss-institute.com/en/team/iframe/carlos-aguilera",
+      "nodeThreeObject": "square"
     },
     {
       "id": "chris-van-der-lans",
@@ -39,7 +40,7 @@
       "id": "yenisel-plasencia",
       "group": "Team Member",
       "name": "Yenisel Plasencia",
-      "pfp_src": "/src/assets/images/team/yenisel-plasencia-calana.jpg",
+      "pfp_src": "/src/assets/images/team/yenisel-plasencia.jpg",
       "info_url": "https://www.biss-institute.com/en/team/iframe/yenisel-plasencia"
     },
     {
@@ -123,7 +124,7 @@
       "id": "ali-reza-ghavamipour",
       "group": "Team Member",
       "name": "Ali Reza Ghavamipour",
-      "pfp_src": "/src/assets/images/team/ali-reza.jpg",
+      "pfp_src": "/src/assets/images/team/ali-reza-ghavamipour.jpg",
       "info_url": "https://www.biss-institute.com/en/team/iframe/ali-reza-ghavamipour"
     },
     {
@@ -208,7 +209,8 @@
       "group": "Project",
       "name": "FAIVOR",
       "info_url": "",
-      "color": "#1389e7"
+      "color": "#1389e7",
+      "nodeThreeObject": "square"
     },
     {
       "id": "fair-ai",

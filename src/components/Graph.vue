@@ -41,35 +41,33 @@ const graph = ref();
 // const selectedNodeInfo = ref();
 // const modalIsVisible = ref<boolean>(false);
 
-// const createRandomGraph = (N: number) => {
-//     const graph = {
-//       nodes: [...Array(N).keys()].map(i => ({ id: i })),
-//       links: [...Array(N).keys()]
-//         .filter(id => id)
-//         .map(id => ({
-//           source: id,
-//           target: Math.round(Math.random() * (id-1))
-//         }))
-//     };
-//     return graph;
-// };
-
 const initialize = async () => {
-
-    const graphData = await (await fetch("/public/graph-elements.json")).json();
-    // const graphData = createRandomGraph(300);
-    console.log(graphData);
 
     const graphContainer = document.getElementById('graph-container');
 
     if(!graphContainer) {
-        throw new Error("graph-container was not found");
+        throw new Error("element graph-container was not found");
     }
 
     graph.value = ForceGraph3D();
     graph.value(graphContainer)
-        .graphData(graphData)
-        .nodeAutoColorBy("group");
+        .jsonUrl('/public/graph-elements.json')
+        .nodeAutoColorBy("group")
+        .onNodeClick(node => {
+          // Aim at node from outside it
+          const distance = 40;
+          const distRatio = 1 + distance/Math.hypot(node.x, node.y, node.z);
+
+          const newPos = node.x || node.y || node.z
+            ? { x: node.x * distRatio, y: node.y * distRatio, z: node.z * distRatio }
+            : { x: 0, y: 0, z: distance }; // special case if node is in (0,0,0)
+
+          graph.value.cameraPosition(
+            newPos, // new position
+            node, // lookAt ({ x, y, z })
+            3000  // ms transition duration
+          )
+        });
 
     console.log(graph.value)
 

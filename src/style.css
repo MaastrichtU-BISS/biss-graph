@@ -9,8 +9,3 @@
     input {
     }
 } */
-
-body {
-    background: rgb(115,188,244);
-background: linear-gradient(90deg, rgba(115,188,244,1) 0%, rgba(192,232,238,1) 100%);
-}

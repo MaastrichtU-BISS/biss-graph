@@ -36,36 +36,29 @@ import ForceGraph3D from '3d-force-graph';
 // import { NodeType, type Graph } from "../types/graph";
 
 
-const graph = ref<{
-    nodes: {
-        id: number
-    }[],
-    links: {
-        source: number,
-        target: number
-    }[]
-}>();
+const graph = ref();
 // const selectedNode = ref();
 // const selectedNodeInfo = ref();
 // const modalIsVisible = ref<boolean>(false);
 
-const createRandomGraph = (N: number) => {
-    const graph = {
-      nodes: [...Array(N).keys()].map(i => ({ id: i })),
-      links: [...Array(N).keys()]
-        .filter(id => id)
-        .map(id => ({
-          source: id,
-          target: Math.round(Math.random() * (id-1))
-        }))
-    };
-    return graph;
-};
+// const createRandomGraph = (N: number) => {
+//     const graph = {
+//       nodes: [...Array(N).keys()].map(i => ({ id: i })),
+//       links: [...Array(N).keys()]
+//         .filter(id => id)
+//         .map(id => ({
+//           source: id,
+//           target: Math.round(Math.random() * (id-1))
+//         }))
+//     };
+//     return graph;
+// };
 
-onMounted(async () => {
-    graph.value = createRandomGraph(300);
+const initialize = async () => {
 
-    console.log(graph.value);
+    const graphData = await (await fetch("/public/graph-elements.json")).json();
+    // const graphData = createRandomGraph(300);
+    console.log(graphData);
 
     const graphContainer = document.getElementById('graph-container');
 
@@ -73,10 +66,17 @@ onMounted(async () => {
         throw new Error("graph-container was not found");
     }
 
-    const myGraph = ForceGraph3D();
-    myGraph(graphContainer).graphData(graph.value);
+    graph.value = ForceGraph3D();
+    graph.value(graphContainer)
+        .graphData(graphData)
+        .nodeAutoColorBy("group");
 
-    console.log(myGraph)
+    console.log(graph.value)
+
+};
+
+onMounted(async () => {
+    initialize();    
 })
 </script>
 <style scoped>

@@ -36,11 +36,13 @@ import * as THREE from '//unpkg.com/three/build/three.module.js';
 // import Dropdown from 'primevue/dropdown';
 // import NodeInfoModal from "./NodeInfoModal.vue";
 import { NodeType } from "../types/graph";
+import { Visitor, RandomVisitor } from "../utils/visitor";
 
 // console.log(UnrealBloomPass)
 
 
 const graph = ref();
+const visitor = ref<Visitor>();
 // const selectedNode = ref();
 // const selectedNodeInfo = ref();
 // const modalIsVisible = ref<boolean>(false);
@@ -49,13 +51,19 @@ const initialize = async () => {
 
     const graphContainer = document.getElementById('graph-container');
 
-    if(!graphContainer) {
+    if (!graphContainer) {
         throw new Error("element graph-container was not found");
+    }
+
+    const gData = await (await fetch("/public/graph-elements.json")).json();
+
+    if (!gData) {
+        throw new Error("graph-elements.json was not found");
     }
 
     graph.value = ForceGraph3D();
     graph.value(graphContainer)
-        .jsonUrl('/public/graph-elements.json')
+        .graphData(gData)
         .showNavInfo(false)
         .nodeAutoColorBy("name")
         .linkDirectionalParticles(2)
@@ -63,7 +71,7 @@ const initialize = async () => {
         // .linkAutoColorBy("target")
         // .backgroundColor('#000003')
         .nodeThreeObject(node => {
-            if(node.group == NodeType.TEAM_MEMBER) {
+            if (node.group == NodeType.TEAM_MEMBER) {
                 const imgTexture = new THREE.TextureLoader().load(`/src/assets/images/team/${node.id}.jpg`);
                 imgTexture.colorSpace = THREE.SRGBColorSpace;
                 const material = new THREE.SpriteMaterial({ map: imgTexture });
@@ -72,34 +80,48 @@ const initialize = async () => {
                 return sprite;
             }
         })
-        .onNodeClick(node => {
-          // Aim at node from outside it
-          const distance = 40;
-          const distRatio = 1 + distance/Math.hypot(node.x, node.y, node.z);
+        .onNodeClick(fitNodeIntoView);
 
-          const newPos = node.x || node.y || node.z
-            ? { x: node.x * distRatio, y: node.y * distRatio, z: node.z * distRatio }
-            : { x: 0, y: 0, z: distance }; // special case if node is in (0,0,0)
+    // const bloomPass = new UnrealBloomPass();
+    // bloomPass.strength = 2;
+    // bloomPass.radius = 1;
+    // bloomPass.threshold = 0;
+    // graph.value.postProcessingComposer().addPass(bloomPass);
 
-          graph.value.cameraPosition(
-            newPos, // new position
-            node, // lookAt ({ x, y, z })
-            3000  // ms transition duration
-          )
-        });
+};
 
-        // const bloomPass = new UnrealBloomPass();
-        // bloomPass.strength = 2;
-        // bloomPass.radius = 1;
-        // bloomPass.threshold = 0;
-        // graph.value.postProcessingComposer().addPass(bloomPass);
-        
+const fitNodeIntoView = (node: any) => {
+    // Aim at node from outside it
+    const distance = 40;
+    const distRatio = 1 + distance / Math.hypot(node.x, node.y, node.z);
+
+    const newPos = node.x || node.y || node.z
+        ? { x: node.x * distRatio, y: node.y * distRatio, z: node.z * distRatio }
+        : { x: 0, y: 0, z: distance }; // special case if node is in (0,0,0)
+
+    graph.value.cameraPosition(
+        newPos, // new position
+        node, // lookAt ({ x, y, z })
+        3000  // ms transition duration
+    )
+};
+
+const initializeVisitor = (time: number = 6000) => {
+    visitor.value = new RandomVisitor(graph.value.graphData());
+    setInterval(() => {
+        visitor.value?.moveNext();
+        const currentNodeId = visitor.value?.getCurrentNodeId();
+        const currentNode = graph.value.graphData().nodes.find((n: any) => n.id == currentNodeId);
+        fitNodeIntoView(currentNode);
+    }, time);
 };
 
 onMounted(async () => {
-    initialize();    
+    await initialize();
+    initializeVisitor();
+    // const node = graph.value.find((n: any) => n.id == 'elsa');
+    // console.log(node);
+
 })
 </script>
-<style scoped>
-
-</style>
+<style scoped></style>

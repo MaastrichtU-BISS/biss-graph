@@ -3,15 +3,9 @@ export enum NodeType {
   TEAM_MEMBER = "Team Member"
 }
 
-export type Cytoscape = {
-  elements: Graph;
-  style: any[];
-  layout: any;
-}
-
 export type Graph = { 
     nodes: Node[];
-    edges: Edge[];
+    links: Edge[];
 };
 
 export type Node = {

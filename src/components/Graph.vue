@@ -29,7 +29,7 @@
     </template>
 </template>
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import ForceGraph3D from '3d-force-graph';
 import * as THREE from '//unpkg.com/three/build/three.module.js';
 // import { UnrealBloomPass } from '//unpkg.com/three/examples/jsm/postprocessing/UnrealBloomPass.js';
@@ -38,11 +38,10 @@ import * as THREE from '//unpkg.com/three/build/three.module.js';
 import { NodeType } from "../types/graph";
 import { Visitor, RandomVisitor } from "../utils/visitor";
 
-// console.log(UnrealBloomPass)
-
-
 const graph = ref();
 const visitor = ref<Visitor>();
+const traverseAnimation = ref<boolean>(true);
+const lastInteractionTime = ref<number>(Date.now());
 // const selectedNode = ref();
 // const selectedNodeInfo = ref();
 // const modalIsVisible = ref<boolean>(false);
@@ -109,19 +108,36 @@ const fitNodeIntoView = (node: any) => {
 const initializeVisitor = (time: number = 6000) => {
     visitor.value = new RandomVisitor(graph.value.graphData());
     setInterval(() => {
-        visitor.value?.moveNext();
-        const currentNodeId = visitor.value?.getCurrentNodeId();
-        const currentNode = graph.value.graphData().nodes.find((n: any) => n.id == currentNodeId);
-        fitNodeIntoView(currentNode);
+        if (traverseAnimation.value) {
+            visitor.value?.moveNext();
+            const currentNodeId = visitor.value?.getCurrentNodeId();
+            const currentNode = graph.value.graphData().nodes.find((n: any) => n.id == currentNodeId);
+            fitNodeIntoView(currentNode);
+        } else {
+            tryResumeTraverseAnimation();
+        }
     }, time);
+};
+
+// this has to be called inside of a setInterval. Every x seconds
+const tryResumeTraverseAnimation = () => {
+    // 5 minutes have passed since the last user interaction
+    if ((((Date.now() - lastInteractionTime.value)) / 1000) > 3000) {
+        traverseAnimation.value = true;
+    }
+};
+
+// this has to be called whenever the user interacts with the screen
+const stopTraverseAnimation = () => {
+    lastInteractionTime.value = Date.now();
+    traverseAnimation.value = false;
 };
 
 onMounted(async () => {
     await initialize();
     initializeVisitor();
-    // const node = graph.value.find((n: any) => n.id == 'elsa');
-    // console.log(node);
-
+    document.body.addEventListener('touchstart', stopTraverseAnimation);
+    document.body.addEventListener('click', stopTraverseAnimation);
 })
 </script>
 <style scoped></style>

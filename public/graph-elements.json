@@ -5,8 +5,7 @@
       "group": "Team Member",
       "name": "Carlos Eduardo Aguilera Medina",
       "pfp_src": "/src/assets/images/team/carlos-aguilera.jpg",
-      "info_url": "https://www.biss-institute.com/en/team/iframe/carlos-aguilera",
-      "nodeThreeObject": "square"
+      "info_url": "https://www.biss-institute.com/en/team/iframe/carlos-aguilera"
     },
     {
       "id": "chris-van-der-lans",
@@ -166,163 +165,139 @@
       "id": "lawnotation",
       "group": "Project",
       "name": "Lawnotation",
-      "info_url": "https://www.biss-institute.com/en/posts/iframe/legal-research-software",
-      "color": "#B93C3C"
+      "info_url": "https://www.biss-institute.com/en/posts/iframe/legal-research-software"
     },
     {
       "id": "techalliance",
       "group": "Project",
       "name": "Tech\nAlliance",
-      "info_url": "https://www.biss-institute.com/en/posts/iframe/enhancing-customer-support-with-ai",
-      "color": "#4CA8BD"
+      "info_url": "https://www.biss-institute.com/en/posts/iframe/enhancing-customer-support-with-ai"
     },
     {
       "id": "flying-forward",
       "group": "Project",
       "name": "Flying\nForward",
-      "info_url": "https://www.biss-institute.com/en/posts/iframe/flying-forward",
-      "color": "#1C2B9C"
+      "info_url": "https://www.biss-institute.com/en/posts/iframe/flying-forward"
     },
     {
       "id": "elsa",
       "group": "Project",
       "name": "ELSA",
-      "info_url": "https://www.biss-institute.com/en/posts/iframe/ai-to-prevent-poverty-and-debt",
-      "color": "#26A64C"
+      "info_url": "https://www.biss-institute.com/en/posts/iframe/ai-to-prevent-poverty-and-debt"
     },
     {
       "id": "audio-to-semantics",
       "group": "Project",
       "name": "Audio to\nSemantics",
-      "info_url": "https://www.biss-institute.com/en/posts/iframe/how-can-we-recognize-sound-when-it-is-out-of-sight",
-      "color": "#d39c05"
+      "info_url": "https://www.biss-institute.com/en/posts/iframe/how-can-we-recognize-sound-when-it-is-out-of-sight"
     },
     {
       "id": "plurism-legal-sources",
       "group": "Project",
       "name": "Pluralism of \nlegal sources \nanalyses",
-      "info_url": "",
-      "color": "#9B66E1"
+      "info_url": ""
     },
     {
       "id": "faivor",
       "group": "Project",
       "name": "FAIVOR",
-      "info_url": "",
-      "color": "#1389e7",
-      "nodeThreeObject": "square"
+      "info_url": ""
     },
     {
       "id": "fair-ai",
       "group": "Project",
       "name": "FAIR4AI",
-      "info_url": "",
-      "color": "#FB7923"
+      "info_url": ""
     },
     {
       "id": "automated-essay-scoring",
       "group": "Project",
       "name": "Automated\nEssay\nScoring",
-      "info_url": "",
-      "color": "#CD3CBC"
+      "info_url": ""
     },
     {
       "id": "netspar-financial-advice",
       "group": "Project",
       "name": "Netspar\nAutomated\nFinancial\nAdvice",
-      "info_url": "https://www.biss-institute.com/en/posts/iframe/can-automated-systems-give-good-financial-advice",
-      "color": "#6EEDEB"
+      "info_url": "https://www.biss-institute.com/en/posts/iframe/can-automated-systems-give-good-financial-advice"
     },
     {
       "id": "case-law-explorer",
       "group": "Project",
       "name": "Case Law\nExplorer",
-      "info_url": "https://www.biss-institute.com/en/posts/iframe/legal-research-software",
-      "color": "#F865B0"
+      "info_url": "https://www.biss-institute.com/en/posts/iframe/legal-research-software"
     },
     {
       "id": "better",
       "group": "Project",
       "name": "BETTER",
-      "info_url": "",
-      "color": "#A40E4C"
+      "info_url": ""
     },
     {
       "id": "gemeente-sittard-geleen",
       "group": "Project",
       "name": "Gemeente\nSittard-Geleen",
-      "info_url": "",
-      "color": "#fd8e7f"
+      "info_url": ""
     },
     {
       "id": "am-ai-right",
       "group": "Project",
       "name": "Am AI\nright?",
-      "info_url": "",
-      "color": "#457553"
+      "info_url": ""
     },
     {
       "id": "stichting-onderzoek-rechtspleging",
       "group": "Project",
       "name": "Stichting\nOnderzoek\nRechtspleging",
-      "info_url": "",
-      "color": "#D996C8"
+      "info_url": ""
     },
     {
       "id": "strong-aya",
       "group": "Project",
       "name": "Strong-AYA",
-      "info_url": "",
-      "color": "#FF4E4E"
+      "info_url": ""
     },
     {
       "id": "impact-explorer",
       "group": "Project",
       "name": "Impact\nExplorer",
-      "info_url": "",
-      "color": "#D4F2D2"
+      "info_url": ""
     },
     {
       "id": "experiencing-poverty",
       "group": "Project",
       "name": "Experiencing\nPoverty",
-      "info_url": "",
-      "color": "#FFD500"
+      "info_url": ""
     },
     {
       "id": "priceless",
       "group": "Project",
       "name": "PRICELESS",
-      "info_url": "",
-      "color": "#FF1F57"
+      "info_url": ""
     },
     {
       "id": "circular-city",
       "group": "Project",
       "name": "Circular City\nChallenge",
-      "info_url": "",
-      "color": "#FFB685"
+      "info_url": ""
     },
     {
       "id": "nijsen-project",
       "group": "Project",
       "name": "Nijsen\nproject",
-      "info_url": "https://www.biss-institute.com/en/posts/iframe/what-is-the-content-of-livestock-feed",
-      "color": "#CC823E"
+      "info_url": "https://www.biss-institute.com/en/posts/iframe/what-is-the-content-of-livestock-feed"
     },
     {
       "id": "factory-shutdown",
       "group": "Project",
       "name": "Factory\nshutdowns",
-      "info_url": "https://www.biss-institute.com/en/posts/iframe/preventfactoryshutdowns",
-      "color": "#6b9d6e"
+      "info_url": "https://www.biss-institute.com/en/posts/iframe/preventfactoryshutdowns"
     },
     {
       "id": "mecc-maastricht",
       "group": "Project",
       "name": "MECC\nMaastricht",
-      "info_url": "",
-      "color": "#966B9D"
+      "info_url": ""
     }
   ],
   "links": [
@@ -376,7 +351,8 @@
     },
     {
       "source": "judith-kamalski",
-      "target": "elsa"
+      "target": "elsa",
+      "value": 10
     },
     {
       "source": "gijs-van-dijck",

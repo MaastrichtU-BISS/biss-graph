@@ -32,9 +32,12 @@
 import { onMounted, ref } from 'vue';
 import ForceGraph3D from '3d-force-graph';
 import * as THREE from '//unpkg.com/three/build/three.module.js';
+// import { UnrealBloomPass } from '//unpkg.com/three/examples/jsm/postprocessing/UnrealBloomPass.js';
 // import Dropdown from 'primevue/dropdown';
 // import NodeInfoModal from "./NodeInfoModal.vue";
 import { NodeType } from "../types/graph";
+
+// console.log(UnrealBloomPass)
 
 
 const graph = ref();
@@ -52,8 +55,13 @@ const initialize = async () => {
 
     graph.value = ForceGraph3D();
     graph.value(graphContainer)
-        .nodeAutoColorBy("group")
         .jsonUrl('/public/graph-elements.json')
+        .showNavInfo(false)
+        .nodeAutoColorBy("name")
+        .linkDirectionalParticles(2)
+        .linkDirectionalParticleSpeed(d => 2 * 0.001)
+        // .linkAutoColorBy("target")
+        // .backgroundColor('#000003')
         .nodeThreeObject(node => {
             if(node.group == NodeType.TEAM_MEMBER) {
                 const imgTexture = new THREE.TextureLoader().load(`/src/assets/images/team/${node.id}.jpg`);
@@ -80,8 +88,12 @@ const initialize = async () => {
           )
         });
 
-    console.log(graph.value)
-
+        // const bloomPass = new UnrealBloomPass();
+        // bloomPass.strength = 2;
+        // bloomPass.radius = 1;
+        // bloomPass.threshold = 0;
+        // graph.value.postProcessingComposer().addPass(bloomPass);
+        
 };
 
 onMounted(async () => {
@@ -89,9 +101,5 @@ onMounted(async () => {
 })
 </script>
 <style scoped>
-/* #graph-container {
-    width: 100vw;
-    height: calc(100vh - 54px);
-    display: block;
-} */
+
 </style>

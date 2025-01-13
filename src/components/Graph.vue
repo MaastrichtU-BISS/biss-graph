@@ -1,13 +1,14 @@
 <template>
-    <div class="">
-        <!-- <div class="pt-4 mx-auto w-fit">
+    <div id="searchbar">
+        <div class="pt-2 pl-2 w-fit">
             <Dropdown v-model="selectedNode" :options="optionNodes" optionLabel="label" optionGroupLabel="label"
                 optionGroupChildren="items" placeholder="Search" class="w-full md:w-80" showClear filter autoFilterFocus
-                @change="updateGraph">
+                @change="fitNodeIntoView($event.value?.value)">
                 <template #value="slotProps">
                     <div v-if="slotProps.value" class="flex align-items-center">
-                        <i v-if="slotProps.value.group == NodeType.PROJECT" class="pi pi-circle-fill mr-2 content-center" :style="`color: ${slotProps.value.color}`"></i>
-                        <div>{{ slotProps.value.value }}</div>
+                        <i v-if="slotProps.value.group == NodeType.PROJECT" class="pi pi-circle-fill mr-2 content-center"
+                            :style="`color: ${slotProps.value.color}`"></i>
+                        <div>{{ slotProps.value.label }}</div>
                     </div>
                     <span v-else>
                         {{ slotProps.placeholder }}
@@ -15,17 +16,18 @@
                 </template>
                 <template #option="slotProps">
                     <div class="flex align-items-center">
-                        <i v-if="slotProps.option.group == NodeType.PROJECT" class="pi pi-circle-fill mr-2 content-center" :style="`color: ${slotProps.option.color}`"></i>
+                        <i v-if="slotProps.option.group == NodeType.PROJECT" class="pi pi-circle-fill mr-2 content-center"
+                            :style="`color: ${slotProps.option.color}`"></i>
                         <div>{{ slotProps.option.label }}</div>
                     </div>
                 </template>
             </Dropdown>
-        </div> -->
+        </div>
     </div>
     <div id="graph-container">
     </div>
     <template>
-        <!-- <NodeInfoModal :nodeInfo="selectedNodeInfo" v-model:isVisible="modalIsVisible"></NodeInfoModal> -->
+        <NodeInfoModal :nodeInfo="selectedNodeInfo" v-model:isVisible="modalIsVisible"></NodeInfoModal>
     </template>
 </template>
 <script setup lang="ts">
@@ -35,8 +37,8 @@ import * as THREE from '//unpkg.com/three/build/three.module.js';
 import { CSS2DRenderer, CSS2DObject } from '//unpkg.com/three/examples/jsm/renderers/CSS2DRenderer.js';
 // import { UnrealBloomPass } from '//unpkg.com/three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import SpriteText from "https://esm.sh/three-spritetext";
-// import Dropdown from 'primevue/dropdown';
-// import NodeInfoModal from "./NodeInfoModal.vue";
+import Dropdown from 'primevue/dropdown';
+import NodeInfoModal from "./NodeInfoModal.vue";
 import { NodeType } from "../types/graph";
 import { Visitor, RandomVisitor } from "../utils/visitor";
 
@@ -44,9 +46,9 @@ const graph = ref();
 const visitor = ref<Visitor>();
 const traverseAnimation = ref<boolean>(true);
 const lastInteractionTime = ref<number>(Date.now());
-// const selectedNode = ref();
-// const selectedNodeInfo = ref();
-// const modalIsVisible = ref<boolean>(false);
+const selectedNode = ref();
+const selectedNodeInfo = ref();
+const modalIsVisible = ref<boolean>(false);
 
 const initialize = async () => {
 
@@ -62,7 +64,7 @@ const initialize = async () => {
         throw new Error("graph-elements.json was not found");
     }
 
-    graph.value = ForceGraph3D({  extraRenderers: [new CSS2DRenderer()] });
+    graph.value = ForceGraph3D({ extraRenderers: [new CSS2DRenderer()] });
     graph.value(graphContainer)
         .graphData(gData)
         .showNavInfo(false)
@@ -70,6 +72,7 @@ const initialize = async () => {
         .linkDirectionalParticles(2)
         .linkDirectionalParticleSpeed(d => 2 * 0.001)
         // .linkAutoColorBy("target")
+        // .linkWidth(.5)
         // .backgroundColor('#000003')
         .nodeThreeObject(node => {
             if (node.group == NodeType.TEAM_MEMBER) {
@@ -94,7 +97,8 @@ const initialize = async () => {
             }
         })
         // .nodeThreeObjectExtend(node => {
-        //     return node.group == NodeType.PROJECT;
+        // return node.group == NodeType.PROJECT;
+        //// return true;
         // })
         .onNodeClick(fitNodeIntoView);
 
@@ -110,6 +114,13 @@ const initialize = async () => {
 };
 
 const fitNodeIntoView = (node: any) => {
+
+    if(!node) return;
+
+    if(typeof node === "string") {
+        node = graph.value.graphData().nodes.find((n: any) => n.id == node);
+    }
+
     // Aim at node from outside it
     const distance = 40;
     const distRatio = 1 + distance / Math.hypot(node.x, node.y, node.z);
@@ -133,8 +144,7 @@ const initializeVisitor = (time: number = 6000) => {
         if (traverseAnimation.value) {
             visitor.value?.moveNext();
             const currentNodeId = visitor.value?.getCurrentNodeId();
-            const currentNode = graph.value.graphData().nodes.find((n: any) => n.id == currentNodeId);
-            fitNodeIntoView(currentNode);
+            fitNodeIntoView(currentNodeId);
         } else {
             tryResumeTraverseAnimation();
         }
@@ -157,6 +167,33 @@ const stopTraverseAnimation = () => {
 
 //#endregion
 
+//#region Filter
+
+const optionNodes = computed(() => {
+    if (graph.value) {
+
+        const groupedItems: { label: string; items: { label: string; value: string; color: string; }[] }[] = [{
+            label: "Team Members",
+            items: [],
+        }, {
+            label: "Projects",
+            items: []
+        }];
+
+        graph.value.graphData().nodes.map((n: any) => {
+            groupedItems[n.group == NodeType.PROJECT ? 1 : 0].items.push({
+                label: n.name,
+                value: n.id,
+                color: n.color
+            });
+        });
+
+        return groupedItems;
+    }
+});
+
+//#endregion
+
 onMounted(async () => {
     await initialize();
     initializeVisitor();
@@ -164,4 +201,13 @@ onMounted(async () => {
     document.body.addEventListener('click', stopTraverseAnimation);
 })
 </script>
-<style scoped></style>
+<style scoped>
+#searchbar {
+    position: absolute;
+    top: 0px;
+    width: 100%;
+    text-align: center;
+    z-index: 100;
+    display: block;
+}
+</style>

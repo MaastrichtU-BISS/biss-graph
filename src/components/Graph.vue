@@ -1,6 +1,6 @@
 <template>
-    <div id="searchbar">
-        <div class="pt-2 pl-2 w-fit">
+    <div class="absolute w-full bottom-0 z-[100] pb-2 px-2 flex justify-between items-end">
+        <div class="w-fit">
             <Dropdown v-model="selectedNode" :options="optionNodes" optionLabel="label" optionGroupLabel="label"
                 optionGroupChildren="items" placeholder="Search" class="w-full md:w-80" showClear filter autoFilterFocus
                 @change="fitNodeIntoView($event.value?.value)">
@@ -11,6 +11,7 @@
                         <div>{{ slotProps.value.label }}</div>
                     </div>
                     <span v-else>
+                        <i class="pi pi-search px-2"></i>
                         {{ slotProps.placeholder }}
                     </span>
                 </template>
@@ -23,21 +24,35 @@
                 </template>
             </Dropdown>
         </div>
+        <div v-if="selectedNode" class="rainbow">
+            <Button severity="secondary" class="pb-2 pl-2 relative" @click="modalIsVisible = true">
+                <div class="flex">
+                    <i class="pi pi-info-circle pr-2 animate-bounce self-center text-lg"></i>
+                    <div>
+                        <div class="block text-sm">
+                            Read more about
+                        </div>
+                        <div class="block font-bold">{{ selectedNode.label }}</div>
+                    </div>
+                </div>
+            </Button>
+        </div>
     </div>
     <div id="graph-container">
     </div>
     <template>
-        <NodeInfoModal :nodeInfo="selectedNodeInfo" v-model:isVisible="modalIsVisible"></NodeInfoModal>
+        <NodeInfoModal v-model:infoUrl="selectedNodeInfoUrl" v-model:isVisible="modalIsVisible"></NodeInfoModal>
     </template>
 </template>
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue';
-import ForceGraph3D from '3d-force-graph';
+import ForceGraph3D from "3d-force-graph";
 import * as THREE from '//unpkg.com/three/build/three.module.js';
 import { CSS2DRenderer, CSS2DObject } from '//unpkg.com/three/examples/jsm/renderers/CSS2DRenderer.js';
 // import { UnrealBloomPass } from '//unpkg.com/three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import SpriteText from "https://esm.sh/three-spritetext";
-import Dropdown from 'primevue/dropdown';
+import Dropdown from "primevue/dropdown";
+import Button from "primevue/button";
 import NodeInfoModal from "./NodeInfoModal.vue";
 import { NodeType } from "../types/graph";
 import { Visitor, RandomVisitor } from "../utils/visitor";
@@ -47,7 +62,6 @@ const visitor = ref<Visitor>();
 const traverseAnimation = ref<boolean>(true);
 const lastInteractionTime = ref<number>(Date.now());
 const selectedNode = ref();
-const selectedNodeInfo = ref();
 const modalIsVisible = ref<boolean>(false);
 
 const initialize = async () => {
@@ -115,11 +129,14 @@ const initialize = async () => {
 
 const fitNodeIntoView = (node: any) => {
 
-    if(!node) return;
+    if (!node) return;
 
-    if(typeof node === "string") {
+    if (typeof node === "string") {
         node = graph.value.graphData().nodes.find((n: any) => n.id == node);
     }
+
+    const nodes = optionNodes.value![0].items.concat(optionNodes.value![1].items);
+    selectedNode.value = nodes.find(n => n.value == node.id);
 
     // Aim at node from outside it
     const distance = 40;
@@ -135,6 +152,10 @@ const fitNodeIntoView = (node: any) => {
         3000  // ms transition duration
     )
 };
+
+const selectedNodeInfoUrl = computed(() => {
+    return selectedNode.value?.url;
+});
 
 //#region Visitor
 
@@ -172,7 +193,7 @@ const stopTraverseAnimation = () => {
 const optionNodes = computed(() => {
     if (graph.value) {
 
-        const groupedItems: { label: string; items: { label: string; value: string; color: string; }[] }[] = [{
+        const groupedItems: { label: string; items: { label: string; value: string; color: string; url: string; }[] }[] = [{
             label: "Team Members",
             items: [],
         }, {
@@ -184,7 +205,8 @@ const optionNodes = computed(() => {
             groupedItems[n.group == NodeType.PROJECT ? 1 : 0].items.push({
                 label: n.name,
                 value: n.id,
-                color: n.color
+                color: n.color,
+                url: n.info_url
             });
         });
 
@@ -202,12 +224,51 @@ onMounted(async () => {
 })
 </script>
 <style scoped>
-#searchbar {
-    position: absolute;
-    top: 0px;
-    width: 100%;
-    text-align: center;
-    z-index: 100;
-    display: block;
+.rainbow {
+	position: relative;
+	z-index: 0;
+	border-radius: 6px;
+	overflow: hidden;
+	padding: .5px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-family: sans-serif;
+	font-weight: bold;
+	
+	&::before {
+		content: '';
+		position: absolute;
+		z-index: -2;
+		left: -50%;
+		top: -50%;
+		width: 200%;
+		height: 200%;
+		background-color: rgb(218, 217, 217);
+		background-repeat: no-repeat;
+		background-size: 50% 50%, 50% 50%;
+		background-position: 0 0, 100% 0, 100% 100%, 0 100%;
+		/* background-image: linear-gradient(#399953, #399953), linear-gradient(#fbb300, #fbb300), linear-gradient(#d53e33, #d53e33), linear-gradient(#377af5, #377af5); */
+        background-image: linear-gradient(white, rgb(205, 202, 202));
+		animation: rotate 4s linear infinite;
+	}
+	
+	&::after {
+		content: '';
+		position: absolute;
+		z-index: -1;
+		left: 6px;
+		top: 6px;
+		width: calc(100% - 12px);
+		height: calc(100% - 12px);
+		background: white;
+		border-radius: 5px;
+	}
+}
+
+@keyframes rotate {
+	100% {
+		transform: rotate(1turn);
+	}
 }
 </style>

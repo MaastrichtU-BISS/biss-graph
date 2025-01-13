@@ -32,7 +32,9 @@
 import { onMounted, ref, computed } from 'vue';
 import ForceGraph3D from '3d-force-graph';
 import * as THREE from '//unpkg.com/three/build/three.module.js';
+import { CSS2DRenderer, CSS2DObject } from '//unpkg.com/three/examples/jsm/renderers/CSS2DRenderer.js';
 // import { UnrealBloomPass } from '//unpkg.com/three/examples/jsm/postprocessing/UnrealBloomPass.js';
+import SpriteText from "https://esm.sh/three-spritetext";
 // import Dropdown from 'primevue/dropdown';
 // import NodeInfoModal from "./NodeInfoModal.vue";
 import { NodeType } from "../types/graph";
@@ -60,7 +62,7 @@ const initialize = async () => {
         throw new Error("graph-elements.json was not found");
     }
 
-    graph.value = ForceGraph3D();
+    graph.value = ForceGraph3D({  extraRenderers: [new CSS2DRenderer()] });
     graph.value(graphContainer)
         .graphData(gData)
         .showNavInfo(false)
@@ -77,8 +79,23 @@ const initialize = async () => {
                 const sprite = new THREE.Sprite(material);
                 sprite.scale.set(12, 12);
                 return sprite;
+            } else {
+                // const nodeEl = document.createElement('div');
+                // nodeEl.textContent = node.name;
+                // nodeEl.style.color = node.color;
+                // nodeEl.className = 'node-label';
+                // return new CSS2DObject(nodeEl);
+
+                const sprite = new SpriteText(node.name);
+                sprite.material.depthWrite = false; // make sprite background transparent
+                sprite.color = node.color;
+                sprite.textHeight = 4;
+                return sprite;
             }
         })
+        // .nodeThreeObjectExtend(node => {
+        //     return node.group == NodeType.PROJECT;
+        // })
         .onNodeClick(fitNodeIntoView);
 
     // const bloomPass = new UnrealBloomPass();
@@ -86,6 +103,9 @@ const initialize = async () => {
     // bloomPass.radius = 1;
     // bloomPass.threshold = 0;
     // graph.value.postProcessingComposer().addPass(bloomPass);
+
+    // Spread nodes a little wider
+    graph.value.d3Force('charge').strength(-120);
 
 };
 
@@ -104,6 +124,8 @@ const fitNodeIntoView = (node: any) => {
         3000  // ms transition duration
     )
 };
+
+//#region Visitor
 
 const initializeVisitor = (time: number = 6000) => {
     visitor.value = new RandomVisitor(graph.value.graphData());
@@ -132,6 +154,8 @@ const stopTraverseAnimation = () => {
     lastInteractionTime.value = Date.now();
     traverseAnimation.value = false;
 };
+
+//#endregion
 
 onMounted(async () => {
     await initialize();

@@ -1,40 +1,59 @@
 <template>
-    <div class="">
-        <!-- <div class="pt-4 mx-auto w-fit">
+    <div class="absolute w-full bottom-0 z-[100] pb-2 px-2 flex justify-between items-end">
+        <div class="w-fit">
             <Dropdown v-model="selectedNode" :options="optionNodes" optionLabel="label" optionGroupLabel="label"
                 optionGroupChildren="items" placeholder="Search" class="w-full md:w-80" showClear filter autoFilterFocus
-                @change="updateGraph">
+                @change="fitNodeIntoView($event.value?.value)">
                 <template #value="slotProps">
                     <div v-if="slotProps.value" class="flex align-items-center">
-                        <i v-if="slotProps.value.group == NodeType.PROJECT" class="pi pi-circle-fill mr-2 content-center" :style="`color: ${slotProps.value.color}`"></i>
-                        <div>{{ slotProps.value.value }}</div>
+                        <i v-if="slotProps.value.group == NodeType.PROJECT" class="pi pi-circle-fill mr-2 content-center"
+                            :style="`color: ${slotProps.value.color}`"></i>
+                        <div>{{ slotProps.value.label }}</div>
                     </div>
                     <span v-else>
+                        <i class="pi pi-search px-2"></i>
                         {{ slotProps.placeholder }}
                     </span>
                 </template>
                 <template #option="slotProps">
                     <div class="flex align-items-center">
-                        <i v-if="slotProps.option.group == NodeType.PROJECT" class="pi pi-circle-fill mr-2 content-center" :style="`color: ${slotProps.option.color}`"></i>
+                        <i v-if="slotProps.option.group == NodeType.PROJECT" class="pi pi-circle-fill mr-2 content-center"
+                            :style="`color: ${slotProps.option.color}`"></i>
                         <div>{{ slotProps.option.label }}</div>
                     </div>
                 </template>
             </Dropdown>
-        </div> -->
+        </div>
+        <div v-if="selectedNode" class="rainbow">
+            <Button severity="secondary" class="pb-2 pl-2 relative" @click="modalIsVisible = true">
+                <div class="flex">
+                    <i class="pi pi-info-circle pr-2 animate-bounce self-center text-lg"></i>
+                    <div>
+                        <div class="block text-sm">
+                            Read more about
+                        </div>
+                        <div class="block font-bold">{{ selectedNode.label }}</div>
+                    </div>
+                </div>
+            </Button>
+        </div>
     </div>
     <div id="graph-container">
     </div>
     <template>
-        <!-- <NodeInfoModal :nodeInfo="selectedNodeInfo" v-model:isVisible="modalIsVisible"></NodeInfoModal> -->
+        <NodeInfoModal v-model:infoUrl="selectedNodeInfoUrl" v-model:isVisible="modalIsVisible"></NodeInfoModal>
     </template>
 </template>
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue';
-import ForceGraph3D from '3d-force-graph';
+import ForceGraph3D from "3d-force-graph";
 import * as THREE from '//unpkg.com/three/build/three.module.js';
+import { CSS2DRenderer, CSS2DObject } from '//unpkg.com/three/examples/jsm/renderers/CSS2DRenderer.js';
 // import { UnrealBloomPass } from '//unpkg.com/three/examples/jsm/postprocessing/UnrealBloomPass.js';
-// import Dropdown from 'primevue/dropdown';
-// import NodeInfoModal from "./NodeInfoModal.vue";
+import SpriteText from "https://esm.sh/three-spritetext";
+import Dropdown from "primevue/dropdown";
+import Button from "primevue/button";
+import NodeInfoModal from "./NodeInfoModal.vue";
 import { NodeType } from "../types/graph";
 import { Visitor, RandomVisitor } from "../utils/visitor";
 
@@ -42,9 +61,8 @@ const graph = ref();
 const visitor = ref<Visitor>();
 const traverseAnimation = ref<boolean>(true);
 const lastInteractionTime = ref<number>(Date.now());
-// const selectedNode = ref();
-// const selectedNodeInfo = ref();
-// const modalIsVisible = ref<boolean>(false);
+const selectedNode = ref();
+const modalIsVisible = ref<boolean>(false);
 
 const initialize = async () => {
 
@@ -60,7 +78,7 @@ const initialize = async () => {
         throw new Error("graph-elements.json was not found");
     }
 
-    graph.value = ForceGraph3D();
+    graph.value = ForceGraph3D({ extraRenderers: [new CSS2DRenderer()] });
     graph.value(graphContainer)
         .graphData(gData)
         .showNavInfo(false)
@@ -68,6 +86,7 @@ const initialize = async () => {
         .linkDirectionalParticles(2)
         .linkDirectionalParticleSpeed(d => 2 * 0.001)
         // .linkAutoColorBy("target")
+        // .linkWidth(.5)
         // .backgroundColor('#000003')
         .nodeThreeObject(node => {
             if (node.group == NodeType.TEAM_MEMBER) {
@@ -77,8 +96,24 @@ const initialize = async () => {
                 const sprite = new THREE.Sprite(material);
                 sprite.scale.set(12, 12);
                 return sprite;
+            } else {
+                // const nodeEl = document.createElement('div');
+                // nodeEl.textContent = node.name;
+                // nodeEl.style.color = node.color;
+                // nodeEl.className = 'node-label';
+                // return new CSS2DObject(nodeEl);
+
+                const sprite = new SpriteText(node.name);
+                sprite.material.depthWrite = false; // make sprite background transparent
+                sprite.color = node.color;
+                sprite.textHeight = 4;
+                return sprite;
             }
         })
+        // .nodeThreeObjectExtend(node => {
+        // return node.group == NodeType.PROJECT;
+        //// return true;
+        // })
         .onNodeClick(fitNodeIntoView);
 
     // const bloomPass = new UnrealBloomPass();
@@ -87,9 +122,22 @@ const initialize = async () => {
     // bloomPass.threshold = 0;
     // graph.value.postProcessingComposer().addPass(bloomPass);
 
+    // Spread nodes a little wider
+    graph.value.d3Force('charge').strength(-120);
+
 };
 
 const fitNodeIntoView = (node: any) => {
+
+    if (!node) return;
+
+    if (typeof node === "string") {
+        node = graph.value.graphData().nodes.find((n: any) => n.id == node);
+    }
+
+    const nodes = optionNodes.value![0].items.concat(optionNodes.value![1].items);
+    selectedNode.value = nodes.find(n => n.value == node.id);
+
     // Aim at node from outside it
     const distance = 40;
     const distRatio = 1 + distance / Math.hypot(node.x, node.y, node.z);
@@ -105,14 +153,19 @@ const fitNodeIntoView = (node: any) => {
     )
 };
 
+const selectedNodeInfoUrl = computed(() => {
+    return selectedNode.value?.url;
+});
+
+//#region Visitor
+
 const initializeVisitor = (time: number = 6000) => {
     visitor.value = new RandomVisitor(graph.value.graphData());
     setInterval(() => {
         if (traverseAnimation.value) {
             visitor.value?.moveNext();
             const currentNodeId = visitor.value?.getCurrentNodeId();
-            const currentNode = graph.value.graphData().nodes.find((n: any) => n.id == currentNodeId);
-            fitNodeIntoView(currentNode);
+            fitNodeIntoView(currentNodeId);
         } else {
             tryResumeTraverseAnimation();
         }
@@ -133,6 +186,36 @@ const stopTraverseAnimation = () => {
     traverseAnimation.value = false;
 };
 
+//#endregion
+
+//#region Filter
+
+const optionNodes = computed(() => {
+    if (graph.value) {
+
+        const groupedItems: { label: string; items: { label: string; value: string; color: string; url: string; }[] }[] = [{
+            label: "Team Members",
+            items: [],
+        }, {
+            label: "Projects",
+            items: []
+        }];
+
+        graph.value.graphData().nodes.map((n: any) => {
+            groupedItems[n.group == NodeType.PROJECT ? 1 : 0].items.push({
+                label: n.name,
+                value: n.id,
+                color: n.color,
+                url: n.info_url
+            });
+        });
+
+        return groupedItems;
+    }
+});
+
+//#endregion
+
 onMounted(async () => {
     await initialize();
     initializeVisitor();
@@ -140,4 +223,52 @@ onMounted(async () => {
     document.body.addEventListener('click', stopTraverseAnimation);
 })
 </script>
-<style scoped></style>
+<style scoped>
+.rainbow {
+	position: relative;
+	z-index: 0;
+	border-radius: 6px;
+	overflow: hidden;
+	padding: .5px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-family: sans-serif;
+	font-weight: bold;
+	
+	&::before {
+		content: '';
+		position: absolute;
+		z-index: -2;
+		left: -50%;
+		top: -50%;
+		width: 200%;
+		height: 200%;
+		background-color: rgb(218, 217, 217);
+		background-repeat: no-repeat;
+		background-size: 50% 50%, 50% 50%;
+		background-position: 0 0, 100% 0, 100% 100%, 0 100%;
+		/* background-image: linear-gradient(#399953, #399953), linear-gradient(#fbb300, #fbb300), linear-gradient(#d53e33, #d53e33), linear-gradient(#377af5, #377af5); */
+        background-image: linear-gradient(white, rgb(205, 202, 202));
+		animation: rotate 4s linear infinite;
+	}
+	
+	&::after {
+		content: '';
+		position: absolute;
+		z-index: -1;
+		left: 6px;
+		top: 6px;
+		width: calc(100% - 12px);
+		height: calc(100% - 12px);
+		background: white;
+		border-radius: 5px;
+	}
+}
+
+@keyframes rotate {
+	100% {
+		transform: rotate(1turn);
+	}
+}
+</style>

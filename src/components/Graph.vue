@@ -41,7 +41,6 @@
                             </div>
                         </div>
                     </Button>
-                    <!-- <div class="absolute top-0 bottom-0 left-0 right-0 ring-white rounded-[2rem] animate-pulse" style="z-index: -1;"></div> -->
                 </div>
             </td>
             <td></td>
@@ -56,7 +55,6 @@
 import { onMounted, ref, computed } from 'vue';
 import ForceGraph3D from "3d-force-graph";
 import * as THREE from '//unpkg.com/three/build/three.module.js';
-import { CSS2DRenderer, CSS2DObject } from '//unpkg.com/three/examples/jsm/renderers/CSS2DRenderer.js';
 // import { UnrealBloomPass } from '//unpkg.com/three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import SpriteText from "https://esm.sh/three-spritetext";
 import Dropdown from "primevue/dropdown";
@@ -86,7 +84,7 @@ const initialize = async () => {
         throw new Error("graph-elements.json was not found");
     }
 
-    graph.value = ForceGraph3D({ extraRenderers: [new CSS2DRenderer()] });
+    graph.value = ForceGraph3D();
     graph.value(graphContainer)
         .graphData(gData)
         .showNavInfo(false)
@@ -95,33 +93,20 @@ const initialize = async () => {
         .linkDirectionalParticleSpeed(d => 2 * 0.001)
         // .linkAutoColorBy("source")
         // .linkWidth(.2)
-        // .backgroundColor('#000003')
+        // .backgroundColor('#000000')
         .nodeThreeObject(node => {
             if (node.group == NodeType.TEAM_MEMBER) {
-
-                // const nodeEl = document.createElement('div');
-                // nodeEl.textContent = node.name;
-                // nodeEl.style.color = 'white';
-                // // nodeEl.style.color = node.color;
-                // nodeEl.className = 'node-label';
-                // const nameObject = new CSS2DObject(nodeEl);
-                // nameObject.position.set( 0, 0, 0 );
 
                 const spriteText = new SpriteText(node.name);
                 spriteText.material.depthWrite = false; // make sprite background transparent
                 // spriteText.color = node.color;
                 spriteText.color = 'white';
                 spriteText.textHeight = 1.2;
-                spriteText.position.set(0, -10, 0)
-
-                const imgTexture = new THREE.TextureLoader().load(`/src/assets/images/team/${node.id}.jpg`);
-                imgTexture.colorSpace = THREE.SRGBColorSpace;
-                const material = new THREE.SpriteMaterial({ map: imgTexture });
-                const spriteImg = new THREE.Sprite(material);
-                spriteImg.scale.set(12, 16);
+                spriteText.position.y = -8;
+                // spriteText.position.set(0, -10, 0)
 
                 const group = new THREE.Group();
-                group.add(spriteImg);
+                group.add(createImageSprite(`/src/assets/images/team/${node.id}.jpg`));
                 group.add(spriteText);
 
                 return group;
@@ -140,7 +125,7 @@ const initialize = async () => {
         .onNodeClick(fitNodeIntoView);
 
     // const bloomPass = new UnrealBloomPass();
-    // bloomPass.strength = 2;
+    // bloomPass.strength = 1;
     // bloomPass.radius = 1;
     // bloomPass.threshold = 0;
     // graph.value.postProcessingComposer().addPass(bloomPass);
@@ -179,6 +164,21 @@ const fitNodeIntoView = (node: any) => {
 const selectedNodeInfoUrl = computed(() => {
     return selectedNode.value?.url;
 });
+
+const createImageSprite = (path: string) => {
+    const imgTexture = new THREE.TextureLoader().load(path);
+    imgTexture.colorSpace = THREE.SRGBColorSpace;
+ 
+    const alphaTexture = new THREE.TextureLoader().load(`/src/assets/images/alfa.png`);
+    const material = new THREE.SpriteMaterial({ map: imgTexture, alphaMap: alphaTexture });
+    const sprite = new THREE.Sprite(material);
+    sprite.scale.set(12, 12);
+   
+    imgTexture.repeat.set(1, 1 / (4/3));
+    imgTexture.center.set(0.5, 0.5);
+ 
+    return sprite;
+}
 
 //#region Visitor
 

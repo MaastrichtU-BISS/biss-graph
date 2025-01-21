@@ -1,45 +1,53 @@
 <template>
-    <div class="absolute w-full bottom-0 z-[100] pb-2 px-2 flex justify-between items-end">
-        <div class="w-fit">
-            <Dropdown v-model="selectedNode" :options="optionNodes" optionLabel="label" optionGroupLabel="label"
-                optionGroupChildren="items" placeholder="Search" class="w-full md:w-80" showClear filter autoFilterFocus
-                @change="fitNodeIntoView($event.value?.value)">
-                <template #value="slotProps">
-                    <div v-if="slotProps.value" class="flex align-items-center">
-                        <i v-if="slotProps.value.group == NodeType.PROJECT" class="pi pi-circle-fill mr-2 content-center"
-                            :style="`color: ${slotProps.value.color}`"></i>
-                        <div>{{ slotProps.value.label }}</div>
-                    </div>
-                    <span v-else>
-                        <i class="pi pi-search px-2"></i>
-                        {{ slotProps.placeholder }}
-                    </span>
-                </template>
-                <template #option="slotProps">
-                    <div class="flex align-items-center">
-                        <i v-if="slotProps.option.group == NodeType.PROJECT" class="pi pi-circle-fill mr-2 content-center"
-                            :style="`color: ${slotProps.option.color}`"></i>
-                        <div>{{ slotProps.option.label }}</div>
-                    </div>
-                </template>
-            </Dropdown>
-        </div>
-        <div v-if="selectedNode" class="rainbow">
-            <Button severity="secondary" class="pb-2 pl-2 relative" @click="modalIsVisible = true">
-                <div class="flex">
-                    <i class="pi pi-info-circle pr-2 animate-bounce self-center text-lg"></i>
-                    <div>
-                        <div class="block text-sm">
-                            Read more about
-                        </div>
-                        <div class="block font-bold">{{ selectedNode.label }}</div>
-                    </div>
+    <div class="absolute bottom-0 pb-2 w-full z-10">
+        <table class="w-full table-fixed align-middle">
+            <td>
+                <div class="w-fit z-10">
+                    <Dropdown v-model="selectedNode" :options="optionNodes" optionLabel="label" optionGroupLabel="label"
+                        optionGroupChildren="items" placeholder="Search" class="w-full md:w-80" showClear filter
+                        autoFilterFocus @change="fitNodeIntoView($event.value?.value)">
+                        <template #value="slotProps">
+                            <div v-if="slotProps.value" class="flex align-items-center">
+                                <i v-if="slotProps.value.group == NodeType.PROJECT"
+                                    class="pi pi-circle-fill mr-2 content-center"
+                                    :style="`color: ${slotProps.value.color}`"></i>
+                                <div>{{ slotProps.value.label }}</div>
+                            </div>
+                            <span v-else>
+                                <i class="pi pi-search px-2"></i>
+                                {{ slotProps.placeholder }}
+                            </span>
+                        </template>
+                        <template #option="slotProps">
+                            <div class="flex align-items-center">
+                                <i v-if="slotProps.option.group == NodeType.PROJECT"
+                                    class="pi pi-circle-fill mr-2 content-center"
+                                    :style="`color: ${slotProps.option.color}`"></i>
+                                <div>{{ slotProps.option.label }}</div>
+                            </div>
+                        </template>
+                    </Dropdown>
                 </div>
-            </Button>
-        </div>
+            </td>
+            <td>
+                <div class="relative text-center mx-auto w-fit z-10" v-if="selectedNode">
+                    <Button severity="primary" rounded class="relative shadow-[inset_0_25px_50px_-12px_rgb(0_0_0_/_0.25)] shadow-indigo-500/50" @click="modalIsVisible = true">
+                        <div class="flex">
+                            <div>
+                                <div class="block text-sm">
+                                    Read more about
+                                </div>
+                                <div class="block font-bold">{{ selectedNode.label }}</div>
+                            </div>
+                        </div>
+                    </Button>
+                    <!-- <div class="absolute top-0 bottom-0 left-0 right-0 ring-white rounded-[2rem] animate-pulse" style="z-index: -1;"></div> -->
+                </div>
+            </td>
+            <td></td>
+        </table>
     </div>
-    <div id="graph-container">
-    </div>
+    <div id="graph-container"></div>
     <template>
         <NodeInfoModal v-model:infoUrl="selectedNodeInfoUrl" v-model:isVisible="modalIsVisible"></NodeInfoModal>
     </template>
@@ -85,24 +93,39 @@ const initialize = async () => {
         .nodeAutoColorBy("name")
         .linkDirectionalParticles(2)
         .linkDirectionalParticleSpeed(d => 2 * 0.001)
-        // .linkAutoColorBy("target")
-        // .linkWidth(.5)
+        // .linkAutoColorBy("source")
+        // .linkWidth(.2)
         // .backgroundColor('#000003')
         .nodeThreeObject(node => {
             if (node.group == NodeType.TEAM_MEMBER) {
+
+                // const nodeEl = document.createElement('div');
+                // nodeEl.textContent = node.name;
+                // nodeEl.style.color = 'white';
+                // // nodeEl.style.color = node.color;
+                // nodeEl.className = 'node-label';
+                // const nameObject = new CSS2DObject(nodeEl);
+                // nameObject.position.set( 0, 0, 0 );
+
+                const spriteText = new SpriteText(node.name);
+                spriteText.material.depthWrite = false; // make sprite background transparent
+                // spriteText.color = node.color;
+                spriteText.color = 'white';
+                spriteText.textHeight = 1.2;
+                spriteText.position.set(0, -10, 0)
+
                 const imgTexture = new THREE.TextureLoader().load(`/src/assets/images/team/${node.id}.jpg`);
                 imgTexture.colorSpace = THREE.SRGBColorSpace;
                 const material = new THREE.SpriteMaterial({ map: imgTexture });
-                const sprite = new THREE.Sprite(material);
-                sprite.scale.set(12, 12);
-                return sprite;
-            } else {
-                // const nodeEl = document.createElement('div');
-                // nodeEl.textContent = node.name;
-                // nodeEl.style.color = node.color;
-                // nodeEl.className = 'node-label';
-                // return new CSS2DObject(nodeEl);
+                const spriteImg = new THREE.Sprite(material);
+                spriteImg.scale.set(12, 16);
 
+                const group = new THREE.Group();
+                group.add(spriteImg);
+                group.add(spriteText);
+
+                return group;
+            } else {
                 const sprite = new SpriteText(node.name);
                 sprite.material.depthWrite = false; // make sprite background transparent
                 sprite.color = node.color;
@@ -111,8 +134,8 @@ const initialize = async () => {
             }
         })
         // .nodeThreeObjectExtend(node => {
-        // return node.group == NodeType.PROJECT;
-        //// return true;
+        //     // return node.group == NodeType.PROJECT;
+        //     return true;
         // })
         .onNodeClick(fitNodeIntoView);
 
@@ -223,52 +246,4 @@ onMounted(async () => {
     document.body.addEventListener('click', stopTraverseAnimation);
 })
 </script>
-<style scoped>
-.rainbow {
-	position: relative;
-	z-index: 0;
-	border-radius: 6px;
-	overflow: hidden;
-	padding: .5px;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	font-family: sans-serif;
-	font-weight: bold;
-	
-	&::before {
-		content: '';
-		position: absolute;
-		z-index: -2;
-		left: -50%;
-		top: -50%;
-		width: 200%;
-		height: 200%;
-		background-color: rgb(218, 217, 217);
-		background-repeat: no-repeat;
-		background-size: 50% 50%, 50% 50%;
-		background-position: 0 0, 100% 0, 100% 100%, 0 100%;
-		/* background-image: linear-gradient(#399953, #399953), linear-gradient(#fbb300, #fbb300), linear-gradient(#d53e33, #d53e33), linear-gradient(#377af5, #377af5); */
-        background-image: linear-gradient(white, rgb(205, 202, 202));
-		animation: rotate 4s linear infinite;
-	}
-	
-	&::after {
-		content: '';
-		position: absolute;
-		z-index: -1;
-		left: 6px;
-		top: 6px;
-		width: calc(100% - 12px);
-		height: calc(100% - 12px);
-		background: white;
-		border-radius: 5px;
-	}
-}
-
-@keyframes rotate {
-	100% {
-		transform: rotate(1turn);
-	}
-}
-</style>
+<style scoped></style>

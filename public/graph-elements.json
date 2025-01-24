@@ -64,13 +64,6 @@
       "info_url": "https://www.biss-institute.com/en/team/iframe/lisa-bruggen"
     },
     {
-      "id": "robert-gianni",
-      "group": "Team Member",
-      "name": "Robert Gianni",
-      "pfp_src": "/src/assets/images/team/robert-gianni.jpg",
-      "info_url": "https://www.biss-institute.com/en/team/iframe/robert-gianni"
-    },
-    {
       "id": "stefan-bos",
       "group": "Team Member",
       "name": "Stefan Bos",
@@ -165,7 +158,8 @@
       "id": "lawnotation",
       "group": "Project",
       "name": "Lawnotation",
-      "info_url": "https://www.biss-institute.com/en/posts/iframe/legal-research-software"
+      "info_url": "https://www.biss-institute.com/en/posts/iframe/legal-research-software",
+      "color": "#FF5733"
     },
     {
       "id": "techalliance",
@@ -371,10 +365,6 @@
       "target": "elsa"
     },
     {
-      "source": "robert-gianni",
-      "target": "elsa"
-    },
-    {
       "source": "stefan-bos",
       "target": "elsa"
     },
@@ -572,10 +562,6 @@
     },
     {
       "source": "darian-meacham",
-      "target": "netspar-financial-advice"
-    },
-    {
-      "source": "robert-gianni",
       "target": "netspar-financial-advice"
     },
     {

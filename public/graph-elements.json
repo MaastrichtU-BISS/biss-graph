@@ -8,6 +8,13 @@
       "info_url": "https://www.biss-institute.com/en/team/iframe/carlos-aguilera"
     },
     {
+      "id": "dani-shanley",
+      "group": "Team Member",
+      "name": "Dani Shanley",
+      "pfp_src": "/src/assets/images/team/dani-shanley.jpg",
+      "info_url": "https://www.biss-institute.com/en/team/iframe/dani-shanley"
+    },
+    {
       "id": "chris-van-der-lans",
       "group": "Team Member",
       "name": "Chris van der Lans",
@@ -345,8 +352,7 @@
     },
     {
       "source": "judith-kamalski",
-      "target": "elsa",
-      "value": 10
+      "target": "elsa"
     },
     {
       "source": "gijs-van-dijck",
@@ -386,6 +392,10 @@
     },
     {
       "source": "andre-dekker",
+      "target": "elsa"
+    },
+    {
+      "source": "dani-shanley",
       "target": "elsa"
     },
     {

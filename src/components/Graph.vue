@@ -216,7 +216,7 @@ const stopTraverseAnimation = () => {
 const optionNodes = computed(() => {
     if (graph.value) {
 
-        const groupedItems: { label: string; items: { label: string; value: string; color: string; url: string; }[] }[] = [{
+        const groupedItems: { label: string; items: { label: string; value: string; color: string; url: string; group: string }[] }[] = [{
             label: "Team Members",
             items: [],
         }, {
@@ -229,7 +229,8 @@ const optionNodes = computed(() => {
                 label: n.name,
                 value: n.id,
                 color: n.color,
-                url: n.info_url
+                url: n.info_url,
+                group: n.group
             });
         });
 

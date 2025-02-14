@@ -1,212 +1,253 @@
 <template>
-    <div class="h-[40px]">
-        <div class="pt-4 mx-auto w-fit">
-            <IconField>
-                <InputIcon class="pi pi-search" />
-                <InputText v-model="toSearch" placeholder="Search" />
-            </IconField>
-        </div>
+    <div class="absolute top-0 text-center w-full z-50">
+        <h1 class="text-3xl font-semibold"> BISS' PROJECTS</h1>
     </div>
-    <div id="graph-container">
+    <div class="absolute bottom-0 pb-2 w-full z-10">
+        <table class="w-full table-fixed align-middle">
+            <td>
+                <div class="w-fit z-10">
+                    <Dropdown v-model="selectedNode" :options="optionNodes" optionLabel="label" optionGroupLabel="label"
+                        optionGroupChildren="items" placeholder="Search" class="w-full md:w-80" showClear filter
+                        autoFilterFocus @change="fitNodeIntoView($event.value?.value)">
+                        <template #value="slotProps">
+                            <div v-if="slotProps.value" class="flex align-items-center">
+                                <i v-if="slotProps.value.group == NodeType.PROJECT"
+                                    class="pi pi-circle-fill mr-2 content-center"
+                                    :style="`color: ${slotProps.value.color}`"></i>
+                                <div>{{ slotProps.value.label }}</div>
+                            </div>
+                            <span v-else>
+                                <i class="pi pi-search px-2"></i>
+                                {{ slotProps.placeholder }}
+                            </span>
+                        </template>
+                        <template #option="slotProps">
+                            <div class="flex align-items-center">
+                                <i v-if="slotProps.option.group == NodeType.PROJECT"
+                                    class="pi pi-circle-fill mr-2 content-center"
+                                    :style="`color: ${slotProps.option.color}`"></i>
+                                <div>{{ slotProps.option.label }}</div>
+                            </div>
+                        </template>
+                    </Dropdown>
+                </div>
+            </td>
+            <td>
+                <div class="relative text-center mx-auto w-fit z-10" v-if="selectedNode">
+                    <Button severity="primary" rounded class="relative shadow-[inset_0_25px_50px_-12px_rgb(0_0_0_/_0.25)] shadow-indigo-500/50" @click="modalIsVisible = true">
+                        <div class="flex">
+                            <div>
+                                <div class="block text-sm">
+                                    Read more about {{ selectedNode.group == NodeType.PROJECT ? ' this project' : ''}}
+                                </div>
+                                <div class="block font-bold">{{ selectedNode.label }}</div>
+                            </div>
+                        </div>
+                    </Button>
+                </div>
+            </td>
+            <td></td>
+        </table>
     </div>
+    <div id="graph-container"></div>
     <template>
-        <TeamMemberModal :nodeInfo="selectedNodeInfo" v-model:isVisible="modalIsVisible"></TeamMemberModal>
+        <NodeInfoModal v-model:infoUrl="selectedNodeInfoUrl" v-model:isVisible="modalIsVisible"></NodeInfoModal>
     </template>
 </template>
 <script setup lang="ts">
-import * as d3 from "d3";
-import { ref, onMounted, computed, watch } from 'vue';
-import IconField from 'primevue/iconfield';
-import InputIcon from 'primevue/inputicon';
-import InputText from 'primevue/inputtext';
-import { Graph, type GraphNode, type GraphLink } from "../types/graph.ts";
-import TeamMemberModal from "./TeamMemberModal.vue";
+import { onMounted, ref, computed } from 'vue';
+import ForceGraph3D from "3d-force-graph";
+import * as THREE from '//unpkg.com/three/build/three.module.js';
+// import { UnrealBloomPass } from '//unpkg.com/three/examples/jsm/postprocessing/UnrealBloomPass.js';
+import SpriteText from "https://esm.sh/three-spritetext";
+import Dropdown from "primevue/dropdown";
+import Button from "primevue/button";
+import NodeInfoModal from "./NodeInfoModal.vue";
+import { NodeType } from "../types/graph";
+import { Visitor, RandomVisitor } from "../utils/visitor";
 
-//Hello world
-
-const dataLocation: string = "/biss-graph.json";
-const graph = ref<Graph>(new Graph([], []));
-const selectedNodeInfo = ref();
+const graph = ref();
+const visitor = ref<Visitor>();
+const traverseAnimation = ref<boolean>(true);
+const lastInteractionTime = ref<number>(Date.now());
+const selectedNode = ref();
 const modalIsVisible = ref<boolean>(false);
-const toSearch = ref<string>("");
-const svg = ref();
 
-const loadData = async (): Promise<{ nodes: GraphNode[]; links: GraphLink[] }> => {
-    return (await fetch(dataLocation)).json();
-}
+const initialize = async () => {
 
-const initializeD3Graph = (dataNodes: any[], dataLinks: any[]) => {
+    const graphContainer = document.getElementById('graph-container');
 
-    if (!graph.value) {
-        throw new Error("Data has not been loaded");
+    if (!graphContainer) {
+        throw new Error("element graph-container was not found");
     }
 
-    // Specify the dimensions of the chart.
-    const width = 928;
-    const height = 680;
-    const radius = 7;
+    const gData = await (await fetch("/public/graph-elements.json")).json();
 
-    // Specify the color scale.
-    const color = d3.scaleOrdinal(d3.schemeCategory10);
-
-    // The force simulation mutates links and nodes, so create a copy
-    // so that re-evaluating this cell produces the same result.
-    const links = dataLinks.map(d => ({ ...d }));
-    const nodes = dataNodes.map(d => ({ ...d }));
-
-    // Create a simulation with several forces.
-    const simulation = d3.forceSimulation(nodes)
-        .force("link", d3.forceLink(links).id((d: any) => d.id))
-        .force("charge", d3.forceManyBody())
-        .force("x", d3.forceX())
-        .force("y", d3.forceY());
-
-    // Create the SVG container.
-    const svg = d3.create("svg")
-        .attr("width", width)
-        .attr("height", height)
-        .attr("viewBox", [-width / 2, -height / 2, width, height])
-        .attr("style", "width: 100vw; height: calc(100vh - 40px)");
-
-    // Add a line for each link, and a circle for each node.
-    const link = svg.append("g")
-        .attr("stroke", "#999")
-        .attr("stroke-opacity", 0.6)
-        .selectAll("line")
-        .data(links)
-        .join("line")
-        .attr("stroke-width", (d: any) => 2);
-
-    const node = svg.append("g")
-        .attr("stroke", "#fff")
-        .attr("stroke-width", 1.5)
-        .selectAll("circle")
-        .data(nodes)
-        .join("circle")
-        .attr("r", radius)
-        .attr("id", (d: any) => d.id)
-        .attr("fill", (d: any) => color(d.group));
-
-    node.append("title")
-        .text((d: any) => d.group == "project" ? d.title : d.full_name);
-
-    // Add a drag behavior.
-    node.call(d3.drag()
-        .on("start", dragstarted)
-        .on("drag", dragged)
-        .on("end", dragended));
-
-    // Add click node behavior
-    node.on("click", clickedNode);
-
-    // Zoom functionalities
-
-    svg.call(d3.zoom()
-        .extent([[0, 0], [width, height]])
-        .scaleExtent([1, 8])
-        .on("zoom", zoomed));
-
-    function zoomed({ transform }: any) {
-        node.attr("transform", transform);
-        link.attr("transform", transform);
+    if (!gData) {
+        throw new Error("graph-elements.json was not found");
     }
 
-    function clickedNode(e: PointerEvent, d: any) {
+    graph.value = ForceGraph3D();
+    graph.value(graphContainer)
+        .graphData(gData)
+        .showNavInfo(false)
+        .nodeAutoColorBy("name")
+        .linkDirectionalParticles(2)
+        .linkDirectionalParticleSpeed(d => 2 * 0.001)
+        // .linkAutoColorBy("source")
+        // .linkWidth(.2)
+        // .backgroundColor('#000000')
+        .nodeThreeObject(node => {
+            if (node.group == NodeType.TEAM_MEMBER) {
 
-        //open modal
-        selectedNodeInfo.value = d;
-        modalIsVisible.value = true;
+                const spriteText = new SpriteText(node.name);
+                spriteText.material.depthWrite = false; // make sprite background transparent
+                // spriteText.color = node.color;
+                spriteText.color = 'white';
+                spriteText.textHeight = 1.2;
+                spriteText.position.y = -8;
+                // spriteText.position.set(0, -10, 0)
 
-        //clear previously highlighted nodes 
-        d3
-            .selectAll("circle")
-            .style("fill", (d: any) => color(d.group));
+                const group = new THREE.Group();
+                group.add(createImageSprite(`/src/assets/images/team/${node.id}.jpg`));
+                group.add(spriteText);
 
-        // highlight selected node and its neighbours
-        const neighbours_id: string[] = [d.id];
-
-        links.map((e: any) => {
-            if (e.target.id == d.id) {
-                neighbours_id.push(e.source.id);
-            } else if (e.source.id == d.id) {
-                neighbours_id.push(e.target.id);
+                return group;
+            } else {
+                const sprite = new SpriteText(node.name);
+                sprite.material.depthWrite = false; // make sprite background transparent
+                sprite.color = node.color;
+                sprite.textHeight = 4;
+                return sprite;
             }
-        });
+        })
+        // .nodeThreeObjectExtend(node => {
+        //     // return node.group == NodeType.PROJECT;
+        //     return true;
+        // })
+        .onNodeClick(fitNodeIntoView);
 
-        d3.selectAll("circle").filter((n: any) =>
-            neighbours_id.includes(n.id)
-        ).style("fill", 'red');
-    }
+    // const bloomPass = new UnrealBloomPass();
+    // bloomPass.strength = 1;
+    // bloomPass.radius = 1;
+    // bloomPass.threshold = 0;
+    // graph.value.postProcessingComposer().addPass(bloomPass);
 
-    // Set the position attributes of links and nodes each time the simulation ticks.
-    simulation.on("tick", () => {
-        link
-            .attr("x1", (d: any) => d.source.x)
-            .attr("y1", (d: any) => d.source.y)
-            .attr("x2", (d: any) => d.target.x)
-            .attr("y2", (d: any) => d.target.y);
+    // Spread nodes a little wider
+    graph.value.d3Force('charge').strength(-120);
 
-        node
-            .attr("cx", (d: any) => d.x)
-            .attr("cy", (d: any) => d.y);
-    });
-
-    // Reheat the simulation when drag starts, and fix the subject position.
-    function dragstarted(event: any) {
-        if (!event.active) simulation.alphaTarget(0.3).restart();
-        event.subject.fx = event.subject.x;
-        event.subject.fy = event.subject.y;
-    }
-
-    // Update the subject (dragged node) position during drag.
-    function dragged(event: any) {
-        event.subject.fx = event.x;
-        event.subject.fy = event.y;
-    }
-
-    // Restore the target alpha so the simulation cools after dragging ends.
-    // Unfix the subject position now that it’s no longer being dragged.
-    function dragended(event: any) {
-        if (!event.active) simulation.alphaTarget(0);
-        event.subject.fx = null;
-        event.subject.fy = null;
-    }
-
-    // When this cell is re-run, stop the previous simulation. (This doesn’t
-    // really matter since the target alpha is zero and the simulation will
-    // stop naturally, but it’s a good practice.)
-    // invalidation.then(() => simulation.stop());
-
-    return svg;
-}
-
-// filter logic
-const filteredGraph = computed((): Graph => {
-    if (toSearch.value?.length) {
-        const filteredNodes = graph.value?.getNodes.filter((n: GraphNode) => {
-            return n.id.toLowerCase().startsWith(toSearch.value.toLowerCase());
-        }).map((n: GraphNode) => n.id) || [];
-
-        return graph.value?.subGraph(filteredNodes);
-    }
-
-    return new Graph(graph.value.getNodes, graph.value?.getLinks);
-});
-
-const updateGraph = async () => {
-    if (!graph.value) return
-    svg.value = initializeD3Graph(filteredGraph.value.getNodes, filteredGraph.value.getLinks);
-    document.getElementById("graph-container")?.replaceChildren();
-    document.getElementById("graph-container")?.append(svg.value.node());
 };
 
-watch(filteredGraph, () => {
-    updateGraph();
-})
+const fitNodeIntoView = (node: any) => {
+
+    if (!node) return;
+
+    if (typeof node === "string") {
+        node = graph.value.graphData().nodes.find((n: any) => n.id == node);
+    }
+
+    const nodes = optionNodes.value![0].items.concat(optionNodes.value![1].items);
+    selectedNode.value = nodes.find(n => n.value == node.id);
+
+    // Aim at node from outside it
+    const distance = 40;
+    const distRatio = 1 + distance / Math.hypot(node.x, node.y, node.z);
+
+    const newPos = node.x || node.y || node.z
+        ? { x: node.x * distRatio, y: node.y * distRatio, z: node.z * distRatio }
+        : { x: 0, y: 0, z: distance }; // special case if node is in (0,0,0)
+
+    graph.value.cameraPosition(
+        newPos, // new position
+        node, // lookAt ({ x, y, z })
+        3000  // ms transition duration
+    )
+};
+
+const selectedNodeInfoUrl = computed(() => {
+    return selectedNode.value?.url;
+});
+
+const createImageSprite = (path: string) => {
+    const imgTexture = new THREE.TextureLoader().load(path);
+    imgTexture.colorSpace = THREE.SRGBColorSpace;
+ 
+    const alphaTexture = new THREE.TextureLoader().load(`/src/assets/images/alfa.png`);
+    const material = new THREE.SpriteMaterial({ map: imgTexture, alphaMap: alphaTexture });
+    const sprite = new THREE.Sprite(material);
+    sprite.scale.set(12, 12);
+   
+    imgTexture.repeat.set(1, 1 / (4/3));
+    imgTexture.center.set(0.5, 0.5);
+ 
+    return sprite;
+}
+
+//#region Visitor
+
+const initializeVisitor = (time: number = 6000) => {
+    visitor.value = new RandomVisitor(graph.value.graphData());
+    setInterval(() => {
+        if (traverseAnimation.value) {
+            visitor.value?.moveNext();
+            const currentNodeId = visitor.value?.getCurrentNodeId();
+            fitNodeIntoView(currentNodeId);
+        } else {
+            tryResumeTraverseAnimation();
+        }
+    }, time);
+};
+
+// this has to be called inside of a setInterval. Every x seconds
+const tryResumeTraverseAnimation = () => {
+    // 5 minutes have passed since the last user interaction
+    if ((((Date.now() - lastInteractionTime.value)) / 1000) > 3000) {
+        traverseAnimation.value = true;
+    }
+};
+
+// this has to be called whenever the user interacts with the screen
+const stopTraverseAnimation = () => {
+    lastInteractionTime.value = Date.now();
+    traverseAnimation.value = false;
+};
+
+//#endregion
+
+//#region Filter
+
+const optionNodes = computed(() => {
+    if (graph.value) {
+
+        const groupedItems: { label: string; items: { label: string; value: string; color: string; url: string; group: string }[] }[] = [{
+            label: "Team Members",
+            items: [],
+        }, {
+            label: "Projects",
+            items: []
+        }];
+
+        graph.value.graphData().nodes.map((n: any) => {
+            groupedItems[n.group == NodeType.PROJECT ? 1 : 0].items.push({
+                label: n.name,
+                value: n.id,
+                color: n.color,
+                url: n.info_url,
+                group: n.group
+            });
+        });
+
+        return groupedItems;
+    }
+});
+
+//#endregion
 
 onMounted(async () => {
-    const data = await loadData();
-    graph.value = new Graph(data.nodes, data.links);
-    updateGraph();
+    await initialize();
+    initializeVisitor();
+    document.body.addEventListener('touchstart', stopTraverseAnimation);
+    document.body.addEventListener('click', stopTraverseAnimation);
 })
 </script>
+<style scoped></style>

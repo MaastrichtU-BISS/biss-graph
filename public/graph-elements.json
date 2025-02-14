@@ -166,140 +166,162 @@
       "group": "Project",
       "name": "Lawnotation",
       "info_url": "https://www.biss-institute.com/en/posts/iframe/legal-research-software",
-      "color": "#FF5733"
+      "color": "#0e5983"
     },
-    {
-      "id": "techalliance",
-      "group": "Project",
-      "name": "Tech\nAlliance",
-      "info_url": "https://www.biss-institute.com/en/posts/iframe/enhancing-customer-support-with-ai"
-    },
-    {
-      "id": "flying-forward",
-      "group": "Project",
-      "name": "Flying\nForward",
-      "info_url": "https://www.biss-institute.com/en/posts/iframe/flying-forward"
-    },
-    {
-      "id": "elsa",
-      "group": "Project",
-      "name": "ELSA",
-      "info_url": "https://www.biss-institute.com/en/posts/iframe/ai-to-prevent-poverty-and-debt"
-    },
-    {
-      "id": "audio-to-semantics",
-      "group": "Project",
-      "name": "Audio to\nSemantics",
-      "info_url": "https://www.biss-institute.com/en/posts/iframe/how-can-we-recognize-sound-when-it-is-out-of-sight"
-    },
-    {
-      "id": "plurism-legal-sources",
-      "group": "Project",
-      "name": "Pluralism of \nlegal sources \nanalyses",
-      "info_url": ""
-    },
-    {
-      "id": "faivor",
-      "group": "Project",
-      "name": "FAIVOR",
-      "info_url": ""
-    },
-    {
-      "id": "fair-ai",
-      "group": "Project",
-      "name": "FAIR4AI",
-      "info_url": ""
-    },
-    {
-      "id": "automated-essay-scoring",
-      "group": "Project",
-      "name": "Automated\nEssay\nScoring",
-      "info_url": ""
-    },
-    {
-      "id": "netspar-financial-advice",
-      "group": "Project",
-      "name": "Netspar\nAutomated\nFinancial\nAdvice",
-      "info_url": "https://www.biss-institute.com/en/posts/iframe/can-automated-systems-give-good-financial-advice"
-    },
-    {
-      "id": "case-law-explorer",
-      "group": "Project",
-      "name": "Case Law\nExplorer",
-      "info_url": "https://www.biss-institute.com/en/posts/iframe/legal-research-software"
-    },
-    {
-      "id": "better",
-      "group": "Project",
-      "name": "BETTER",
-      "info_url": ""
-    },
-    {
-      "id": "gemeente-sittard-geleen",
-      "group": "Project",
-      "name": "Gemeente\nSittard-Geleen",
-      "info_url": ""
-    },
-    {
-      "id": "am-ai-right",
-      "group": "Project",
-      "name": "Am AI\nright?",
-      "info_url": ""
-    },
-    {
-      "id": "stichting-onderzoek-rechtspleging",
-      "group": "Project",
-      "name": "Stichting\nOnderzoek\nRechtspleging",
-      "info_url": ""
-    },
-    {
-      "id": "strong-aya",
-      "group": "Project",
-      "name": "Strong-AYA",
-      "info_url": ""
-    },
-    {
-      "id": "impact-explorer",
-      "group": "Project",
-      "name": "Impact\nExplorer",
-      "info_url": ""
-    },
-    {
-      "id": "experiencing-poverty",
-      "group": "Project",
-      "name": "Experiencing\nPoverty",
-      "info_url": ""
-    },
-    {
-      "id": "priceless",
-      "group": "Project",
-      "name": "PRICELESS",
-      "info_url": ""
-    },
-    {
-      "id": "circular-city",
-      "group": "Project",
-      "name": "Circular City\nChallenge",
-      "info_url": ""
-    },
-    {
-      "id": "nijsen-project",
-      "group": "Project",
-      "name": "Nijsen\nproject",
-      "info_url": "https://www.biss-institute.com/en/posts/iframe/what-is-the-content-of-livestock-feed"
-    },
-    {
-      "id": "factory-shutdown",
-      "group": "Project",
-      "name": "Factory\nshutdowns",
-      "info_url": "https://www.biss-institute.com/en/posts/iframe/preventfactoryshutdowns"
-    },
-    {
-      "id": "mecc-maastricht",
-      "group": "Project",
-      "name": "MECC\nMaastricht",
-      "info_url": ""
-    }
+        {
+          "id": "techalliance",
+          "group": "Project",
+          "name": "Tech\nAlliance",
+          "info_url": "https://www.biss-institute.com/en/posts/iframe/enhancing-customer-support-with-ai",
+          "color": "#fe5629"
+        },
+        {
+          "id": "flying-forward",
+          "group": "Project",
+          "name": "Flying\nForward",
+          "info_url": "https://www.biss-institute.com/en/posts/iframe/flying-forward",
+          "color": "#7d3c52"
+        },
+        {
+          "id": "elsa",
+          "group": "Project",
+          "name": "ELSA",
+          "info_url": "https://www.biss-institute.com/en/posts/iframe/ai-to-prevent-poverty-and-debt",
+          "color": "#62bc79"
+        },
+        {
+          "id": "audio-to-semantics",
+          "group": "Project",
+          "name": "Audio to\nSemantics",
+          "info_url": "https://www.biss-institute.com/en/posts/iframe/how-can-we-recognize-sound-when-it-is-out-of-sight",
+          "color": "#F0C808"
+        },
+        {
+          "id": "plurism-legal-sources",
+          "group": "Project",
+          "name": "Pluralism of \nlegal sources \nanalyses",
+          "info_url": "",
+          "color": "#8A2BE2"
+        },
+        {
+          "id": "faivor",
+          "group": "Project",
+          "name": "FAIVOR",
+          "info_url": "",
+          "color": "#FF7F50"
+        },
+        {
+          "id": "fair-ai",
+          "group": "Project",
+          "name": "FAIR4AI",
+          "info_url": "",
+          "color": "#2E8B57"
+        },
+        {
+          "id": "automated-essay-scoring",
+          "group": "Project",
+          "name": "Automated\nEssay\nScoring",
+          "info_url": "",
+          "color": "#FFD700"
+        },
+        {
+          "id": "netspar-financial-advice",
+          "group": "Project",
+          "name": "Netspar\nAutomated\nFinancial\nAdvice",
+          "info_url": "https://www.biss-institute.com/en/posts/iframe/can-automated-systems-give-good-financial-advice",
+          "color": "#FF1493"
+        },
+        {
+          "id": "case-law-explorer",
+          "group": "Project",
+          "name": "Case Law\nExplorer",
+          "info_url": "https://www.biss-institute.com/en/posts/iframe/legal-research-software",
+          "color": "#00BFFF"
+        },
+        {
+          "id": "better",
+          "group": "Project",
+          "name": "BETTER",
+          "info_url": "",
+          "color": "#C71585"
+        },
+        {
+          "id": "gemeente-sittard-geleen",
+          "group": "Project",
+          "name": "Gemeente\nSittard-Geleen",
+          "info_url": "",
+          "color": "#D2691E"
+        },
+        {
+          "id": "am-ai-right",
+          "group": "Project",
+          "name": "Am AI\nright?",
+          "info_url": "",
+          "color": "#3c457d"
+        },
+        {
+          "id": "stichting-onderzoek-rechtspleging",
+          "group": "Project",
+          "name": "Stichting\nOnderzoek\nRechtspleging",
+          "info_url": "",
+          "color": "#32CD32"
+        },
+        {
+          "id": "strong-aya",
+          "group": "Project",
+          "name": "Strong-AYA",
+          "info_url": "",
+          "color": "#8B0000"
+        },
+        {
+          "id": "impact-explorer",
+          "group": "Project",
+          "name": "Impact\nExplorer",
+          "info_url": "",
+          "color": "#3b7d82"
+        },
+        {
+          "id": "experiencing-poverty",
+          "group": "Project",
+          "name": "Experiencing\nPoverty",
+          "info_url": "",
+          "color": "#20B2AA"
+        },
+        {
+          "id": "priceless",
+          "group": "Project",
+          "name": "PRICELESS",
+          "info_url": "",
+          "color": "#9932CC"
+        },
+        {
+          "id": "circular-city",
+          "group": "Project",
+          "name": "Circular City\nChallenge",
+          "info_url": "",
+          "color": "#FF6347"
+        },
+        {
+          "id": "nijsen-project",
+          "group": "Project",
+          "name": "Nijsen\nproject",
+          "info_url": "https://www.biss-institute.com/en/posts/iframe/what-is-the-content-of-livestock-feed",
+          "color": "#800080"
+        },
+        {
+          "id": "factory-shutdown",
+          "group": "Project",
+          "name": "Factory\nshutdowns",
+          "info_url": "https://www.biss-institute.com/en/posts/iframe/preventfactoryshutdowns",
+          "color": "#ADFF2F"
+        },
+        {
+          "id": "mecc-maastricht",
+          "group": "Project",
+          "name": "MECC\nMaastricht",
+          "info_url": "",
+          "color": "#4682B4"
+        }
   ],
   "links": [
     {

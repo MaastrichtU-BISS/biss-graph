@@ -1,4 +1,7 @@
 <template>
+    <div class="absolute top-0 text-center w-full z-11">
+        <h1 class="text-3xl font-semibold"> BISS' PROJECTS</h1>
+    </div>
     <div class="absolute bottom-0 pb-2 w-full z-10">
         <table class="w-full table-fixed align-middle">
             <td>
@@ -35,7 +38,7 @@
                         <div class="flex">
                             <div>
                                 <div class="block text-sm">
-                                    Read more about
+                                    Read more about {{ selectedNode.group == NodeType.PROJECT ? ' this project' : ''}}
                                 </div>
                                 <div class="block font-bold">{{ selectedNode.label }}</div>
                             </div>

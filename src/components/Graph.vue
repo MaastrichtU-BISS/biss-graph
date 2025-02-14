@@ -1,5 +1,5 @@
 <template>
-    <div class="absolute top-0 text-center w-full z-11">
+    <div class="absolute top-0 text-center w-full z-50">
         <h1 class="text-3xl font-semibold"> BISS' PROJECTS</h1>
     </div>
     <div class="absolute bottom-0 pb-2 w-full z-10">

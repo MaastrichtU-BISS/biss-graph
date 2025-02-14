@@ -11,3 +11,14 @@ const isVisible = defineModel<boolean>('isVisible', { required: true, default: f
 const infoUrl = defineModel<string>('infoUrl', { required: false } );
     
 </script>
+<style>
+.p-dialog-content {
+    padding: 0;
+    background-color: white !important;
+}
+
+.p-dialog-header {
+    background-color: white !important;
+    /* border-bottom: 1px gray solid; */
+}
+</style>

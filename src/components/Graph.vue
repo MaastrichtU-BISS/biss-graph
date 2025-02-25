@@ -99,20 +99,26 @@ const initialize = async () => {
         // .backgroundColor('#000000')
         .nodeThreeObject((node: any) => {
             if (node.group == NodeType.TEAM_MEMBER) {
-
                 const spriteText = new SpriteText(node.name);
-                spriteText.material.depthWrite = false; // make sprite background transparent
-                // spriteText.color = node.color;
+                spriteText.material.depthWrite = false; 
                 spriteText.color = 'white';
-                spriteText.textHeight = 1.2;
-                spriteText.position.y = -8;
-                // spriteText.position.set(0, -10, 0)
+                spriteText.textHeight = 1.2; 
+
+                const imageSprite = createImageSprite(`/src/assets/images/team/${node.id}.jpg`);
+                const textPadding = 3;
+
+                const imageHeight = imageSprite.scale.y;
+                imageSprite.position.set(0, 0, 0);
+                const textYOffset = imageHeight / 2 + spriteText.textHeight / 2 + textPadding;
+
+                spriteText.position.set(0, -textYOffset, 0);
 
                 const group = new THREE.Group();
-                group.add(createImageSprite(`/src/assets/images/team/${node.id}.jpg`));
+                group.add(imageSprite);
                 group.add(spriteText);
 
                 return group;
+
             } else {
                 const sprite = new SpriteText(node.name);
                 sprite.material.depthWrite = true; // make sprite background transparent
@@ -191,15 +197,15 @@ const selectedNodeInfoUrl = computed(() => {
 const createImageSprite = (path: string) => {
     const imgTexture = new THREE.TextureLoader().load(path);
     imgTexture.colorSpace = THREE.SRGBColorSpace;
- 
+
     const alphaTexture = new THREE.TextureLoader().load(`/src/assets/images/alfa.png`);
     const material = new THREE.SpriteMaterial({ map: imgTexture, alphaMap: alphaTexture });
     const sprite = new THREE.Sprite(material);
     sprite.scale.set(12, 12);
-   
-    imgTexture.repeat.set(1, 1 / (4/3));
+
+    imgTexture.repeat.set(1, 1 / (4 / 3));
     imgTexture.center.set(0.5, 0.5);
- 
+
     return sprite;
 }
 

@@ -1,6 +1,9 @@
 <template>
-    <div class="absolute top-0 text-center w-full z-50">
-        <h1 class="text-3xl font-semibold"> BISS' PROJECTS</h1>
+    <div class="absolute top-0 text-center flex w-full ">
+        <h1 class="text-3xl font-semibold mx-auto z-50"> BISS' PROJECTS</h1>
+        <div class="p-2 z-50">
+            <img src="/finger-tapping.gif" height="50" width="50" />
+        </div>
     </div>
     <div class="absolute bottom-0 pb-2 w-full z-10">
         <table class="w-full table-fixed align-middle">
@@ -105,10 +108,9 @@ const initialize = async () => {
                 spriteText.textHeight = 1.2; 
 
                 const imageSprite = createImageSprite(`/src/assets/images/team/${node.id}.jpg`);
-                const textPadding = 3;
 
+                const textPadding = 3;
                 const imageHeight = imageSprite.scale.y;
-                imageSprite.position.set(0, 0, 0);
                 const textYOffset = imageHeight / 2 + spriteText.textHeight / 2 + textPadding;
 
                 spriteText.position.set(0, -textYOffset, 0);
@@ -195,15 +197,18 @@ const selectedNodeInfoUrl = computed(() => {
 });
 
 const createImageSprite = (path: string) => {
-    const imgTexture = new THREE.TextureLoader().load(path);
+    const imgTextureLoader = new THREE.TextureLoader();
+    const imgTexture = imgTextureLoader.load(path);
+
     imgTexture.colorSpace = THREE.SRGBColorSpace;
 
     const alphaTexture = new THREE.TextureLoader().load(`/src/assets/images/alfa.png`);
     const material = new THREE.SpriteMaterial({ map: imgTexture, alphaMap: alphaTexture });
     const sprite = new THREE.Sprite(material);
-    sprite.scale.set(12, 12);
+    sprite.scale.set(12, 12, 1)
+    sprite.position.set(0, 0, 0);
 
-    imgTexture.repeat.set(1, 1 / (4 / 3));
+    imgTexture.repeat.set(1, 1);
     imgTexture.center.set(0.5, 0.5);
 
     return sprite;

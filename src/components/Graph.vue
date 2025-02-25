@@ -95,9 +95,9 @@ const initialize = async () => {
         .linkDirectionalParticles(2)
         .linkDirectionalParticleSpeed(d => 2 * 0.001)
         // .linkAutoColorBy("source")
-        // .linkWidth(.2)
+        .linkWidth(.2)
         // .backgroundColor('#000000')
-        .nodeThreeObject(node => {
+        .nodeThreeObject((node: any) => {
             if (node.group == NodeType.TEAM_MEMBER) {
 
                 const spriteText = new SpriteText(node.name);
@@ -115,8 +115,10 @@ const initialize = async () => {
                 return group;
             } else {
                 const sprite = new SpriteText(node.name);
-                sprite.material.depthWrite = false; // make sprite background transparent
+                sprite.material.depthWrite = true; // make sprite background transparent
                 sprite.color = node.color;
+                // sprite.backgroundColor = 'black';
+                // sprite.border = '1px solid white';
                 sprite.textHeight = 4;
                 return sprite;
             }
@@ -125,7 +127,9 @@ const initialize = async () => {
         //     // return node.group == NodeType.PROJECT;
         //     return true;
         // })
-        .onNodeClick(fitNodeIntoView);
+        .onNodeClick((node: any) => {
+            fitNodeIntoView(node);
+        });
 
     // const bloomPass = new UnrealBloomPass();
     // bloomPass.strength = 1;
@@ -138,12 +142,28 @@ const initialize = async () => {
 
 };
 
-const fitNodeIntoView = (node: any) => {
+const highlightEdges = (n: any) => {
+    const conectedLinks = graph.value.graphData().links.filter((l: any) => {
+        return l.source.id == n?.id || l.target.id == n?.id;
+    });
+
+    graph.value
+    // .linkWidth(l => conectedLinks.includes(l) ? .3 : .2)
+    .linkDirectionalParticleSpeed(l => conectedLinks.includes(l) ? 0.004 : 0.002)
+    .linkDirectionalParticles(l => conectedLinks.includes(l) ? 4 : 2)
+    .linkColor(l => conectedLinks.includes(l) ? '#E9F633' : null)
+};
+
+const fitNodeIntoView = (node: any, highlight: boolean = true) => {
 
     if (!node) return;
 
     if (typeof node === "string") {
         node = graph.value.graphData().nodes.find((n: any) => n.id == node);
+    }
+
+    if(highlight) {
+        highlightEdges(node);
     }
 
     const nodes = optionNodes.value![0].items.concat(optionNodes.value![1].items);
@@ -185,13 +205,13 @@ const createImageSprite = (path: string) => {
 
 //#region Visitor
 
-const initializeVisitor = (time: number = 6000) => {
+const initializeVisitor = (time: number = 15000) => {
     visitor.value = new RandomVisitor(graph.value.graphData());
     setInterval(() => {
         if (traverseAnimation.value) {
             visitor.value?.moveNext();
             const currentNodeId = visitor.value?.getCurrentNodeId();
-            fitNodeIntoView(currentNodeId);
+            fitNodeIntoView(currentNodeId, false);
         } else {
             tryResumeTraverseAnimation();
         }

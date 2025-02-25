@@ -37,11 +37,13 @@
             </td>
             <td>
                 <div class="relative text-center mx-auto w-fit z-10" v-if="selectedNode">
-                    <Button severity="primary" rounded class="relative shadow-[inset_0_25px_50px_-12px_rgb(0_0_0_/_0.25)] shadow-indigo-500/50" @click="modalIsVisible = true">
+                    <Button severity="primary" rounded
+                        class="relative shadow-[inset_0_25px_50px_-12px_rgb(0_0_0_/_0.25)] shadow-indigo-500/50"
+                        @click="modalIsVisible = true">
                         <div class="flex">
                             <div>
                                 <div class="block text-sm">
-                                    Read more about {{ selectedNode.group == NodeType.PROJECT ? ' this project' : ''}}
+                                    Read more about {{ selectedNode.group == NodeType.PROJECT ? ' this project' : '' }}
                                 </div>
                                 <div class="block font-bold">{{ selectedNode.label }}</div>
                             </div>
@@ -58,10 +60,9 @@
     </template>
 </template>
 <script setup lang="ts">
-import { onMounted, ref, computed } from 'vue';
+import { onMounted, ref, computed, watch } from 'vue';
 import ForceGraph3D from "3d-force-graph";
 import * as THREE from '//unpkg.com/three/build/three.module.js';
-// import { UnrealBloomPass } from '//unpkg.com/three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import SpriteText from "https://esm.sh/three-spritetext";
 import Dropdown from "primevue/dropdown";
 import Button from "primevue/button";
@@ -76,6 +77,11 @@ const lastInteractionTime = ref<number>(Date.now());
 const selectedNode = ref();
 const modalIsVisible = ref<boolean>(false);
 
+const TEAM_MEMBERS_TOTAL = ref(0);
+const teamMembersLoaded = ref(0);
+
+const teamMemberNodes: any = {};
+
 const initialize = async () => {
 
     const graphContainer = document.getElementById('graph-container');
@@ -85,6 +91,12 @@ const initialize = async () => {
     }
 
     const gData = await (await fetch("/public/graph-elements.json")).json();
+
+    const teamMembers = gData.nodes.filter((n: any) => n.group == NodeType.TEAM_MEMBER);
+    TEAM_MEMBERS_TOTAL.value = teamMembers.length;
+    teamMembers.forEach((n: any) => {
+        createSpriteWithText(n.id, `/src/assets/images/team/${n.id}.jpg`, n.name);
+    });
 
     if (!gData) {
         throw new Error("graph-elements.json was not found");
@@ -97,57 +109,13 @@ const initialize = async () => {
         .nodeAutoColorBy("name")
         .linkDirectionalParticles(2)
         .linkDirectionalParticleSpeed(d => 2 * 0.001)
-        // .linkAutoColorBy("source")
         .linkWidth(.2)
-        // .backgroundColor('#000000')
-        .nodeThreeObject((node: any) => {
-            if (node.group == NodeType.TEAM_MEMBER) {
-                const spriteText = new SpriteText(node.name);
-                spriteText.material.depthWrite = false; 
-                spriteText.color = 'white';
-                spriteText.textHeight = 1.2; 
-
-                const imageSprite = createImageSprite(`/src/assets/images/team/${node.id}.jpg`);
-
-                const textPadding = 3;
-                const imageHeight = imageSprite.scale.y;
-                const textYOffset = imageHeight / 2 + spriteText.textHeight / 2 + textPadding;
-
-                spriteText.position.set(0, -textYOffset, 0);
-
-                const group = new THREE.Group();
-                group.add(imageSprite);
-                group.add(spriteText);
-
-                return group;
-
-            } else {
-                const sprite = new SpriteText(node.name);
-                sprite.material.depthWrite = true; // make sprite background transparent
-                sprite.color = node.color;
-                // sprite.backgroundColor = 'black';
-                // sprite.border = '1px solid white';
-                sprite.textHeight = 4;
-                return sprite;
-            }
-        })
-        // .nodeThreeObjectExtend(node => {
-        //     // return node.group == NodeType.PROJECT;
-        //     return true;
-        // })
         .onNodeClick((node: any) => {
             fitNodeIntoView(node);
         });
 
-    // const bloomPass = new UnrealBloomPass();
-    // bloomPass.strength = 1;
-    // bloomPass.radius = 1;
-    // bloomPass.threshold = 0;
-    // graph.value.postProcessingComposer().addPass(bloomPass);
-
     // Spread nodes a little wider
     graph.value.d3Force('charge').strength(-120);
-
 };
 
 const highlightEdges = (n: any) => {
@@ -156,10 +124,10 @@ const highlightEdges = (n: any) => {
     });
 
     graph.value
-    // .linkWidth(l => conectedLinks.includes(l) ? .3 : .2)
-    .linkDirectionalParticleSpeed(l => conectedLinks.includes(l) ? 0.004 : 0.002)
-    .linkDirectionalParticles(l => conectedLinks.includes(l) ? 4 : 2)
-    .linkColor(l => conectedLinks.includes(l) ? '#E9F633' : null)
+        // .linkWidth(l => conectedLinks.includes(l) ? .3 : .2)
+        .linkDirectionalParticleSpeed(l => conectedLinks.includes(l) ? 0.004 : 0.002)
+        .linkDirectionalParticles(l => conectedLinks.includes(l) ? 4 : 2)
+        .linkColor(l => conectedLinks.includes(l) ? '#E9F633' : null)
 };
 
 const fitNodeIntoView = (node: any, highlight: boolean = true) => {
@@ -170,7 +138,7 @@ const fitNodeIntoView = (node: any, highlight: boolean = true) => {
         node = graph.value.graphData().nodes.find((n: any) => n.id == node);
     }
 
-    if(highlight) {
+    if (highlight) {
         highlightEdges(node);
     }
 
@@ -195,24 +163,113 @@ const fitNodeIntoView = (node: any, highlight: boolean = true) => {
 const selectedNodeInfoUrl = computed(() => {
     return selectedNode.value?.url;
 });
+// Function to create a sprite with an image and text
+const createSpriteWithText = (id: string, imagePath: string, text: string) => {
+    // Create a canvas to draw the image and text
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
 
-const createImageSprite = (path: string) => {
-    const imgTextureLoader = new THREE.TextureLoader();
-    const imgTexture = imgTextureLoader.load(path);
+    if (!ctx) return;
 
-    imgTexture.colorSpace = THREE.SRGBColorSpace;
+    // Load the image to draw onto the canvas
+    const image = new Image();
+    image.src = imagePath;
 
-    const alphaTexture = new THREE.TextureLoader().load(`/src/assets/images/alfa.png`);
-    const material = new THREE.SpriteMaterial({ map: imgTexture, alphaMap: alphaTexture });
-    const sprite = new THREE.Sprite(material);
-    sprite.scale.set(12, 12, 1)
-    sprite.position.set(0, 0, 0);
+    image.onload = () => {
+        // Set canvas size based on the image size
+        canvas.width = image.width;
+        canvas.height = image.height + 40;  // Extra space for text below image
 
-    imgTexture.repeat.set(1, 1);
-    imgTexture.center.set(0.5, 0.5);
+        // Draw the image onto the canvas
+        ctx.drawImage(image, 0, 0);
 
-    return sprite;
-}
+        // Add the text below the image
+        ctx.font = '30px Arial';
+        ctx.fillStyle = 'white';
+        ctx.textAlign = 'center';
+        ctx.fillText(text, canvas.width / 2, image.height + 30);
+
+        // Create a texture from the canvas
+        const texture = new THREE.Texture(canvas);
+        texture.needsUpdate = true; // Make sure the texture updates when the canvas is ready
+        texture.colorSpace = THREE.SRGBColorSpace;
+
+        // Create a sprite material with the texture
+        const alphaTexture = new THREE.TextureLoader().load(`/src/assets/images/alfa.png`);
+        const material = new THREE.SpriteMaterial({ map: texture, alphaMap: alphaTexture });
+
+        // Create the sprite
+        const sprite = new THREE.Sprite(material);
+        sprite.scale.set(12, 12, 1)
+        sprite.position.set(0, 0, 0);
+
+        texture.repeat.set(1, 1);
+        texture.center.set(0.5, 0.5);
+
+        teamMemberNodes[id] = sprite;
+        teamMembersLoaded.value++;
+    };
+};
+
+const allTeamMembersLoaded = computed(() => {
+    return TEAM_MEMBERS_TOTAL.value != 0 && teamMembersLoaded.value == TEAM_MEMBERS_TOTAL.value;
+});
+
+watch(allTeamMembersLoaded, (newVal, oldVal) => {
+    if (newVal) {
+        graph.value.nodeThreeObject((node: any) => {
+            if (node.group == NodeType.TEAM_MEMBER) {
+                // const spriteText = new SpriteText(node.name);
+                // spriteText.material.depthWrite = false; 
+                // spriteText.color = 'white';
+                // spriteText.textHeight = 1.2; 
+
+                // const imageSprite = createImageSprite(`/src/assets/images/team/${node.id}.jpg`);
+
+                // const textPadding = 3;
+                // const imageHeight = imageSprite.scale.y;
+                // const textYOffset = imageHeight / 2 + spriteText.textHeight / 2 + textPadding;
+
+                // spriteText.position.set(0, -textYOffset, 0);
+
+                // const group = new THREE.Group();
+                // group.add(imageSprite);
+                // group.add(spriteText);
+
+                // return group;
+
+                return teamMemberNodes[node.id];
+
+            } else {
+                const sprite = new SpriteText(node.name);
+                sprite.material.depthWrite = true; // make sprite background transparent
+                sprite.color = node.color;
+                // sprite.backgroundColor = 'black';
+                // sprite.border = '1px solid white';
+                sprite.textHeight = 4;
+                return sprite;
+            }
+        });
+    }
+})
+
+// const createImageSprite = (path: string) => {
+//     const imgTextureLoader = new THREE.TextureLoader();
+//     const imgTexture = imgTextureLoader.load(path);
+
+//     imgTexture.colorSpace = THREE.SRGBColorSpace;
+
+//     const alphaTexture = new THREE.TextureLoader().load(`/src/assets/images/alfa.png`);
+//     const material = new THREE.SpriteMaterial({ map: imgTexture, alphaMap: alphaTexture });
+//     const sprite = new THREE.Sprite(material);
+//     sprite.scale.set(12, 12, 1)
+//     sprite.position.set(0, 0, 0);
+
+//     imgTexture.repeat.set(1, 1);
+//     imgTexture.center.set(0.5, 0.5);
+
+//     return sprite;
+// }
 
 //#region Visitor
 
@@ -275,10 +332,13 @@ const optionNodes = computed(() => {
 //#endregion
 
 onMounted(async () => {
+    console.log('Creating graph...')
     await initialize();
+    console.log('Loading textures...');
     initializeVisitor();
     document.body.addEventListener('touchstart', stopTraverseAnimation);
     document.body.addEventListener('click', stopTraverseAnimation);
+    console.log('Ready');
 })
 </script>
 <style scoped></style>

@@ -176,18 +176,34 @@ const createSpriteWithText = (id: string, imagePath: string, text: string) => {
     image.src = imagePath;
 
     image.onload = () => {
-        // Set canvas size based on the image size
-        canvas.width = image.width;
-        canvas.height = image.height + 40;  // Extra space for text below image
+
+        const size = Math.min(image.width, image.height);
+        canvas.width = canvas.height = size;
+        const radius = size / 2;
+
+        // crop image to circle
+        ctx.save(); 
+        ctx.beginPath();
+        ctx.arc(radius, radius, radius, 0, Math.PI * 2);
+        ctx.clip();
+        
 
         // Draw the image onto the canvas
-        ctx.drawImage(image, 0, 0);
+        ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+        // black semitransparent rectangle
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+
+        ctx.fillRect(0, radius * 1.5, size, radius * 1.5);
+
+        ctx.restore(); // Restore the state to remove clipping
 
         // Add the text below the image
-        ctx.font = '30px Arial';
+        ctx.font = '50px Arial';
         ctx.fillStyle = 'white';
         ctx.textAlign = 'center';
-        ctx.fillText(text, canvas.width / 2, image.height + 30);
+        ctx.textBaseline = 'middle';
+        ctx.fillText(text, radius, radius * 1.75 );
 
         // Create a texture from the canvas
         const texture = new THREE.Texture(canvas);
@@ -195,8 +211,7 @@ const createSpriteWithText = (id: string, imagePath: string, text: string) => {
         texture.colorSpace = THREE.SRGBColorSpace;
 
         // Create a sprite material with the texture
-        const alphaTexture = new THREE.TextureLoader().load(`/src/assets/images/alfa.png`);
-        const material = new THREE.SpriteMaterial({ map: texture, alphaMap: alphaTexture });
+        const material = new THREE.SpriteMaterial({ map: texture });
 
         // Create the sprite
         const sprite = new THREE.Sprite(material);
@@ -251,7 +266,7 @@ watch(allTeamMembersLoaded, (newVal, oldVal) => {
             }
         });
     }
-})
+});
 
 // const createImageSprite = (path: string) => {
 //     const imgTextureLoader = new THREE.TextureLoader();

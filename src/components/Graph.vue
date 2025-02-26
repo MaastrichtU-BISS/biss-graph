@@ -230,37 +230,21 @@ const allTeamMembersLoaded = computed(() => {
     return TEAM_MEMBERS_TOTAL.value != 0 && teamMembersLoaded.value == TEAM_MEMBERS_TOTAL.value;
 });
 
-watch(allTeamMembersLoaded, (newVal, oldVal) => {
+watch(allTeamMembersLoaded, (newVal) => {
     if (newVal) {
         graph.value.nodeThreeObject((node: any) => {
             if (node.group == NodeType.TEAM_MEMBER) {
-                // const spriteText = new SpriteText(node.name);
-                // spriteText.material.depthWrite = false; 
-                // spriteText.color = 'white';
-                // spriteText.textHeight = 1.2; 
-
-                // const imageSprite = createImageSprite(`/src/assets/images/team/${node.id}.jpg`);
-
-                // const textPadding = 3;
-                // const imageHeight = imageSprite.scale.y;
-                // const textYOffset = imageHeight / 2 + spriteText.textHeight / 2 + textPadding;
-
-                // spriteText.position.set(0, -textYOffset, 0);
-
-                // const group = new THREE.Group();
-                // group.add(imageSprite);
-                // group.add(spriteText);
-
-                // return group;
-
                 return teamMemberNodes[node.id];
-
             } else {
                 const sprite = new SpriteText(node.name);
                 sprite.material.depthWrite = true; // make sprite background transparent
                 sprite.color = node.color;
-                // sprite.backgroundColor = 'black';
-                // sprite.border = '1px solid white';
+                sprite.backgroundColor = '#000011'; 
+                sprite.padding = 1;
+                sprite.borderColor = 'white';
+                sprite.borderWidth = .07;
+                sprite.border = 'solid';
+                sprite.borderRadius = 2;
                 sprite.textHeight = 4;
                 return sprite;
             }

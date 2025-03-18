@@ -112,6 +112,12 @@ const initialize = async () => {
         .linkWidth(.2)
         .onNodeClick((node: any) => {
             fitNodeIntoView(node);
+        })
+        .onNodeHover((node: any) => {
+            // if(window.matchMedia("(pointer: coarse)").matches) {
+                // console.log('TOUCH SCREEN')
+                fitNodeIntoView(node);
+            // }
         });
 
     // Spread nodes a little wider
@@ -252,24 +258,6 @@ watch(allTeamMembersLoaded, (newVal) => {
     }
 });
 
-// const createImageSprite = (path: string) => {
-//     const imgTextureLoader = new THREE.TextureLoader();
-//     const imgTexture = imgTextureLoader.load(path);
-
-//     imgTexture.colorSpace = THREE.SRGBColorSpace;
-
-//     const alphaTexture = new THREE.TextureLoader().load(`/src/assets/images/alfa.png`);
-//     const material = new THREE.SpriteMaterial({ map: imgTexture, alphaMap: alphaTexture });
-//     const sprite = new THREE.Sprite(material);
-//     sprite.scale.set(12, 12, 1)
-//     sprite.position.set(0, 0, 0);
-
-//     imgTexture.repeat.set(1, 1);
-//     imgTexture.center.set(0.5, 0.5);
-
-//     return sprite;
-// }
-
 //#region Visitor
 
 const initializeVisitor = (time: number = 15000) => {
@@ -288,7 +276,7 @@ const initializeVisitor = (time: number = 15000) => {
 // this has to be called inside of a setInterval. Every x seconds
 const tryResumeTraverseAnimation = () => {
     // 5 minutes have passed since the last user interaction
-    if ((((Date.now() - lastInteractionTime.value)) / 1000) > 3000) {
+    if ((((Date.now() - lastInteractionTime.value)) / 1000) > 15) {
         modalIsVisible.value = false;
         traverseAnimation.value = true;
     }
@@ -338,6 +326,9 @@ onMounted(async () => {
     initializeVisitor();
     document.body.addEventListener('touchstart', stopTraverseAnimation);
     document.body.addEventListener('click', stopTraverseAnimation);
+    document.body.addEventListener('mousemove', stopTraverseAnimation);
+    document.body.addEventListener('mousedown', stopTraverseAnimation);
+    document.body.addEventListener('focus', stopTraverseAnimation);
     console.log('Ready');
 })
 </script>

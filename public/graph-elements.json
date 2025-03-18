@@ -164,6 +164,7 @@
     {
       "id": "lawnotation",
       "group": "Project",
+<<<<<<< HEAD
       "name": "Lawnotation",
       "info_url": "https://www.biss-institute.com/en/posts/iframe/legal-research-software",
       "color": "#0e5983"
@@ -322,6 +323,75 @@
           "info_url": "",
           "color": "#4682B4"
         }
+=======
+      "name": "Legal Research Software",
+      "info_url": "https://www.biss-institute.com/en/posts/iframe/legal-research-software",
+      "color": "#0e5983"
+    },
+    {
+      "id": "techalliance",
+      "group": "Project",
+      "name": "Enhancing customer support\nwith AI",
+      "info_url": "https://www.biss-institute.com/en/posts/iframe/enhancing-customer-support-with-ai",
+      "color": "#fe5629"
+    },
+    {
+      "id": "flying-forward",
+      "group": "Project",
+      "name": "Flying Forward\nDrones that fly\nby their own",
+      "info_url": "https://www.biss-institute.com/en/posts/iframe/flying-forward",
+      "color": "#7d3c52"
+    },
+    {
+      "id": "elsa",
+      "group": "Project",
+      "name": "AI to prevent debt",
+      "info_url": "https://www.biss-institute.com/en/posts/iframe/ai-to-prevent-poverty-and-debt",
+      "color": "#62bc79"
+    },
+    {
+      "id": "audio-to-semantics",
+      "group": "Project",
+      "name": "How to recognize sound\nwhen it's out of sight?",
+      "info_url": "https://www.biss-institute.com/en/posts/iframe/how-can-we-recognize-sound-when-it-is-out-of-sight",
+      "color": "#F0C808"
+    },
+    {
+      "id": "fair-ai",
+      "group": "Project",
+      "name": "FAIR4AI",
+      "info_url": "https://www.biss-institute.com/en/posts/iframe/fair4ai-making-ai-models-practically-usable",
+      "color": "#2E8B57"
+    },
+    {
+      "id": "netspar-financial-advice",
+      "group": "Project",
+      "name": "Can automated systems\ngive good financial advice?",
+      "info_url": "https://www.biss-institute.com/en/posts/iframe/can-automated-systems-give-good-financial-advice",
+      "color": "#FF1493"
+    },
+    {
+      "id": "better",
+      "group": "Project",
+      "name": "Responsible data analytics\nin healthcare",
+      "info_url": "https://www.biss-institute.com/en/posts/iframe/better-responsible-data-analytics-in-healthcare",
+      "color": "#C71585"
+    },
+    {
+      "id": "nijsen-project",
+      "group": "Project",
+      "name": "What is the content\nof Livestock feed?",
+      "info_url": "https://www.biss-institute.com/en/posts/iframe/what-is-the-content-of-livestock-feed",
+      "color": "#800080"
+    },
+    {
+      "id": "factory-shutdown",
+      "group": "Project",
+      "name": "Prevent factory shutdowns",
+      "info_url": "https://www.biss-institute.com/en/posts/iframe/preventfactoryshutdowns",
+      "color": "#ADFF2F"
+    }
+>>>>>>> main
   ],
   "links": [
     {
@@ -377,6 +447,13 @@
       "target": "elsa"
     },
     {
+<<<<<<< HEAD
+=======
+      "source": "vivienne-curvers",
+      "target": "elsa"
+    },
+    {
+>>>>>>> main
       "source": "gijs-van-dijck",
       "target": "elsa"
     },
@@ -441,11 +518,16 @@
       "target": "nijsen-project"
     },
     {
+<<<<<<< HEAD
       "source": "rudolf-muller",
+=======
+      "source": "yenisel-plasencia",
+>>>>>>> main
       "target": "nijsen-project"
     },
     {
       "source": "vivienne-curvers",
+<<<<<<< HEAD
       "target": "circular-city"
     },
     {
@@ -555,6 +637,9 @@
     {
       "source": "chris-van-der-lans",
       "target": "gemeente-sittard-geleen"
+=======
+      "target": "nijsen-project"
+>>>>>>> main
     },
     {
       "source": "johan-van-soest",
@@ -569,6 +654,7 @@
       "target": "better"
     },
     {
+<<<<<<< HEAD
       "source": "gijs-van-dijck",
       "target": "case-law-explorer"
     },
@@ -587,6 +673,10 @@
     {
       "source": "sander-van-essel",
       "target": "case-law-explorer"
+=======
+      "source": "vivienne-curvers",
+      "target": "better"
+>>>>>>> main
     },
     {
       "source": "lisa-bruggen",
@@ -601,6 +691,7 @@
       "target": "netspar-financial-advice"
     },
     {
+<<<<<<< HEAD
       "source": "rudolf-muller",
       "target": "automated-essay-scoring"
     },
@@ -609,6 +700,8 @@
       "target": "automated-essay-scoring"
     },
     {
+=======
+>>>>>>> main
       "source": "sander-van-essel",
       "target": "fair-ai"
     },
@@ -617,6 +710,7 @@
       "target": "fair-ai"
     },
     {
+<<<<<<< HEAD
       "source": "johan-van-soest",
       "target": "faivor"
     },
@@ -635,6 +729,10 @@
     {
       "source": "anna-wilbik",
       "target": "mecc-maastricht"
+=======
+      "source": "vivienne-curvers",
+      "target": "fair-ai"
+>>>>>>> main
     },
     {
       "source": "ali-reza-ghavamipour",

@@ -289,6 +289,7 @@ const initializeVisitor = (time: number = 15000) => {
 const tryResumeTraverseAnimation = () => {
     // 5 minutes have passed since the last user interaction
     if ((((Date.now() - lastInteractionTime.value)) / 1000) > 3000) {
+        modalIsVisible.value = false;
         traverseAnimation.value = true;
     }
 };
@@ -340,4 +341,3 @@ onMounted(async () => {
     console.log('Ready');
 })
 </script>
-<style scoped></style>

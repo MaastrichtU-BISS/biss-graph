@@ -358,6 +358,10 @@
       "target": "nijsen-project"
     },
     {
+      "source": "vivienne-curvers",
+      "target": "nijsen-project"
+    },
+    {
       "source": "johan-van-soest",
       "target": "better"
     },
@@ -367,6 +371,10 @@
     },
     {
       "source": "andre-dekker",
+      "target": "better"
+    },
+    {
+      "source": "vivienne-curvers",
       "target": "better"
     },
     {
@@ -387,6 +395,10 @@
     },
     {
       "source": "johan-van-soest",
+      "target": "fair-ai"
+    },
+    {
+      "source": "vivienne-curvers",
       "target": "fair-ai"
     },
     {

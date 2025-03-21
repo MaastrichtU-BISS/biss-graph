@@ -1,14 +1,14 @@
 <template>
     <div class="absolute top-0 text-center flex w-full ">
-        <h1 class="text-2xl font-semibold mx-auto z-50 my-2">
+        <h1 class="text-3xl font-semibold mx-auto z-50 my-4">
            BISS is like the A-team, but with professors from Maastricht University
         </h1>
         <div class="p-2 z-50">
             <img src="/src/assets/images/finger-tapping.gif" height="50" width="50" />
         </div>
     </div>
-    <div class="absolute bottom-0 pb-2 w-full">
-        <table class="w-full table-fixed align-middle">
+    <div class="absolute bottom-0 w-full">
+        <table class="w-full table-fixed py-2 align-bottom">
             <td>
                 <div class="w-fit z-10 relative">
                     <Dropdown v-model="selectedNode" :options="optionNodes" optionLabel="label" optionGroupLabel="label"
@@ -55,7 +55,7 @@
             </td>
             <td>
                 <div class="relative text-right z-10">
-                    <img src="/src/assets/images/biss_um_logo.png" height="100px">
+                    <img src="/src/assets/images/biss_um_logo.png" height="90px" class="mb-[-20px]">
                 </div>
             </td>
         </table>

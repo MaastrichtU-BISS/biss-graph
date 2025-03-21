@@ -1,5 +1,5 @@
 <template>
-    <div class="absolute top-0 text-center flex w-full z-10 align-middle" style="background-color: rgba(0,0,0,.5);">
+    <div class="absolute top-0 text-center flex w-full z-10 align-middle" style="background-color: rgba(0,0,17,.5);">
         <h1 class="text-3xl font-semibold mx-auto z-50 my-2">
             BISS is like the A-team, but with professors from Maastricht University
         </h1>

@@ -1,10 +1,10 @@
 <template>
     <div class="absolute top-0 text-center flex w-full ">
         <h1 class="text-2xl font-semibold mx-auto z-50 my-2">
-            *BISS is like the A-team, but with professors from Maastricht University
+           BISS is like the A-team, but with professors from Maastricht University
         </h1>
         <div class="p-2 z-50">
-            <img src="/finger-tapping.gif" height="50" width="50" />
+            <img src="/src/assets/images/finger-tapping.gif" height="50" width="50" />
         </div>
     </div>
     <div class="absolute bottom-0 pb-2 w-full">
@@ -53,7 +53,11 @@
                     </Button>
                 </div>
             </td>
-            <td></td>
+            <td>
+                <div class="relative text-right z-10">
+                    <img src="/src/assets/images/biss_um_logo.png" height="100px">
+                </div>
+            </td>
         </table>
     </div>
     <div id="graph-container"></div>

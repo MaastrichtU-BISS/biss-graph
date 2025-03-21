@@ -1,10 +1,10 @@
 <template>
-    <div class="absolute top-0 text-center flex w-full ">
-        <h1 class="text-3xl font-semibold mx-auto z-50 my-4">
-           BISS is like the A-team, but with professors from Maastricht University
+    <div class="absolute top-0 text-center flex w-full z-10 align-middle" style="background-color: rgba(0,0,0,.5);">
+        <h1 class="text-3xl font-semibold mx-auto z-50 my-2">
+            BISS is like the A-team, but with professors from Maastricht University
         </h1>
         <div class="p-2 z-50">
-            <img src="/src/assets/images/finger-tapping.gif" height="50" width="50" />
+            <img src="/src/assets/images/finger-tapping.gif" height="40" width="40" />
         </div>
     </div>
     <div class="absolute bottom-0 w-full">
@@ -279,7 +279,7 @@ const moveVisitor = () => {
     visitor.value?.moveNext();
     const currentNodeId = visitor.value?.getCurrentNodeId();
     fitNodeIntoView(currentNodeId, false);
-} 
+}
 
 // this has to be called inside of a setInterval. Every x seconds
 const tryResumeTraverseAnimation = (time: number = 15000) => {

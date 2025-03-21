@@ -113,13 +113,6 @@
       "info_url": "https://www.biss-institute.com/en/team/iframe/elia-formisano"
     },
     {
-      "id": "anna-wilbik",
-      "group": "Team Member",
-      "name": "Prof. Anna Wilbik",
-      "pfp_src": "/src/assets/images/team/anna-wilbik.jpg",
-      "info_url": "https://www.biss-institute.com/en/team/iframe/anna-wilbik"
-    },
-    {
       "id": "ali-reza-ghavamipour",
       "group": "Team Member",
       "name": "Dr. Ali Reza Ghavamipour",
@@ -146,13 +139,6 @@
       "name": "Vivienne Curvers",
       "pfp_src": "/src/assets/images/team/vivienne-curvers.jpg",
       "info_url": "https://www.biss-institute.com/en/team/iframe/vivienne-curvers"
-    },
-    {
-      "id": "aleksandra-draper",
-      "group": "Team Member",
-      "name": "Aleksandra Draper",
-      "pfp_src": "/src/assets/images/team/aleksandra-draper.jpg",
-      "info_url": "https://www.biss-institute.com/en/team/iframe/aleksandra-draper"
     },
     {
       "id": "judith-kamalski",

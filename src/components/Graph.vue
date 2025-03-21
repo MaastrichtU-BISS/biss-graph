@@ -1,14 +1,16 @@
 <template>
     <div class="absolute top-0 text-center flex w-full ">
-        <h1 class="text-3xl font-semibold mx-auto z-50"> BISS' PROJECTS</h1>
+        <h1 class="text-2xl font-semibold mx-auto z-50 my-2">
+            *BISS is like the A-team, but with professors from Maastricht University
+        </h1>
         <div class="p-2 z-50">
             <img src="/finger-tapping.gif" height="50" width="50" />
         </div>
     </div>
-    <div class="absolute bottom-0 pb-2 w-full z-10">
+    <div class="absolute bottom-0 pb-2 w-full">
         <table class="w-full table-fixed align-middle">
             <td>
-                <div class="w-fit z-10">
+                <div class="w-fit z-10 relative">
                     <Dropdown v-model="selectedNode" :options="optionNodes" optionLabel="label" optionGroupLabel="label"
                         optionGroupChildren="items" placeholder="Search" class="w-full md:w-80" showClear filter
                         autoFilterFocus @change="fitNodeIntoView($event.value?.value)">
@@ -113,11 +115,8 @@ const initialize = async () => {
         .onNodeClick((node: any) => {
             fitNodeIntoView(node);
         })
-        .onNodeHover((node: any) => {
-            // if(window.matchMedia("(pointer: coarse)").matches) {
-                // console.log('TOUCH SCREEN')
-                fitNodeIntoView(node);
-            // }
+        .onNodeDragEnd((node: any) => {
+            fitNodeIntoView(node);
         });
 
     // Spread nodes a little wider
@@ -188,11 +187,11 @@ const createSpriteWithText = (id: string, imagePath: string, text: string) => {
         const radius = size / 2;
 
         // crop image to circle
-        ctx.save(); 
+        ctx.save();
         ctx.beginPath();
         ctx.arc(radius, radius, radius, 0, Math.PI * 2);
         ctx.clip();
-        
+
 
         // Draw the image onto the canvas
         ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
@@ -209,7 +208,7 @@ const createSpriteWithText = (id: string, imagePath: string, text: string) => {
         ctx.fillStyle = 'white';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText(text, radius, radius * 1.75 );
+        ctx.fillText(text, radius, radius * 1.75);
 
         // Create a texture from the canvas
         const texture = new THREE.Texture(canvas);
@@ -245,7 +244,7 @@ watch(allTeamMembersLoaded, (newVal) => {
                 const sprite = new SpriteText(node.name);
                 sprite.material.depthWrite = true; // make sprite background transparent
                 sprite.color = node.color;
-                sprite.backgroundColor = '#000011'; 
+                sprite.backgroundColor = '#000011';
                 sprite.padding = 1;
                 sprite.borderColor = 'white';
                 sprite.borderWidth = .07;
@@ -262,23 +261,29 @@ watch(allTeamMembersLoaded, (newVal) => {
 
 const initializeVisitor = (time: number = 15000) => {
     visitor.value = new RandomVisitor(graph.value.graphData());
+    moveVisitor();
     setInterval(() => {
         if (traverseAnimation.value) {
-            visitor.value?.moveNext();
-            const currentNodeId = visitor.value?.getCurrentNodeId();
-            fitNodeIntoView(currentNodeId, false);
+            moveVisitor();
         } else {
-            tryResumeTraverseAnimation();
+            tryResumeTraverseAnimation(time);
         }
     }, time);
 };
 
+const moveVisitor = () => {
+    visitor.value?.moveNext();
+    const currentNodeId = visitor.value?.getCurrentNodeId();
+    fitNodeIntoView(currentNodeId, false);
+} 
+
 // this has to be called inside of a setInterval. Every x seconds
-const tryResumeTraverseAnimation = () => {
-    // 5 minutes have passed since the last user interaction
-    if ((((Date.now() - lastInteractionTime.value)) / 1000) > 15) {
+const tryResumeTraverseAnimation = (time: number = 15000) => {
+    // x seconds have passed since the last user interaction
+    if ((((Date.now() - lastInteractionTime.value)) / 1000) > (time / 1000)) {
         modalIsVisible.value = false;
         traverseAnimation.value = true;
+        moveVisitor();
     }
 };
 
@@ -323,7 +328,7 @@ onMounted(async () => {
     console.log('Creating graph...')
     await initialize();
     console.log('Loading textures...');
-    initializeVisitor();
+    initializeVisitor(300000);
     document.body.addEventListener('touchstart', stopTraverseAnimation);
     document.body.addEventListener('click', stopTraverseAnimation);
     document.body.addEventListener('mousemove', stopTraverseAnimation);

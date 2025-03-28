@@ -143,6 +143,10 @@ const fitNodeIntoView = (node: any, highlight: boolean = true) => {
 
     if (!node) return;
 
+    if(node?.id == selectedNode.value?.value) {
+        modalIsVisible.value = true;
+    }
+
     if (typeof node === "string") {
         node = graph.value.graphData().nodes.find((n: any) => n.id == node);
     }

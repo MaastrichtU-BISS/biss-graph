@@ -3,9 +3,6 @@
         <h1 class="text-3xl font-semibold mx-auto z-50 my-4">
             BISS is like the A-team, but with professors from Maastricht University
         </h1>
-        <div class="p-2 z-50">
-            <img src="/src/assets/images/finger-tapping.gif" height="40" width="40" />
-        </div>
     </div>
     <div class="absolute bottom-0 w-full">
         <table class="w-full table-fixed py-2 align-bottom">
@@ -55,6 +52,7 @@
             </td>
             <td>
                 <div class="relative text-right z-10">
+                    <img src="/src/assets/images/finger-tapping.gif" class="mr-4" height="60" width="60" style="margin-bottom: -5px" />
                     <img src="/src/assets/images/biss_um_logo.png" height="90px" class="mb-[-20px]">
                 </div>
             </td>

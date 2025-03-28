@@ -12,8 +12,8 @@
             <td>
                 <div class="w-fit z-10 relative">
                     <Dropdown v-model="selectedNode" :options="optionNodes" optionLabel="label" optionGroupLabel="label"
-                        optionGroupChildren="items" placeholder="Search" class="w-full md:w-80" showClear filter
-                        autoFilterFocus @change="fitNodeIntoView($event.value?.value)">
+                        optionGroupChildren="items" placeholder="Search" class="w-full min-w-[505px]" showClear
+                        @change="fitNodeIntoView($event.value?.value)">
                         <template #value="slotProps">
                             <div v-if="slotProps.value" class="flex align-items-center">
                                 <i v-if="slotProps.value.group == NodeType.PROJECT"
@@ -305,15 +305,15 @@ const optionNodes = computed(() => {
     if (graph.value) {
 
         const groupedItems: { label: string; items: { label: string; value: string; color: string; url: string; group: string }[] }[] = [{
-            label: "Team Members",
+            label: "Projects",
             items: [],
         }, {
-            label: "Projects",
+            label: "Team Members",
             items: []
         }];
 
         graph.value.graphData().nodes.map((n: any) => {
-            groupedItems[n.group == NodeType.PROJECT ? 1 : 0].items.push({
+            groupedItems[n.group == NodeType.PROJECT ? 0 : 1].items.push({
                 label: n.name,
                 value: n.id,
                 color: n.color,

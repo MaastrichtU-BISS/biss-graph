@@ -1,7 +1,9 @@
 <template>
     <Dialog v-model:visible="isVisible" modal :style="{ width: '80vw' }" dismissableMask
         :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
-        <iframe :src="infoUrl" frameborder="0" class="w-full min-h-[80vh]"></iframe>
+        <template #container>
+            <iframe :src="infoUrl" frameborder="0" class="w-full min-h-[80vh] rounded-lg"></iframe>
+        </template>
     </Dialog>
 </template>
 <script setup lang="ts">

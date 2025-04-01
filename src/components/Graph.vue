@@ -66,8 +66,8 @@
 <script setup lang="ts">
 import { onMounted, ref, computed, watch } from 'vue';
 import ForceGraph3D from "3d-force-graph";
-import * as THREE from '//unpkg.com/three/build/three.module.js';
-import SpriteText from "https://esm.sh/three-spritetext";
+import * as THREE from "three";
+import SpriteText from "three-spritetext";
 import Dropdown from "primevue/dropdown";
 import Button from "primevue/button";
 import NodeInfoModal from "./NodeInfoModal.vue";

@@ -1,16 +1,28 @@
 <template>
-    <Dialog v-model:visible="isVisible" modal :style="{ width: '80vw' }" dismissableMask
-        :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
+    <Dialog v-model:visible="isVisible" modal :style="{ width: '70vw' }" dismissableMask>
         <template #container>
-            <iframe :src="infoUrl" frameborder="0" class="w-full min-h-[80vh] rounded-lg"></iframe>
+            <div class="relative h-[70vh]">
+                <iframe :src="infoUrl" frameborder="0" class="w-full min-h-[70vh] rounded-lg"></iframe>
+                <Button icon="pi pi-times" class="absolute left-3 bottom-3" @click="close" severity="secondary" outlined rounded aria-label="Cancel" />
+                <!-- <Button icon="pi pi-arrow-down" class="absolute left-20 bottom-3" @click="scrollDown" severity="secondary" outlined rounded aria-label="Scroll" /> -->
+            </div>
         </template>
     </Dialog>
 </template>
 <script setup lang="ts">
+import Button from 'primevue/button'
 import Dialog from 'primevue/dialog';
 
 const isVisible = defineModel<boolean>('isVisible', { required: true, default: false} );
 const infoUrl = defineModel<string>('infoUrl', { required: false } );
+
+const close = () => {
+    isVisible.value = false;
+}
+
+// const scrollDown = () => {
+
+// }
     
 </script>
 <style>

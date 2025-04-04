@@ -1,5 +1,5 @@
 <template>
-    <Dialog v-model:visible="isVisible" modal :style="{ width: '70vw' }" dismissableMask>
+    <Dialog v-model:visible="isVisible" modal :style="{ width: '60vw' }" dismissableMask>
         <template #container>
             <div class="relative h-[70vh]">
                 <iframe :src="infoUrl" frameborder="0" class="w-full min-h-[70vh] rounded-lg"></iframe>

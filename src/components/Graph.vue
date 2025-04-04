@@ -109,6 +109,7 @@ const initialize = async () => {
     graph.value = ForceGraph3D();
     graph.value(graphContainer)
         .graphData(gData)
+        .nodeLabel('')
         .showNavInfo(false)
         .nodeAutoColorBy("name")
         .linkDirectionalParticles(2)

@@ -150,6 +150,166 @@
     {
       "id": "lawnotation",
       "group": "Project",
+<<<<<<< HEAD
+      "name": "Lawnotation",
+      "info_url": "https://www.biss-institute.com/en/posts/iframe/legal-research-software",
+      "color": "#0e5983"
+    },
+        {
+          "id": "techalliance",
+          "group": "Project",
+          "name": "Tech\nAlliance",
+          "info_url": "https://www.biss-institute.com/en/posts/iframe/enhancing-customer-support-with-ai",
+          "color": "#fe5629"
+        },
+        {
+          "id": "flying-forward",
+          "group": "Project",
+          "name": "Flying\nForward",
+          "info_url": "https://www.biss-institute.com/en/posts/iframe/flying-forward",
+          "color": "#7d3c52"
+        },
+        {
+          "id": "elsa",
+          "group": "Project",
+          "name": "ELSA",
+          "info_url": "https://www.biss-institute.com/en/posts/iframe/ai-to-prevent-poverty-and-debt",
+          "color": "#62bc79"
+        },
+        {
+          "id": "audio-to-semantics",
+          "group": "Project",
+          "name": "Audio to\nSemantics",
+          "info_url": "https://www.biss-institute.com/en/posts/iframe/how-can-we-recognize-sound-when-it-is-out-of-sight",
+          "color": "#F0C808"
+        },
+        {
+          "id": "plurism-legal-sources",
+          "group": "Project",
+          "name": "Pluralism of \nlegal sources \nanalyses",
+          "info_url": "",
+          "color": "#8A2BE2"
+        },
+        {
+          "id": "faivor",
+          "group": "Project",
+          "name": "FAIVOR",
+          "info_url": "",
+          "color": "#FF7F50"
+        },
+        {
+          "id": "fair-ai",
+          "group": "Project",
+          "name": "FAIR4AI",
+          "info_url": "",
+          "color": "#2E8B57"
+        },
+        {
+          "id": "automated-essay-scoring",
+          "group": "Project",
+          "name": "Automated\nEssay\nScoring",
+          "info_url": "",
+          "color": "#FFD700"
+        },
+        {
+          "id": "netspar-financial-advice",
+          "group": "Project",
+          "name": "Netspar\nAutomated\nFinancial\nAdvice",
+          "info_url": "https://www.biss-institute.com/en/posts/iframe/can-automated-systems-give-good-financial-advice",
+          "color": "#FF1493"
+        },
+        {
+          "id": "case-law-explorer",
+          "group": "Project",
+          "name": "Case Law\nExplorer",
+          "info_url": "https://www.biss-institute.com/en/posts/iframe/legal-research-software",
+          "color": "#00BFFF"
+        },
+        {
+          "id": "better",
+          "group": "Project",
+          "name": "BETTER",
+          "info_url": "",
+          "color": "#C71585"
+        },
+        {
+          "id": "gemeente-sittard-geleen",
+          "group": "Project",
+          "name": "Gemeente\nSittard-Geleen",
+          "info_url": "",
+          "color": "#D2691E"
+        },
+        {
+          "id": "am-ai-right",
+          "group": "Project",
+          "name": "Am AI\nright?",
+          "info_url": "",
+          "color": "#3c457d"
+        },
+        {
+          "id": "stichting-onderzoek-rechtspleging",
+          "group": "Project",
+          "name": "Stichting\nOnderzoek\nRechtspleging",
+          "info_url": "",
+          "color": "#32CD32"
+        },
+        {
+          "id": "strong-aya",
+          "group": "Project",
+          "name": "Strong-AYA",
+          "info_url": "",
+          "color": "#8B0000"
+        },
+        {
+          "id": "impact-explorer",
+          "group": "Project",
+          "name": "Impact\nExplorer",
+          "info_url": "",
+          "color": "#3b7d82"
+        },
+        {
+          "id": "experiencing-poverty",
+          "group": "Project",
+          "name": "Experiencing\nPoverty",
+          "info_url": "",
+          "color": "#20B2AA"
+        },
+        {
+          "id": "priceless",
+          "group": "Project",
+          "name": "PRICELESS",
+          "info_url": "",
+          "color": "#9932CC"
+        },
+        {
+          "id": "circular-city",
+          "group": "Project",
+          "name": "Circular City\nChallenge",
+          "info_url": "",
+          "color": "#FF6347"
+        },
+        {
+          "id": "nijsen-project",
+          "group": "Project",
+          "name": "Nijsen\nproject",
+          "info_url": "https://www.biss-institute.com/en/posts/iframe/what-is-the-content-of-livestock-feed",
+          "color": "#800080"
+        },
+        {
+          "id": "factory-shutdown",
+          "group": "Project",
+          "name": "Factory\nshutdowns",
+          "info_url": "https://www.biss-institute.com/en/posts/iframe/preventfactoryshutdowns",
+          "color": "#ADFF2F"
+        },
+        {
+          "id": "mecc-maastricht",
+          "group": "Project",
+          "name": "MECC\nMaastricht",
+          "info_url": "",
+          "color": "#4682B4"
+        }
+=======
       "name": "Legal Research Software",
       "info_url": "https://www.biss-institute.com/en/posts/iframe/legal-research-software",
       "color": "#0e5983"
@@ -217,6 +377,7 @@
       "info_url": "https://www.biss-institute.com/en/posts/iframe/preventfactoryshutdowns",
       "color": "#ADFF2F"
     }
+>>>>>>> main
   ],
   "links": [
     {
@@ -272,10 +433,13 @@
       "target": "elsa"
     },
     {
+<<<<<<< HEAD
+=======
       "source": "vivienne-curvers",
       "target": "elsa"
     },
     {
+>>>>>>> main
       "source": "gijs-van-dijck",
       "target": "elsa"
     },
@@ -340,12 +504,128 @@
       "target": "nijsen-project"
     },
     {
+<<<<<<< HEAD
+      "source": "rudolf-muller",
+=======
       "source": "yenisel-plasencia",
+>>>>>>> main
       "target": "nijsen-project"
     },
     {
       "source": "vivienne-curvers",
+<<<<<<< HEAD
+      "target": "circular-city"
+    },
+    {
+      "source": "darian-meacham",
+      "target": "circular-city"
+    },
+    {
+      "source": "aleksandra-draper",
+      "target": "circular-city"
+    },
+    {
+      "source": "andre-dekker",
+      "target": "priceless"
+    },
+    {
+      "source": "gijs-van-dijck",
+      "target": "priceless"
+    },
+    {
+      "source": "johan-van-soest",
+      "target": "priceless"
+    },
+    {
+      "source": "lisa-bruggen",
+      "target": "experiencing-poverty"
+    },
+    {
+      "source": "minou-van-der-werf",
+      "target": "experiencing-poverty"
+    },
+    {
+      "source": "max-louwerse",
+      "target": "experiencing-poverty"
+    },
+    {
+      "source": "stefan-bos",
+      "target": "experiencing-poverty"
+    },
+    {
+      "source": "vivienne-curvers",
+      "target": "impact-explorer"
+    },
+    {
+      "source": "chris-van-der-lans",
+      "target": "impact-explorer"
+    },
+    {
+      "source": "elia-formisano",
+      "target": "impact-explorer"
+    },
+    {
+      "source": "darian-meacham",
+      "target": "strong-aya"
+    },
+    {
+      "source": "andre-dekker",
+      "target": "strong-aya"
+    },
+    {
+      "source": "johan-van-soest",
+      "target": "strong-aya"
+    },
+    {
+      "source": "gijs-van-dijck",
+      "target": "stichting-onderzoek-rechtspleging"
+    },
+    {
+      "source": "judith-kamalski",
+      "target": "stichting-onderzoek-rechtspleging"
+    },
+    {
+      "source": "vivienne-curvers",
+      "target": "stichting-onderzoek-rechtspleging"
+    },
+    {
+      "source": "aleksandra-draper",
+      "target": "stichting-onderzoek-rechtspleging"
+    },
+    {
+      "source": "gijs-van-dijck",
+      "target": "am-ai-right"
+    },
+    {
+      "source": "yenisel-plasencia",
+      "target": "am-ai-right"
+    },
+    {
+      "source": "aleksandra-draper",
+      "target": "am-ai-right"
+    },
+    {
+      "source": "lisa-bruggen",
+      "target": "gemeente-sittard-geleen"
+    },
+    {
+      "source": "vivienne-curvers",
+      "target": "gemeente-sittard-geleen"
+    },
+    {
+      "source": "johan-van-soest",
+      "target": "gemeente-sittard-geleen"
+    },
+    {
+      "source": "minou-van-der-werf",
+      "target": "gemeente-sittard-geleen"
+    },
+    {
+      "source": "chris-van-der-lans",
+      "target": "gemeente-sittard-geleen"
+=======
       "target": "nijsen-project"
+>>>>>>> main
     },
     {
       "source": "johan-van-soest",
@@ -360,8 +640,29 @@
       "target": "better"
     },
     {
+<<<<<<< HEAD
+      "source": "gijs-van-dijck",
+      "target": "case-law-explorer"
+    },
+    {
+      "source": "chris-van-der-lans",
+      "target": "case-law-explorer"
+    },
+    {
+      "source": "shashank-chakravarthy",
+      "target": "case-law-explorer"
+    },
+    {
+      "source": "carlos-aguilera",
+      "target": "case-law-explorer"
+    },
+    {
+      "source": "sander-van-essel",
+      "target": "case-law-explorer"
+=======
       "source": "vivienne-curvers",
       "target": "better"
+>>>>>>> main
     },
     {
       "source": "lisa-bruggen",
@@ -376,6 +677,17 @@
       "target": "netspar-financial-advice"
     },
     {
+<<<<<<< HEAD
+      "source": "rudolf-muller",
+      "target": "automated-essay-scoring"
+    },
+    {
+      "source": "yenisel-plasencia",
+      "target": "automated-essay-scoring"
+    },
+    {
+=======
+>>>>>>> main
       "source": "sander-van-essel",
       "target": "fair-ai"
     },
@@ -384,8 +696,29 @@
       "target": "fair-ai"
     },
     {
+<<<<<<< HEAD
+      "source": "johan-van-soest",
+      "target": "faivor"
+    },
+    {
+      "source": "shashank-chakravarthy",
+      "target": "plurism-legal-sources"
+    },
+    {
+      "source": "gijs-van-dijck",
+      "target": "plurism-legal-sources"
+    },
+    {
+      "source": "yenisel-plasencia",
+      "target": "mecc-maastricht"
+    },
+    {
+      "source": "anna-wilbik",
+      "target": "mecc-maastricht"
+=======
       "source": "vivienne-curvers",
       "target": "fair-ai"
+>>>>>>> main
     },
     {
       "source": "ali-reza-ghavamipour",

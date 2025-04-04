@@ -344,4 +344,3 @@ onMounted(async () => {
     console.log('Ready');
 })
 </script>
-<style scoped></style>

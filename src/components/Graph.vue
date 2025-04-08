@@ -94,7 +94,7 @@ const initialize = async () => {
         throw new Error("element graph-container was not found");
     }
 
-    const gData = await (await fetch("/public/graph-elements.json")).json();
+    const gData = await (await fetch("/graph-elements.json")).json();
 
     const teamMembers = gData.nodes.filter((n: any) => n.group == NodeType.TEAM_MEMBER);
     TEAM_MEMBERS_TOTAL.value = teamMembers.length;

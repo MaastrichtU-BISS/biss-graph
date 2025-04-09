@@ -35,8 +35,12 @@
                 </div>
             </td>
             <td>
-                <div class="relative text-center mx-auto w-fit z-10" v-if="selectedNode">
-                    <Button severity="primary" rounded
+                <div class="relative text-center mx-auto w-fit z-10 flex gap-6 align-middle" v-if="selectedNode">
+                  {{ currentZoom }}
+                    <Button icon="pi pi-search-minus" severity="secondary" rounded variant="outlined" aria-label="Bookmark" @click="applyZoom(-10)"/>
+                    <Slider v-model="currentZoom" @update:modelValue="zoomSliderChanged" :min="MIN_DISTANCE" :max="MAX_DISTANCE" class="w-56 self-center" />
+                    <Button icon="pi pi-search-plus" severity="secondary" rounded variant="outlined" aria-label="Bookmark" @click="applyZoom(+10)"/>
+                    <!-- <Button severity="primary" rounded
                         class="relative shadow-[inset_0_25px_50px_-12px_rgb(0_0_0_/_0.25)] shadow-indigo-500/50"
                         @click="modalIsVisible = true">
                         <div class="flex">
@@ -47,7 +51,7 @@
                                 <div class="block font-bold">{{ selectedNode.label }}</div>
                             </div>
                         </div>
-                    </Button>
+                    </Button> -->
                 </div>
             </td>
             <td>
@@ -69,6 +73,7 @@ import ForceGraph3D from "3d-force-graph";
 import * as THREE from "three";
 import SpriteText from "three-spritetext";
 import Dropdown from "primevue/dropdown";
+import Slider from 'primevue/slider';
 import Button from "primevue/button";
 import NodeInfoModal from "./NodeInfoModal.vue";
 import { NodeType } from "../types/graph";
@@ -85,6 +90,24 @@ const TEAM_MEMBERS_TOTAL = ref(0);
 const teamMembersLoaded = ref(0);
 
 const teamMemberNodes: any = {};
+
+const MIN_DISTANCE = 40;
+const MAX_DISTANCE = 440;
+const currentZoom = ref<number>(MIN_DISTANCE);
+
+const zoomSliderChanged = (newZoom: number) => {
+    applyZoom(newZoom);
+};
+
+const applyZoom = (delta: number) => {
+    const newZoom = currentZoom.value + delta;
+
+    if(newZoom < MIN_DISTANCE || newZoom > MAX_DISTANCE) return;
+
+    currentZoom.value = newZoom;
+    graph.value.controls().maxDistance = currentZoom.value;
+    graph.value.controls().minDistance = currentZoom.value;
+}
 
 const initialize = async () => {
 
@@ -124,6 +147,7 @@ const initialize = async () => {
 
     // Spread nodes a little wider
     graph.value.d3Force('charge').strength(-120);
+
 };
 
 const highlightEdges = (n: any) => {
@@ -157,6 +181,9 @@ const fitNodeIntoView = (node: any, highlight: boolean = true) => {
     const nodes = optionNodes.value![0].items.concat(optionNodes.value![1].items);
     selectedNode.value = nodes.find(n => n.value == node.id);
 
+    graph.value.controls().maxDistance = 5000;
+    graph.value.controls().minDistance = 0.1;
+
     // Aim at node from outside it
     const distance = 40;
     const distRatio = 1 + distance / Math.hypot(node.x, node.y, node.z);
@@ -170,6 +197,11 @@ const fitNodeIntoView = (node: any, highlight: boolean = true) => {
         node, // lookAt ({ x, y, z })
         3000  // ms transition duration
     )
+
+    setTimeout(() => {
+        graph.value.controls().maxDistance = MAX_DISTANCE;
+        graph.value.controls().minDistance = MIN_DISTANCE;
+    }, 3001);
 };
 
 const selectedNodeInfoUrl = computed(() => {

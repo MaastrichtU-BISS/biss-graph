@@ -35,28 +35,19 @@
                 </div>
             </td>
             <td>
-                <div class="relative text-center mx-auto w-fit z-10 flex gap-6 align-middle" v-if="selectedNode">
-                  {{ currentZoom }}
-                    <Button icon="pi pi-search-minus" severity="secondary" rounded variant="outlined" aria-label="Bookmark" @click="applyZoom(-10)"/>
-                    <Slider v-model="currentZoom" @update:modelValue="zoomSliderChanged" :min="MIN_DISTANCE" :max="MAX_DISTANCE" class="w-56 self-center" />
-                    <Button icon="pi pi-search-plus" severity="secondary" rounded variant="outlined" aria-label="Bookmark" @click="applyZoom(+10)"/>
-                    <!-- <Button severity="primary" rounded
-                        class="relative shadow-[inset_0_25px_50px_-12px_rgb(0_0_0_/_0.25)] shadow-indigo-500/50"
-                        @click="modalIsVisible = true">
-                        <div class="flex">
-                            <div>
-                                <div class="block text-sm">
-                                    Read more about {{ selectedNode.group == NodeType.PROJECT ? ' this project' : '' }}
-                                </div>
-                                <div class="block font-bold">{{ selectedNode.label }}</div>
-                            </div>
-                        </div>
-                    </Button> -->
+                <div class="relative text-center mx-auto w-fit z-10 flex gap-6 align-middle">
+                    <Button icon="pi pi-search-minus" severity="secondary" rounded variant="outlined"
+                        @mousedown="heldDown(-1)" @mouseup="release" @touchstart="heldDown(-1)" @touchend="release" />
+                    <Slider v-model="displayedZoom" @update:modelValue="zoomSliderChanged" :min="MIN_DISTANCE"
+                        :max="MAX_DISTANCE" :step="1" class="w-56 self-center" />
+                    <Button icon="pi pi-search-plus" severity="secondary" rounded variant="outlined"
+                        @mousedown="heldDown(+1)" @mouseup="release" @touchstart="heldDown(+1)" @touchend="release" />
                 </div>
             </td>
             <td>
                 <div class="relative text-right z-10">
-                    <img src="/src/assets/images/finger-tapping.gif" class="mr-4" height="60" width="60" style="margin-bottom: -5px" />
+                    <img src="/src/assets/images/finger-tapping.gif" class="mr-4" height="60" width="60"
+                        style="margin-bottom: -5px" />
                     <img src="/src/assets/images/biss_um_logo.png" height="90px" class="mb-[-20px]">
                 </div>
             </td>
@@ -91,22 +82,38 @@ const teamMembersLoaded = ref(0);
 
 const teamMemberNodes: any = {};
 
-const MIN_DISTANCE = 40;
-const MAX_DISTANCE = 440;
-const currentZoom = ref<number>(MIN_DISTANCE);
+const MIN_DISTANCE = 0;
+const MAX_DISTANCE = 400;
+const ZOOM_OFFSET = 40;
+const displayedZoom = ref<number>(MAX_DISTANCE);
+
+const heldDownIntervalId = ref<number>();
 
 const zoomSliderChanged = (newZoom: number) => {
     applyZoom(newZoom);
 };
 
-const applyZoom = (delta: number) => {
-    const newZoom = currentZoom.value + delta;
+const applyZoom = (newZoom: number) => {
 
-    if(newZoom < MIN_DISTANCE || newZoom > MAX_DISTANCE) return;
+    if (newZoom < MIN_DISTANCE || newZoom > MAX_DISTANCE) return false;
 
-    currentZoom.value = newZoom;
-    graph.value.controls().maxDistance = currentZoom.value;
-    graph.value.controls().minDistance = currentZoom.value;
+    displayedZoom.value = newZoom;
+
+    const realZoom = MAX_DISTANCE - newZoom + ZOOM_OFFSET
+    graph.value.controls().maxDistance = realZoom;
+    graph.value.controls().minDistance = realZoom;
+
+    return true;
+}
+
+const heldDown = (delta: number) => {
+    heldDownIntervalId.value = setInterval(() => {
+        applyZoom(displayedZoom.value + delta)
+    }, 10);
+}
+
+const release = () => {
+    clearInterval(heldDownIntervalId.value);
 }
 
 const initialize = async () => {
@@ -148,6 +155,8 @@ const initialize = async () => {
     // Spread nodes a little wider
     graph.value.d3Force('charge').strength(-120);
 
+    applyZoom(0);
+
 };
 
 const highlightEdges = (n: any) => {
@@ -166,7 +175,7 @@ const fitNodeIntoView = (node: any, highlight: boolean = true) => {
 
     if (!node) return;
 
-    if(node?.id == selectedNode.value?.value) {
+    if (node?.id == selectedNode.value?.value) {
         modalIsVisible.value = true;
     }
 
@@ -185,7 +194,8 @@ const fitNodeIntoView = (node: any, highlight: boolean = true) => {
     graph.value.controls().minDistance = 0.1;
 
     // Aim at node from outside it
-    const distance = 40;
+    displayedZoom.value = MAX_DISTANCE;
+    const distance = ZOOM_OFFSET;
     const distRatio = 1 + distance / Math.hypot(node.x, node.y, node.z);
 
     const newPos = node.x || node.y || node.z
@@ -199,8 +209,7 @@ const fitNodeIntoView = (node: any, highlight: boolean = true) => {
     )
 
     setTimeout(() => {
-        graph.value.controls().maxDistance = MAX_DISTANCE;
-        graph.value.controls().minDistance = MIN_DISTANCE;
+        applyZoom(MAX_DISTANCE);
     }, 3001);
 };
 

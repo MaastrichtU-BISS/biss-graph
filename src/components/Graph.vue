@@ -35,19 +35,21 @@
                 </div>
             </td>
             <td>
-                <div class="relative text-center mx-auto w-fit z-10 flex gap-6 align-middle">
-                    <Button icon="pi pi-search-minus" severity="secondary" rounded variant="outlined"
-                        @mousedown="heldDown(-1)" @mouseup="release" @touchstart="heldDown(-1)" @touchend="release" />
-                    <Slider v-model="displayedZoom" @update:modelValue="zoomSliderChanged" :min="MIN_DISTANCE"
-                        :max="MAX_DISTANCE" :step="1" class="w-56 self-center" />
-                    <Button icon="pi pi-search-plus" severity="secondary" rounded variant="outlined"
-                        @mousedown="heldDown(+1)" @mouseup="release" @touchstart="heldDown(+1)" @touchend="release" />
+                <div class="relative text-center mx-auto w-fit z-10 flex gap-2 align-middle" style="margin-right: 40px">
+                    <div class="flex gap-6 align-middle">
+                        <Button icon="pi pi-search-minus" severity="secondary" rounded variant="outlined"
+                            @mousedown="heldDown(-1)" @mouseup="release" @touchstart="heldDown(-1)" @touchend="release" />
+                        <Slider v-model="displayedZoom" @update:modelValue="zoomSliderChanged" :min="MIN_DISTANCE"
+                            :max="MAX_DISTANCE" :step="1" class="w-56 self-center" />
+                        <Button icon="pi pi-search-plus" severity="secondary" rounded variant="outlined"
+                            @mousedown="heldDown(+1)" @mouseup="release" @touchstart="heldDown(+1)" @touchend="release" />
+                    </div>
+                    <img src="/src/assets/images/finger-tapping.gif" height="40" width="40" />
                 </div>
             </td>
             <td>
                 <div class="relative text-right z-10">
-                    <img src="/src/assets/images/finger-tapping.gif" class="mr-4" height="60" width="60"
-                        style="margin-bottom: -5px" />
+                    
                     <img src="/src/assets/images/biss_um_logo.png" height="90px" class="mb-[-20px]">
                 </div>
             </td>

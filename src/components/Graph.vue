@@ -5,7 +5,7 @@
         </h1>
     </div>
     <div class="absolute bottom-0 w-full">
-        <table class="w-full table-fixed py-2 align-bottom">
+        <table class="w-full table-fixed align-bottom">
             <td>
                 <div class="w-fit z-10 relative">
                     <Dropdown v-model="selectedNode" :options="optionNodes" optionLabel="label" optionGroupLabel="label"
@@ -35,7 +35,7 @@
                 </div>
             </td>
             <td>
-                <div class="relative text-center mx-auto w-fit z-10 flex gap-2 align-middle" style="margin-right: 40px">
+                <div class="relative text-center mx-auto w-fit z-10 flex gap-2 align-middle pb-2" style="margin-right: 40px">
                     <div class="flex gap-6 align-middle">
                         <Button icon="pi pi-search-minus" severity="secondary" rounded variant="outlined"
                             @mousedown="heldDown(-1)" @mouseup="release" @touchstart="heldDown(-1)" @touchend="release" />
@@ -71,12 +71,12 @@
                                 </li>
                                 <li>
                                     <p class="text-sm">
-                                        Interact with the screen to learn more about us by taping team members or projets.
+                                        Interact with the screen to learn more about us, by taping team members or projets.
                                     </p>
                                 </li>
                                 <li>
                                     <p class="text-sm">
-                                        Or checkout our website by scanning the above QR code.
+                                        Or check out our website by scanning the above QR code.
                                     </p>
                                 </li>
                             </ul>

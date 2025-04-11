@@ -9,7 +9,7 @@
             <td>
                 <div class="w-fit z-10 relative">
                     <Dropdown v-model="selectedNode" :options="optionNodes" optionLabel="label" optionGroupLabel="label"
-                        optionGroupChildren="items" placeholder="Search" class="w-full min-w-[505px]" showClear
+                        optionGroupChildren="items" placeholder="Search" class="w-full min-w-[300px]" showClear
                         @change="fitNodeIntoView($event.value?.value)">
                         <template #value="slotProps">
                             <div v-if="slotProps.value" class="flex align-items-center">

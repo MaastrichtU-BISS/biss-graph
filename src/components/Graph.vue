@@ -53,11 +53,11 @@
                         <template #title>
                             <div class="flex gap-8 justify-center">
                                 <div>
-                                    <img src="/src/assets/images/biss_um_logo.png" height="100px">
+                                    <img src="/src/assets/images/biss_um_logo.png" height="120px">
                                 </div>
 
                                 <div class="text-center">
-                                    <img src="/src/assets/images/biss_qr_code.png" height="60px">
+                                    <img src="/src/assets/images/biss_qr_code.png" height="80px">
                                     <div class="text-xs">biss-institute.com </div>
                                 </div>
                             </div>

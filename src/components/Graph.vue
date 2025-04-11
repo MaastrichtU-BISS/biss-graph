@@ -9,7 +9,7 @@
             <td>
                 <div class="w-fit z-10 relative">
                     <Dropdown v-model="selectedNode" :options="optionNodes" optionLabel="label" optionGroupLabel="label"
-                        optionGroupChildren="items" placeholder="Search" class="w-full min-w-[505px]" showClear
+                        optionGroupChildren="items" placeholder="Search" class="w-full min-w-[300px]" showClear
                         @change="fitNodeIntoView($event.value?.value)">
                         <template #value="slotProps">
                             <div v-if="slotProps.value" class="flex align-items-center">
@@ -35,24 +35,19 @@
                 </div>
             </td>
             <td>
-                <div class="relative text-center mx-auto w-fit z-10" v-if="selectedNode">
-                    <Button severity="primary" rounded
-                        class="relative shadow-[inset_0_25px_50px_-12px_rgb(0_0_0_/_0.25)] shadow-indigo-500/50"
-                        @click="modalIsVisible = true">
-                        <div class="flex">
-                            <div>
-                                <div class="block text-sm">
-                                    Read more about {{ selectedNode.group == NodeType.PROJECT ? ' this project' : '' }}
-                                </div>
-                                <div class="block font-bold">{{ selectedNode.label }}</div>
-                            </div>
-                        </div>
-                    </Button>
+                <div class="relative text-center mx-auto w-fit z-10 flex gap-6 align-middle">
+                    <Button icon="pi pi-search-minus" severity="secondary" rounded variant="outlined"
+                        @mousedown="heldDown(-1)" @mouseup="release" @touchstart="heldDown(-1)" @touchend="release" />
+                    <Slider v-model="displayedZoom" @update:modelValue="zoomSliderChanged" :min="MIN_DISTANCE"
+                        :max="MAX_DISTANCE" :step="1" class="w-56 self-center" />
+                    <Button icon="pi pi-search-plus" severity="secondary" rounded variant="outlined"
+                        @mousedown="heldDown(+1)" @mouseup="release" @touchstart="heldDown(+1)" @touchend="release" />
                 </div>
             </td>
             <td>
                 <div class="relative text-right z-10">
-                    <img src="/src/assets/images/finger-tapping.gif" class="mr-4" height="60" width="60" style="margin-bottom: -5px" />
+                    <img src="/src/assets/images/finger-tapping.gif" class="mr-4" height="60" width="60"
+                        style="margin-bottom: -5px" />
                     <img src="/src/assets/images/biss_um_logo.png" height="90px" class="mb-[-20px]">
                 </div>
             </td>
@@ -69,6 +64,7 @@ import ForceGraph3D from "3d-force-graph";
 import * as THREE from "three";
 import SpriteText from "three-spritetext";
 import Dropdown from "primevue/dropdown";
+import Slider from 'primevue/slider';
 import Button from "primevue/button";
 import NodeInfoModal from "./NodeInfoModal.vue";
 import { NodeType } from "../types/graph";
@@ -85,6 +81,40 @@ const TEAM_MEMBERS_TOTAL = ref(0);
 const teamMembersLoaded = ref(0);
 
 const teamMemberNodes: any = {};
+
+const MIN_DISTANCE = 0;
+const MAX_DISTANCE = 400;
+const ZOOM_OFFSET = 40;
+const displayedZoom = ref<number>(MAX_DISTANCE);
+
+const heldDownIntervalId = ref<number>();
+
+const zoomSliderChanged = (newZoom: number) => {
+    applyZoom(newZoom);
+};
+
+const applyZoom = (newZoom: number) => {
+
+    if (newZoom < MIN_DISTANCE || newZoom > MAX_DISTANCE) return false;
+
+    displayedZoom.value = newZoom;
+
+    const realZoom = MAX_DISTANCE - newZoom + ZOOM_OFFSET
+    graph.value.controls().maxDistance = realZoom;
+    graph.value.controls().minDistance = realZoom;
+
+    return true;
+}
+
+const heldDown = (delta: number) => {
+    heldDownIntervalId.value = setInterval(() => {
+        applyZoom(displayedZoom.value + delta)
+    }, 10);
+}
+
+const release = () => {
+    clearInterval(heldDownIntervalId.value);
+}
 
 const initialize = async () => {
 
@@ -124,6 +154,9 @@ const initialize = async () => {
 
     // Spread nodes a little wider
     graph.value.d3Force('charge').strength(-120);
+
+    applyZoom(0);
+
 };
 
 const highlightEdges = (n: any) => {
@@ -142,7 +175,7 @@ const fitNodeIntoView = (node: any, highlight: boolean = true) => {
 
     if (!node) return;
 
-    if(node?.id == selectedNode.value?.value) {
+    if (node?.id == selectedNode.value?.value) {
         modalIsVisible.value = true;
     }
 
@@ -157,8 +190,12 @@ const fitNodeIntoView = (node: any, highlight: boolean = true) => {
     const nodes = optionNodes.value![0].items.concat(optionNodes.value![1].items);
     selectedNode.value = nodes.find(n => n.value == node.id);
 
+    graph.value.controls().maxDistance = 5000;
+    graph.value.controls().minDistance = 0.1;
+
     // Aim at node from outside it
-    const distance = 40;
+    displayedZoom.value = MAX_DISTANCE;
+    const distance = ZOOM_OFFSET;
     const distRatio = 1 + distance / Math.hypot(node.x, node.y, node.z);
 
     const newPos = node.x || node.y || node.z
@@ -170,6 +207,10 @@ const fitNodeIntoView = (node: any, highlight: boolean = true) => {
         node, // lookAt ({ x, y, z })
         3000  // ms transition duration
     )
+
+    setTimeout(() => {
+        applyZoom(MAX_DISTANCE);
+    }, 3001);
 };
 
 const selectedNodeInfoUrl = computed(() => {
@@ -211,7 +252,7 @@ const createSpriteWithText = (id: string, imagePath: string, text: string) => {
         ctx.restore(); // Restore the state to remove clipping
 
         // Add the text below the image
-        ctx.font = '50px Arial';
+        ctx.font = '21px Arial';
         ctx.fillStyle = 'white';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';

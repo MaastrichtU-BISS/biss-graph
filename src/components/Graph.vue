@@ -384,5 +384,9 @@ onMounted(async () => {
     document.body.addEventListener('mousedown', stopTraverseAnimation);
     document.body.addEventListener('focus', stopTraverseAnimation);
     console.log('Ready');
+
+    document.addEventListener('contextmenu', function (e) {
+        e.preventDefault();
+    });
 })
 </script>

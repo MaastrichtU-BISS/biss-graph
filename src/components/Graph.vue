@@ -168,7 +168,8 @@ const highlightEdges = (n: any) => {
         // .linkWidth(l => conectedLinks.includes(l) ? .3 : .2)
         .linkDirectionalParticleSpeed(l => conectedLinks.includes(l) ? 0.004 : 0.002)
         .linkDirectionalParticles(l => conectedLinks.includes(l) ? 4 : 2)
-        .linkColor(l => conectedLinks.includes(l) ? '#E9F633' : null)
+        .linkWidth(l => conectedLinks.includes(l) ? .3 : 0)
+        .linkColor(l => conectedLinks.includes(l) ? '#f5dd42' : null)
 };
 
 const fitNodeIntoView = (node: any, highlight: boolean = true) => {

@@ -4,7 +4,6 @@
             <div class="relative h-[70vh]">
                 <iframe :src="infoUrl" frameborder="0" class="w-full min-h-[70vh] rounded-lg"></iframe>
                 <Button icon="pi pi-times" class="absolute left-3 bottom-3" @click="close" severity="secondary" outlined rounded aria-label="Cancel" />
-                <!-- <Button icon="pi pi-arrow-down" class="absolute left-20 bottom-3" @click="scrollDown" severity="secondary" outlined rounded aria-label="Scroll" /> -->
             </div>
         </template>
     </Dialog>
@@ -19,10 +18,6 @@ const infoUrl = defineModel<string>('infoUrl', { required: false } );
 const close = () => {
     isVisible.value = false;
 }
-
-// const scrollDown = () => {
-
-// }
     
 </script>
 <style>

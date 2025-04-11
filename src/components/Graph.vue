@@ -48,9 +48,41 @@
                 </div>
             </td>
             <td>
-                <div class="relative text-right z-10">
-                    
-                    <img src="/src/assets/images/biss_um_logo.png" height="90px" class="mb-[-20px]">
+                <div class="relative z-10 w-[350px] float-end border border-white border-solid rounded-lg">
+                    <Card class="p-0">
+                        <template #title>
+                            <div class="flex gap-8 justify-center">
+                                <div>
+                                    <img src="/src/assets/images/biss_um_logo.png" height="100px">
+                                </div>
+
+                                <div class="text-center">
+                                    <img src="/src/assets/images/biss_qr_code.png" height="60px">
+                                    <div class="text-xs">biss-institute.com </div>
+                                </div>
+                            </div>
+                        </template>
+                        <template #content>
+                            <ul class="my-0">
+                                <li>
+                                    <p class="m-0 text-sm">
+                                        Discover the projects our team members are involved with!
+                                    </p>
+                                </li>
+                                <li>
+                                    <p class="text-sm">
+                                        Interact with the screen to learn more about us by taping team members or projets.
+                                    </p>
+                                </li>
+                                <li>
+                                    <p class="text-sm">
+                                        Or checkout our website by scanning the above QR code.
+                                    </p>
+                                </li>
+                            </ul>
+
+                        </template>
+                    </Card>
                 </div>
             </td>
         </table>
@@ -68,6 +100,7 @@ import SpriteText from "three-spritetext";
 import Dropdown from "primevue/dropdown";
 import Slider from 'primevue/slider';
 import Button from "primevue/button";
+import Card from "primevue/card";
 import NodeInfoModal from "./NodeInfoModal.vue";
 import { NodeType } from "../types/graph";
 import { Visitor, RandomVisitor } from "../utils/visitor";
@@ -392,3 +425,14 @@ onMounted(async () => {
     });
 })
 </script>
+
+<style>
+
+.p-card-body {
+    padding-top: 10px;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+    gap: 0;
+}
+</style>

@@ -4,6 +4,10 @@
             BISS is like the A-team, but with professors from Maastricht University
         </h1>
     </header>
+    <main id="graph-container"></main>
+    <template>
+        <NodeInfoModal v-model:infoUrl="selectedNodeInfoUrl" v-model:isVisible="modalIsVisible"></NodeInfoModal>
+    </template>
     <footer class="absolute bottom-0 w-full">
         <div class="grid grid-cols-3 items-end p-2">
             <div class="w-fit z-10 relative">
@@ -32,17 +36,14 @@
                     </template>
                 </Dropdown>
             </div>
-            <div class="text-center mx-auto w-fit z-10 flex gap-2 align-middle pb-2"
-                style="margin-right: 40px">
+            <div class="text-center mx-auto w-fit z-10 flex gap-2 align-middle pb-2" style="margin-right: 40px">
                 <div class="flex gap-6 align-middle">
                     <Button icon="pi pi-search-minus" severity="secondary" rounded variant="outlined"
-                        @mousedown="heldDown(-1)" @mouseup="release" @touchstart="heldDown(-1)"
-                        @touchend="release" />
+                        @mousedown="heldDown(-1)" @mouseup="release" @touchstart="heldDown(-1)" @touchend="release" />
                     <Slider v-model="displayedZoom" @update:modelValue="zoomSliderChanged" :min="MIN_DISTANCE"
                         :max="MAX_DISTANCE" :step="1" class="w-56 self-center" />
                     <Button icon="pi pi-search-plus" severity="secondary" rounded variant="outlined"
-                        @mousedown="heldDown(+1)" @mouseup="release" @touchstart="heldDown(+1)"
-                        @touchend="release" />
+                        @mousedown="heldDown(+1)" @mouseup="release" @touchstart="heldDown(+1)" @touchend="release" />
                 </div>
                 <img src="/src/assets/images/finger-tapping.gif" height="40" width="40" />
             </div>
@@ -85,10 +86,6 @@
             </div>
         </div>
     </footer>
-    <main id="graph-container"></main>
-    <template>
-        <NodeInfoModal v-model:infoUrl="selectedNodeInfoUrl" v-model:isVisible="modalIsVisible"></NodeInfoModal>
-    </template>
 </template>
 <script setup lang="ts">
 import { onMounted, ref, computed, watch } from 'vue';

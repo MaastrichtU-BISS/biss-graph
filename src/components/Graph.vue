@@ -50,13 +50,13 @@
             <div class="relative z-10 w-[350px] justify-self-end border border-white border-solid rounded-lg">
                 <Card class="p-0">
                     <template #title>
-                        <div class="flex gap-8 justify-center">
+                        <div class="flex justify-around items-center">
                             <div>
-                                <img src="/src/assets/images/biss_um_logo.png" height="100px">
+                                <img src="/src/assets/images/biss_um_logo.png" height="120px">
                             </div>
 
                             <div class="text-center">
-                                <img src="/src/assets/images/biss_qr_code.png" height="60px">
+                                <img src="/src/assets/images/biss_qr_code.png" height="100px">
                                 <div class="text-xs">biss-institute.com </div>
                             </div>
                         </div>
@@ -425,6 +425,5 @@ onMounted(async () => {
     padding-bottom: 0;
     padding-left: 0;
     padding-right: 0;
-    gap: 0;
 }
 </style>

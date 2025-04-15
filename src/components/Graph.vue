@@ -1,93 +1,91 @@
 <template>
-    <div class="absolute top-0 text-center flex w-full z-10 align-middle" style="background-color: rgba(0,0,17,.5);">
+    <header class="absolute top-0 text-center flex w-full z-10 align-middle" style="background-color: rgba(0,0,17,.5);">
         <h1 class="text-3xl font-semibold mx-auto z-50 my-4">
             BISS is like the A-team, but with professors from Maastricht University
         </h1>
-    </div>
-    <div class="absolute bottom-0 w-full">
-        <table class="w-full table-fixed align-bottom">
-            <td>
-                <div class="w-fit z-10 relative">
-                    <Dropdown v-model="selectedNode" :options="optionNodes" optionLabel="label" optionGroupLabel="label"
-                        optionGroupChildren="items" placeholder="Search" class="w-full min-w-[300px]" showClear
-                        @change="fitNodeIntoView($event.value?.value)">
-                        <template #value="slotProps">
-                            <div v-if="slotProps.value" class="flex align-items-center">
-                                <i v-if="slotProps.value.group == NodeType.PROJECT"
-                                    class="pi pi-circle-fill mr-2 content-center"
-                                    :style="`color: ${slotProps.value.color}`"></i>
-                                <div>{{ slotProps.value.label }}</div>
-                            </div>
-                            <span v-else>
-                                <i class="pi pi-search px-2"></i>
-                                {{ slotProps.placeholder }}
-                            </span>
-                        </template>
-                        <template #option="slotProps">
-                            <div class="flex align-items-center">
-                                <i v-if="slotProps.option.group == NodeType.PROJECT"
-                                    class="pi pi-circle-fill mr-2 content-center"
-                                    :style="`color: ${slotProps.option.color}`"></i>
-                                <div>{{ slotProps.option.label }}</div>
-                            </div>
-                        </template>
-                    </Dropdown>
+    </header>
+    <footer class="absolute bottom-0 w-full">
+        <div class="grid grid-cols-3 items-end p-2">
+            <div class="w-fit z-10 relative">
+                <Dropdown v-model="selectedNode" :options="optionNodes" optionLabel="label" optionGroupLabel="label"
+                    optionGroupChildren="items" placeholder="Search" class="w-full min-w-[300px]" showClear
+                    @change="fitNodeIntoView($event.value?.value)">
+                    <template #value="slotProps">
+                        <div v-if="slotProps.value" class="flex align-items-center">
+                            <i v-if="slotProps.value.group == NodeType.PROJECT"
+                                class="pi pi-circle-fill mr-2 content-center"
+                                :style="`color: ${slotProps.value.color}`"></i>
+                            <div>{{ slotProps.value.label }}</div>
+                        </div>
+                        <span v-else>
+                            <i class="pi pi-search px-2"></i>
+                            {{ slotProps.placeholder }}
+                        </span>
+                    </template>
+                    <template #option="slotProps">
+                        <div class="flex align-items-center">
+                            <i v-if="slotProps.option.group == NodeType.PROJECT"
+                                class="pi pi-circle-fill mr-2 content-center"
+                                :style="`color: ${slotProps.option.color}`"></i>
+                            <div>{{ slotProps.option.label }}</div>
+                        </div>
+                    </template>
+                </Dropdown>
+            </div>
+            <div class="text-center mx-auto w-fit z-10 flex gap-2 align-middle pb-2"
+                style="margin-right: 40px">
+                <div class="flex gap-6 align-middle">
+                    <Button icon="pi pi-search-minus" severity="secondary" rounded variant="outlined"
+                        @mousedown="heldDown(-1)" @mouseup="release" @touchstart="heldDown(-1)"
+                        @touchend="release" />
+                    <Slider v-model="displayedZoom" @update:modelValue="zoomSliderChanged" :min="MIN_DISTANCE"
+                        :max="MAX_DISTANCE" :step="1" class="w-56 self-center" />
+                    <Button icon="pi pi-search-plus" severity="secondary" rounded variant="outlined"
+                        @mousedown="heldDown(+1)" @mouseup="release" @touchstart="heldDown(+1)"
+                        @touchend="release" />
                 </div>
-            </td>
-            <td>
-                <div class="relative text-center mx-auto w-fit z-10 flex gap-2 align-middle pb-2" style="margin-right: 40px">
-                    <div class="flex gap-6 align-middle">
-                        <Button icon="pi pi-search-minus" severity="secondary" rounded variant="outlined"
-                            @mousedown="heldDown(-1)" @mouseup="release" @touchstart="heldDown(-1)" @touchend="release" />
-                        <Slider v-model="displayedZoom" @update:modelValue="zoomSliderChanged" :min="MIN_DISTANCE"
-                            :max="MAX_DISTANCE" :step="1" class="w-56 self-center" />
-                        <Button icon="pi pi-search-plus" severity="secondary" rounded variant="outlined"
-                            @mousedown="heldDown(+1)" @mouseup="release" @touchstart="heldDown(+1)" @touchend="release" />
-                    </div>
-                    <img src="/src/assets/images/finger-tapping.gif" height="40" width="40" />
-                </div>
-            </td>
-            <td>
-                <div class="relative z-10 w-[350px] float-end border border-white border-solid rounded-lg">
-                    <Card class="p-0">
-                        <template #title>
-                            <div class="flex gap-8 justify-center">
-                                <div>
-                                    <img src="/src/assets/images/biss_um_logo.png" height="100px">
-                                </div>
+                <img src="/src/assets/images/finger-tapping.gif" height="40" width="40" />
+            </div>
+            <div class="relative z-10 w-[350px] justify-self-end border border-white border-solid rounded-lg">
+                <Card class="p-0">
+                    <template #title>
+                        <div class="flex gap-8 justify-center">
+                            <div>
+                                <img src="/src/assets/images/biss_um_logo.png" height="100px">
+                            </div>
 
-                                <div class="text-center">
-                                    <img src="/src/assets/images/biss_qr_code.png" height="60px">
-                                    <div class="text-xs">biss-institute.com </div>
-                                </div>
+                            <div class="text-center">
+                                <img src="/src/assets/images/biss_qr_code.png" height="60px">
+                                <div class="text-xs">biss-institute.com </div>
                             </div>
-                        </template>
-                        <template #content>
-                            <ul class="my-0">
-                                <li>
-                                    <p class="m-0 text-sm">
-                                        Discover the projects our team members are involved with!
-                                    </p>
-                                </li>
-                                <li>
-                                    <p class="text-sm">
-                                        Interact with the screen to learn more about us, by taping team members or projets.
-                                    </p>
-                                </li>
-                                <li>
-                                    <p class="text-sm">
-                                        Or check out our website by scanning the above QR code.
-                                    </p>
-                                </li>
-                            </ul>
+                        </div>
+                    </template>
+                    <template #content>
+                        <ul class="my-0">
+                            <li>
+                                <p class="m-0 text-sm">
+                                    Discover the projects our team members are involved with!
+                                </p>
+                            </li>
+                            <li>
+                                <p class="text-sm">
+                                    Interact with the screen to learn more about us, by taping team members or
+                                    projets.
+                                </p>
+                            </li>
+                            <li>
+                                <p class="text-sm">
+                                    Or check out our website by scanning the above QR code.
+                                </p>
+                            </li>
+                        </ul>
 
-                        </template>
-                    </Card>
-                </div>
-            </td>
-        </table>
-    </div>
-    <div id="graph-container"></div>
+                    </template>
+                </Card>
+            </div>
+        </div>
+    </footer>
+    <main id="graph-container"></main>
     <template>
         <NodeInfoModal v-model:infoUrl="selectedNodeInfoUrl" v-model:isVisible="modalIsVisible"></NodeInfoModal>
     </template>

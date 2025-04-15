@@ -425,7 +425,6 @@ onMounted(async () => {
 </script>
 
 <style>
-
 .p-card-body {
     padding-top: 10px;
     padding-bottom: 0;

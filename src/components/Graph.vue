@@ -65,22 +65,20 @@
                         <ul class="my-0">
                             <li>
                                 <p class="m-0 text-sm">
-                                    Discover the projects our team members are involved with!
+                                    Discover which projects our team members are involved with!
                                 </p>
                             </li>
                             <li>
                                 <p class="text-sm">
-                                    Interact with the screen to learn more about us, by taping team members or
-                                    projets.
+                                    Interact with the screen by tapping team members and projects or
                                 </p>
                             </li>
                             <li>
                                 <p class="text-sm">
-                                    Or check out our website by scanning the above QR code.
+                                    Check out our website by scanning the QR code above.
                                 </p>
                             </li>
                         </ul>
-
                     </template>
                 </Card>
             </div>

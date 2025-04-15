@@ -4,10 +4,6 @@
             BISS is like the A-team, but with professors from Maastricht University
         </h1>
     </header>
-    <main id="graph-container"></main>
-    <template>
-        <NodeInfoModal v-model:infoUrl="selectedNodeInfoUrl" v-model:isVisible="modalIsVisible"></NodeInfoModal>
-    </template>
     <footer class="absolute bottom-0 w-full">
         <div class="grid grid-cols-3 items-end p-2">
             <div class="w-fit z-10 relative">
@@ -84,6 +80,10 @@
             </div>
         </div>
     </footer>
+    <main id="graph-container"></main>
+    <template>
+        <NodeInfoModal v-model:infoUrl="selectedNodeInfoUrl" v-model:isVisible="modalIsVisible"></NodeInfoModal>
+    </template>
 </template>
 <script setup lang="ts">
 import { onMounted, ref, computed, watch } from 'vue';

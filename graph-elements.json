@@ -216,6 +216,27 @@
       "name": "Prevent factory shutdowns",
       "info_url": "https://www.biss-institute.com/en/posts/iframe/preventfactoryshutdowns",
       "color": "#ADFF2F"
+    },
+    {
+      "id": "experiencing-poverty",
+      "group": "Project",
+      "name": "Experiencing poverty with VR",
+      "info_url": "https://www.biss-institute.com/en/posts/experiencing-poverty-with-vr",
+      "color": "#e7f777"
+    },
+    {
+      "id": "priceless-assets",
+      "group": "Project",
+      "name": "Priceless Assets of Subversion:\nFinancial Crime and the Valuation\nof Unique Goods",
+      "info_url": "https://www.biss-institute.com/en/posts/priceless-assets-of-subversion-financial-crime-and-the-valuation-of-unique-goods",
+      "color": "#f982e7"
+    },
+    {
+      "id": "sittard-geleen",
+      "group": "Project",
+      "name": "Working towards a clear and simple\nwelfare application",
+      "info_url": "https://www.biss-institute.com/en/posts/working-towards-a-clear-and-simple-welfare-application",
+      "color": "#33c7ff"
     }
   ],
   "links": [
@@ -320,6 +341,10 @@
       "target": "elsa"
     },
     {
+      "source": "ali-reza-ghavamipour",
+      "target": "elsa"
+    },
+    {
       "source": "elia-formisano",
       "target": "audio-to-semantics"
     },
@@ -352,7 +377,7 @@
       "target": "better"
     },
     {
-      "source": "ali-reza-ghavamipour",
+      "source": "chris-van-der-lans",
       "target": "better"
     },
     {
@@ -360,7 +385,19 @@
       "target": "better"
     },
     {
-      "source": "vivienne-curvers",
+      "source": "dani-shanley",
+      "target": "better"
+    },
+    {
+      "source": "darian-meacham",
+      "target": "better"
+    },
+    {
+      "source": "yenisel-plasencia",
+      "target": "better"
+    },
+    {
+      "source": "carlos-aguilera",
       "target": "better"
     },
     {
@@ -384,12 +421,68 @@
       "target": "fair-ai"
     },
     {
-      "source": "vivienne-curvers",
+      "source": "andre-dekker",
       "target": "fair-ai"
     },
     {
+      "source": "chris-van-der-lans",
+      "target": "fair-ai"
+    },
+    {
+      "source": "yenisel-plasencia",
+      "target": "fair-ai"
+    },
+    {
+      "source": "lisa-bruggen",
+      "target": "experiencing-poverty"
+    },
+    {
+      "source": "max-louwerse",
+      "target": "experiencing-poverty"
+    },
+    {
+      "source": "minou-van-der-werf",
+      "target": "experiencing-poverty"
+    },
+    {
+      "source": "stefan-bos",
+      "target": "experiencing-poverty"
+    },
+    {
+      "source": "andre-dekker",
+      "target": "priceless-assets"
+    },
+    {
+      "source": "gijs-van-dijck",
+      "target": "priceless-assets"
+    },
+    {
+      "source": "johan-van-soest",
+      "target": "priceless-assets"
+    },
+    {
+      "source": "judith-kamalski",
+      "target": "priceless-assets"
+    },
+    {
       "source": "ali-reza-ghavamipour",
-      "target": "elsa"
+      "target": "priceless-assets"
+    },
+    {
+      "source": "johan-van-soest",
+      "target": "sittard-geleen"
+    },
+    {
+      "source": "lisa-bruggen",
+      "target": "sittard-geleen"
+    },
+    {
+      "source": "minou-van-der-werf",
+      "target": "sittard-geleen"
+    },
+    {
+      "source": "chris-van-der-lans",
+      "target": "sittard-geleen"
     }
   ]
 }

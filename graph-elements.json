@@ -148,6 +148,13 @@
       "info_url": "https://www.biss-institute.com/en/team/iframe/judith-kamalski"
     },
     {
+      "id": "aleksandra-draper",
+      "group": "Team Member",
+      "name": "Aleksandra Draper",
+      "pfp_src": "/src/assets/images/team/aleksandra-draper.jpg",
+      "info_url": "https://www.biss-institute.com/en/team/iframe/aleksandra-draper"
+    },
+    {
       "id": "lawnotation",
       "group": "Project",
       "name": "Legal Research Software",
@@ -221,22 +228,36 @@
       "id": "experiencing-poverty",
       "group": "Project",
       "name": "Experiencing poverty with VR",
-      "info_url": "https://www.biss-institute.com/en/posts/experiencing-poverty-with-vr",
+      "info_url": "https://www.biss-institute.com/en/posts/iframe/experiencing-poverty-with-vr",
       "color": "#e7f777"
     },
     {
       "id": "priceless-assets",
       "group": "Project",
       "name": "Priceless Assets of Subversion:\nFinancial Crime and the Valuation\nof Unique Goods",
-      "info_url": "https://www.biss-institute.com/en/posts/priceless-assets-of-subversion-financial-crime-and-the-valuation-of-unique-goods",
+      "info_url": "https://www.biss-institute.com/en/posts/iframe/priceless-assets-of-subversion-financial-crime-and-the-valuation-of-unique-goods",
       "color": "#f982e7"
     },
     {
       "id": "sittard-geleen",
       "group": "Project",
       "name": "Working towards a clear and simple\nwelfare application",
-      "info_url": "https://www.biss-institute.com/en/posts/working-towards-a-clear-and-simple-welfare-application",
+      "info_url": "https://www.biss-institute.com/en/posts/iframe/working-towards-a-clear-and-simple-welfare-application",
       "color": "#33c7ff"
+    },
+    {
+      "id": "digimach",
+      "group": "Project",
+      "name": "DigiMach: Smart, Sustainable,\n and Connected Manufacturing",
+      "info_url": "https://www.biss-institute.com/en/posts/iframe/digimach-smart-sustainable-and-connected-manufacturing",
+      "color": "#00FFFF"
+    },
+    {
+      "id": "benedrone",
+      "group": "Project",
+      "name": "BeNeDrone: Cross-border innovation\n in medical drone deployment",
+      "info_url": "https://www.biss-institute.com/en/posts/iframe/benedrone-cross-border-innovation-in-medical-drone-deployment",
+      "color": "#FF4500"
     }
   ],
   "links": [
@@ -483,6 +504,58 @@
     {
       "source": "chris-van-der-lans",
       "target": "sittard-geleen"
+    },
+    {
+      "source": "max-louwerse",
+      "target": "benedrone"
+    },
+    {
+      "source": "gijs-van-dijck",
+      "target": "benedrone"
+    },
+    {
+      "source": "chris-van-der-lans",
+      "target": "benedrone"
+    },
+    {
+      "source": "yenisel-plasencia",
+      "target": "benedrone"
+    },
+    {
+      "source": "carlos-aguilera",
+      "target": "benedrone"
+    },
+    {
+      "source": "shashank-chakravarthy",
+      "target": "benedrone"
+    },
+    {
+      "source": "sander-van-essel",
+      "target": "benedrone"
+    },
+    {
+      "source": "vivienne-curvers",
+      "target": "benedrone"
+    },
+    {
+      "source": "aleksandra-draper",
+      "target": "benedrone"
+    },
+    {
+      "source": "rudolf-muller",
+      "target": "digimach"
+    },
+    {
+      "source": "chris-van-der-lans",
+      "target": "digimach"
+    },
+    {
+      "source": "yenisel-plasencia",
+      "target": "digimach"
+    },
+    {
+      "source": "aleksandra-draper",
+      "target": "digimach"
     }
   ]
 }

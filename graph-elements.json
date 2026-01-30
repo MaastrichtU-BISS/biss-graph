@@ -158,7 +158,7 @@
       "id": "maud-modders",
       "group": "Team Member",
       "name": "Maud Modders",
-      "pfp_src": "/src/assets/images/team/maud-modders.jpg",
+      "pfp_src": "/src/assets/images/team/maud-modders-2.jpg",
       "info_url": "https://www.biss-institute.com/en/team/iframe/maud-modders"
     },
     {
@@ -329,6 +329,10 @@
     },
     {
       "source": "minou-van-der-werf",
+      "target": "elsa"
+    },
+    {
+      "source": "maud-modders",
       "target": "elsa"
     },
     {

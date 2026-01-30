@@ -281,7 +281,7 @@ const createSpriteWithText = (id: string, imagePath: string, text: string) => {
         ctx.restore(); // Restore the state to remove clipping
 
         // Add the text below the image
-        ctx.font = '21px Arial';
+        ctx.font = '20px Arial';
         ctx.fillStyle = 'white';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';

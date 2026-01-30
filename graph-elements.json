@@ -29,11 +29,11 @@
       "info_url": "https://www.biss-institute.com/en/team/iframe/shashank-chakravarthy"
     },
     {
-      "id": "sander-van-essel",
+      "id": "peter-de-kock",
       "group": "Team Member",
-      "name": "Sander van Essel",
-      "pfp_src": "/src/assets/images/team/sander-van-essel.jpg",
-      "info_url": "https://www.biss-institute.com/en/team/iframe/sander-van-essel"
+      "name": "Prof. Dr. Peter de Kock",
+      "pfp_src": "/src/assets/images/team/peter-de-kock.jpg",
+      "info_url": "https://www.biss-institute.com/en/team/iframe/peter-de-kock"
     },
     {
       "id": "gijs-van-dijck",
@@ -155,6 +155,20 @@
       "info_url": "https://www.biss-institute.com/en/team/iframe/aleksandra-draper"
     },
     {
+      "id": "maud-modders",
+      "group": "Team Member",
+      "name": "Maud Modders",
+      "pfp_src": "/src/assets/images/team/maud-modders.jpg",
+      "info_url": "https://www.biss-institute.com/en/team/iframe/maud-modders"
+    },
+    {
+      "id": "sushma-maranganti",
+      "group": "Team Member",
+      "name": "Dr. Sushma Maranganti Bhatter",
+      "pfp_src": "/src/assets/images/team/sushma-maranganti.jpg",
+      "info_url": "https://www.biss-institute.com/en/team/iframe/sushma-maranganti"
+    },
+    {
       "id": "lawnotation",
       "group": "Project",
       "name": "Legal Research Software",
@@ -274,19 +288,11 @@
       "target": "lawnotation"
     },
     {
-      "source": "sander-van-essel",
-      "target": "lawnotation"
-    },
-    {
       "source": "gijs-van-dijck",
       "target": "lawnotation"
     },
     {
       "source": "chris-van-der-lans",
-      "target": "techalliance"
-    },
-    {
-      "source": "sander-van-essel",
       "target": "techalliance"
     },
     {
@@ -434,10 +440,6 @@
       "target": "netspar-financial-advice"
     },
     {
-      "source": "sander-van-essel",
-      "target": "fair-ai"
-    },
-    {
       "source": "johan-van-soest",
       "target": "fair-ai"
     },
@@ -514,6 +516,10 @@
       "target": "benedrone"
     },
     {
+      "source": "sushma-maranganti",
+      "target": "benedrone"
+    },
+    {
       "source": "chris-van-der-lans",
       "target": "benedrone"
     },
@@ -527,10 +533,6 @@
     },
     {
       "source": "shashank-chakravarthy",
-      "target": "benedrone"
-    },
-    {
-      "source": "sander-van-essel",
       "target": "benedrone"
     },
     {

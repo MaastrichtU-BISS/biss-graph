@@ -162,6 +162,13 @@
       "info_url": "https://www.biss-institute.com/en/team/iframe/sushma-maranganti"
     },
     {
+      "id": "david-wicker",
+      "group": "Team Member",
+      "name": "David Wicker",
+      "pfp_src": "/src/assets/images/team/david-wicker.jpg",
+      "info_url": "https://www.biss-institute.com/en/team/iframe/david-wicker"
+    },
+    {
       "id": "lawnotation",
       "group": "Project",
       "name": "Legal Research Software",
@@ -282,6 +289,10 @@
     },
     {
       "source": "gijs-van-dijck",
+      "target": "lawnotation"
+    },
+    {
+      "source": "david-wicker",
       "target": "lawnotation"
     },
     {

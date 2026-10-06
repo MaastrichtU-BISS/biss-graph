@@ -185,6 +185,9 @@ const visitor = new RandomVisitor(graphData);
 
 /** Fraction of the screen width the detail panel covers. */
 const panelFraction = () => {
+    // The detail view covers the graph on a phone, so keep the selected node centred
+    // for when the panel closes instead of reserving a nonexistent side column.
+    if (window.matchMedia("(max-width: 700px)").matches) return 0;
     const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
     const vw = window.innerWidth;
     const gap = Math.min(Math.max(rem, 0.016 * vw), 2.5 * rem);
@@ -827,5 +830,64 @@ h1 {
 .sheet-enter-from :deep(.sheet),
 .sheet-leave-to :deep(.sheet) {
     transform: translateY(30%);
+}
+
+@media (max-width: 700px) {
+    .kiosk { --panel-width: 100%; }
+    .brand {
+        top: calc(env(safe-area-inset-top) + 0.5rem);
+        left: 1rem;
+        right: 1rem;
+        gap: 0.75rem;
+        align-items: center;
+    }
+    .logo { height: 2.4rem; }
+    .brand-text { min-width: 0; padding-left: 0.75rem; }
+    h1 { font-size: 1.15rem; white-space: nowrap; }
+    .brand-text p { display: none; }
+    .top-right, .has-panel .top-right {
+        top: calc(env(safe-area-inset-top) + 4rem);
+        left: 0.75rem;
+        right: 0.75rem;
+        justify-content: space-between;
+        padding: 0.2rem;
+        gap: 0;
+    }
+    .top-right .ghost { min-height: 2.75rem; padding: 0 0.35rem; font-size: 0.8rem; }
+    .settings { gap: 0; }
+    .setting { min-width: 2.2rem; justify-content: center; }
+    .divider { margin: 0; }
+    .dock {
+        left: 0.75rem;
+        right: 0.75rem;
+        bottom: calc(env(safe-area-inset-bottom) + 0.5rem);
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        padding: 0.25rem;
+        border-radius: 1.2rem;
+    }
+    .dock .ghost {
+        min-width: 0;
+        min-height: 3.6rem;
+        flex-direction: column;
+        justify-content: center;
+        gap: 0.15rem;
+        padding: 0.25rem 0.1rem;
+        border-radius: 0.9rem;
+        font-size: 0.64rem;
+        line-height: 1.1;
+        text-align: center;
+    }
+    .dock .ghost :deep(.icon) { width: 1.3rem; height: 1.3rem; }
+    .hints, .qr { display: none; }
+    .filters {
+        left: 0.75rem;
+        right: 0.75rem;
+        bottom: calc(env(safe-area-inset-bottom) + 5rem);
+        width: auto;
+        max-height: min(65dvh, 32rem);
+        overflow-y: auto;
+        touch-action: pan-y;
+    }
 }
 </style>

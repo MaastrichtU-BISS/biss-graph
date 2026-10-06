@@ -197,7 +197,7 @@ canvas {
     bottom: calc(9% - 2.4rem);
     transform: translateX(-50%);
     display: flex;
-    gap: 0.6rem;
+    gap: 1rem;
     margin: 0;
     padding: 0;
     list-style: none;
@@ -208,7 +208,7 @@ canvas {
     height: 0.55rem;
     border-radius: 999px;
     background: rgba(255, 255, 255, 0.25);
-    transition: width 400ms var(--ease-out), background-color 400ms ease;
+    transition: transform 400ms var(--ease-out), background-color 400ms ease;
 }
 
 .chapters li.done {
@@ -216,7 +216,7 @@ canvas {
 }
 
 .chapters li.active {
-    width: 2rem;
+    transform: scaleX(3.6);
     background: #fff;
 }
 
@@ -395,5 +395,30 @@ h1 {
 
 .caption-leave-to {
     opacity: 0;
+}
+
+@media (max-width: 700px) {
+    .intro, .outro {
+        gap: 0.7rem;
+        padding: calc(env(safe-area-inset-top) + 4.3rem) 1rem calc(env(safe-area-inset-bottom) + 2.5rem);
+    }
+    .outro {
+        justify-content: safe center;
+        overflow-y: auto;
+        touch-action: pan-y;
+    }
+    .eyebrow { font-size: 0.85rem; }
+    h1 { font-size: clamp(2.1rem, 11vw, 3rem); line-height: 1.05; }
+    .intro p, .outro p { font-size: 1.05rem; line-height: 1.3; }
+    .url { margin-top: 0.3rem; padding: 0.45rem 0.9rem; font-size: 0.95rem; }
+    .credits { width: 100%; gap: 0.4rem; }
+    .credit-row { gap: 0.25rem; font-size: 0.78rem; }
+    .credit-label { width: 100%; font-size: 0.67rem; }
+    .credit-name { padding: 0.16rem 0.4rem; }
+    .faces { max-width: 21rem; justify-content: center; flex-wrap: wrap; margin-top: 0.3rem; }
+    .faces img { width: 2.5rem; height: 2.5rem; margin-right: -0.35rem; }
+    .caption { bottom: calc(env(safe-area-inset-bottom) + 5%); width: calc(100% - 2rem); font-size: clamp(1.15rem, 5vw, 1.55rem); }
+    .chapters { bottom: calc(env(safe-area-inset-bottom) + 0.8rem); }
+    .scrim { height: 32%; }
 }
 </style>

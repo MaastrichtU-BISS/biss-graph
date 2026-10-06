@@ -120,4 +120,12 @@ iframe.ready {
         transform: rotate(1turn);
     }
 }
+
+@media (max-width: 700px) {
+    .backdrop { padding: 0; }
+    .sheet { border-radius: 0; }
+    .head { gap: 0.6rem; padding: 0.65rem 0.75rem calc(env(safe-area-inset-bottom) + 0.65rem); }
+    h2 { font-size: 1rem; }
+    .head .btn { padding: 0 0.8rem; }
+}
 </style>

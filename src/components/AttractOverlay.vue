@@ -359,4 +359,31 @@ const subtitle = computed(() => {
 .spot-leave-to {
     opacity: 0;
 }
+
+@media (max-width: 700px) {
+    .cta {
+        top: auto;
+        left: 0.75rem;
+        right: 0.75rem;
+        bottom: calc(env(safe-area-inset-bottom) + 0.75rem);
+        padding: 0.5rem 0.8rem;
+    }
+    .touch, .press { width: 2.8rem; height: 2.8rem; }
+    .cta-title { font-size: 1rem; }
+    .cta-sub { font-size: 0.8rem; }
+    .spotlight, .news {
+        left: 0.75rem;
+        right: 0.75rem;
+        bottom: calc(env(safe-area-inset-bottom) + 5.8rem);
+        width: auto;
+        max-height: min(42dvh, 21rem);
+        overflow: hidden;
+        padding: 1rem;
+        gap: 0.6rem;
+    }
+    .spot-title { font-size: 1.25rem; }
+    .spotlight .list { display: none; }
+    .news-qr { display: none; }
+    .news-text { -webkit-line-clamp: 4; font-size: 0.95rem; }
+}
 </style>

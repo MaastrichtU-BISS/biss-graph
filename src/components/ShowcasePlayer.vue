@@ -81,4 +81,13 @@ const emit = defineEmits<{ done: [] }>();
         transform: scaleX(1);
     }
 }
+
+@media (max-width: 700px) {
+    .hint {
+        top: calc(env(safe-area-inset-top) + 0.65rem);
+        right: 0.75rem;
+        padding: 0.55rem 0.75rem;
+        font-size: 0.8rem;
+    }
+}
 </style>

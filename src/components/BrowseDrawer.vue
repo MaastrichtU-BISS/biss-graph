@@ -234,4 +234,22 @@ const tabs = computed(() => [
 .fade-leave-to {
     opacity: 0;
 }
+
+@media (max-width: 700px) {
+    .backdrop { padding: 0; }
+    .sheet { width: 100%; height: 100%; border-radius: 0; }
+    .head {
+        gap: 0.5rem;
+        padding: calc(env(safe-area-inset-top) + 0.4rem) 0.75rem 0;
+    }
+    .tabs { flex: 1; min-width: 0; gap: 0.4rem; justify-content: space-between; }
+    .tab { gap: 0.2rem; min-width: 0; font-size: 0.82rem; min-height: 3.2rem; }
+    .count { font-size: 0.7rem; }
+    .grid { padding: 0.8rem 0.75rem calc(env(safe-area-inset-bottom) + 1rem); gap: 0.55rem; }
+    .people { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .projects { grid-template-columns: minmax(0, 1fr); }
+    .person { padding: 0.8rem 0.4rem; }
+    .photo { width: 4.2rem; height: 4.2rem; }
+    .project { padding: 0.9rem 1rem; }
+}
 </style>

@@ -419,4 +419,22 @@ ul {
 .swap-leave-to {
     opacity: 0;
 }
+
+@media (max-width: 700px) {
+    .panel {
+        inset: 0;
+        width: 100%;
+        border-radius: 0;
+    }
+    .toolbar { padding: calc(env(safe-area-inset-top) + 0.7rem) 1rem 0; }
+    .body { padding: 0.4rem 1rem calc(env(safe-area-inset-bottom) + 1.5rem); }
+    .hero { gap: 0.65rem; padding-top: 0.8rem; }
+    .hero-photo { width: 7rem; height: 7rem; }
+    .title { font-size: 1.65rem; }
+    .actions { width: 100%; }
+    .actions .btn { flex: 1 1 100%; }
+    .take-away { gap: 0.75rem; padding: 0.8rem; }
+    .take-qr { width: 5rem; height: 5rem; }
+    .team { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 </style>

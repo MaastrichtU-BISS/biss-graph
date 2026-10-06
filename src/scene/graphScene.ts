@@ -872,7 +872,10 @@ export class GraphScene {
     const vFov = THREE.MathUtils.degToRad(camera.fov / 2);
     const hFov = Math.atan(Math.tan(vFov) * camera.aspect);
     // the sphere is conservative for a flat-ish cloud, so frame a little tighter
-    const distance = (radius * 0.92) / Math.sin(Math.min(vFov, hFov));
+    // A full graph fit leaves the already narrow network thumbnail-sized on phones.
+    // Let portrait visitors see a useful section of it; the lists remain the overview.
+    const distance = ((radius * 0.92) / Math.sin(Math.min(vFov, hFov))) *
+      (camera.aspect < 0.8 && window.innerWidth <= 700 ? 0.55 : 1);
 
     const dir = camera.position.clone().sub(center);
     if (dir.lengthSq() < 1e-6 || ms === 0) dir.set(0.25, 0.15, 1);

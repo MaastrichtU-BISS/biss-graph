@@ -537,6 +537,7 @@ onBeforeUnmount(() => {
 .stage {
     position: absolute;
     inset: 0;
+    touch-action: none;
     opacity: 0;
     transition: opacity 1.4s ease;
 }

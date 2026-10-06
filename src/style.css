@@ -60,7 +60,6 @@ body {
   -webkit-touch-callout: none;
   -webkit-tap-highlight-color: transparent;
   overscroll-behavior: none;
-  touch-action: none;
 }
 
 button {

@@ -854,7 +854,9 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
 
         // domain headers and their links (under the pills)
         DOMAINS.forEach((d, i) => {
-            const a = pop(t, T.domains + 0.1 + i * 0.12);
+            // each header pops as its first project card arrives
+            const first = Math.min(...PILLS.filter((p) => p.domain === d.id).map((p) => p.index));
+            const a = pop(t, T.domains + 0.9 + first * 0.12 + 0.5);
             if (a <= 0) return;
             const c = domainAt(i);
             const hy = c.y + cellH * 0.13;
@@ -946,7 +948,7 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
             if (c <= 0) return;
             const cw = Math.min(W * 0.215, 400 * k);
             const top = y + R + 52 * k;
-            const ch = Math.min(safe.bottom - top - 16 * k, span * 0.58);
+            const ch = Math.min(safe.bottom - top - 16 * k, span * 0.5);
             scaled(ctx, xs[i], top, Math.max(0, c), () => {
                 ctx.save();
                 ctx.globalAlpha *= Math.min(1, c);
@@ -1067,7 +1069,7 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
         const lw = Math.min(lh * 2.1, (colW - 30 * k) / 2);
         const fy = safe.top + span * 0.83;
         const fh = lh;
-        const fw = Math.min(lh * 2.2, colW * 0.8);
+        const fw = Math.min(lh * 2.2, (colW - 20 * k) / 2);
 
         const partnerPos = (i: number, j: number, n: number) => {
             const row = Math.floor(j / 2);
@@ -1082,7 +1084,7 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
             const users = LINKED.map((l, i) => (l.funders.includes(id) ? i : -1)).filter((i) => i >= 0);
             const base = users.reduce((a, b) => a + b, 0) / users.length;
             const shared = LINKED[users[0]].funders;
-            const offset = users.length === 1 && shared.length > 1 ? (shared.indexOf(id) - (shared.length - 1) / 2) * (fw * 0.55 + 6 * k) : 0;
+            const offset = users.length === 1 && shared.length > 1 ? (shared.indexOf(id) - (shared.length - 1) / 2) * (fw + 10 * k) : 0;
             return xOf(base) + offset;
         };
         const partnerAt = (i: number, j: number) => 0.6 + i * 0.25 + j * 0.12;

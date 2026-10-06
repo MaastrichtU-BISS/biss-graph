@@ -26,13 +26,15 @@ const ENTRIES = [
   { id: "fair4ai", project: "fair4ai-making-ai-models-practically-usable", title: "FAIR4AI", file: "./fair4ai/Fair4ai.vue" },
   { id: "better", project: "better-responsible-data-analytics-in-healthcare", title: "BETTER", file: "./better/Better.vue" },
   // about BISS itself, not one project; plays now and then in the idle loop and from the dock
-  { id: "biss", project: "", title: "What is BISS?", file: "./biss/AboutBiss.vue" },
+  { id: "biss", project: "", title: "What is BISS?", file: "./biss/AboutBiss.vue", duration: 51 },
   { id: "flying-forward", project: "flying-forward", title: "Flying Forward", file: "./flyingForward/FlyingForward.vue" },
 ];
 
-export const showcases: Showcase[] = ENTRIES.filter((e) => files[e.file]).map(({ file, ...e }) => ({
+export const showcases: Showcase[] = (ENTRIES as ((typeof ENTRIES)[number] & { duration?: number })[])
+  .filter((e) => files[e.file])
+  .map(({ file, ...e }) => ({
   ...e,
-  duration: 40,
+  duration: e.duration ?? 40,
   component: defineAsyncComponent(files[file]),
 }));
 

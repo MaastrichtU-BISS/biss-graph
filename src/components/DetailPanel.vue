@@ -1,0 +1,282 @@
+<template>
+    <aside class="panel surface" :style="{ '--tone': entity.color }">
+        <div class="toolbar">
+            <button v-if="canGoBack" class="icon-button" aria-label="Back" @click="emit('back')">
+                <Icon name="back" />
+            </button>
+            <span class="tag" :class="isPerson ? 'tag-person' : 'tag-project'">
+                {{ isPerson ? "Team member" : "Project" }}
+            </span>
+            <button class="icon-button ml-auto" aria-label="Close" @click="emit('close')">
+                <Icon name="close" />
+            </button>
+        </div>
+
+        <Transition name="swap" mode="out-in">
+            <div :key="entity.id" class="body scroll">
+                <header class="hero" :class="{ person: isPerson }">
+                    <img v-if="isPerson" :src="entity.photo" :alt="entity.title" class="avatar hero-photo" />
+                    <span v-else class="hero-bar" aria-hidden="true"></span>
+                    <h2 class="title">{{ entity.title }}</h2>
+                    <p v-if="entity.role" class="role">{{ entity.role }}</p>
+                    <p class="summary">{{ summary }}</p>
+                    <button v-if="entity.infoUrl" class="btn btn-primary" @click="emit('open', entity.infoUrl)">
+                        {{ isPerson ? "View full profile" : "Read about this project" }}
+                        <Icon name="open" />
+                    </button>
+                </header>
+
+                <section>
+                    <h3 class="section-title">{{ isPerson ? "Works on" : "The team" }}</h3>
+
+                    <ul v-if="isPerson" class="projects">
+                        <li v-for="p in related" :key="p.id">
+                            <button class="row" :style="{ '--tone': p.color }" @click="emit('select', p.id)">
+                                <span class="dot" aria-hidden="true"></span>
+                                <span class="row-text">
+                                    <span class="row-title">{{ p.title }}</span>
+                                    <span class="faces">
+                                        <img v-for="m in teammates(p)" :key="m.id" :src="m.photo" alt=""
+                                            class="avatar face" />
+                                        <span v-if="p.connections.length > 6" class="more">
+                                            +{{ p.connections.length - 6 }}
+                                        </span>
+                                    </span>
+                                </span>
+                                <Icon name="chevron" class="chevron" />
+                            </button>
+                        </li>
+                    </ul>
+
+                    <ul v-else class="team">
+                        <li v-for="m in related" :key="m.id">
+                            <button class="member" @click="emit('select', m.id)">
+                                <img :src="m.photo" :alt="m.title" class="avatar member-photo" />
+                                <span class="member-name">{{ m.title }}</span>
+                            </button>
+                        </li>
+                    </ul>
+                </section>
+            </div>
+        </Transition>
+    </aside>
+</template>
+<script setup lang="ts">
+import { computed } from "vue";
+import Icon from "./Icon.vue";
+import { entities } from "../data/graph";
+import { Entity, NodeType } from "../types/graph";
+
+const props = defineProps<{ id: string; canGoBack: boolean }>();
+const emit = defineEmits<{
+    select: [id: string];
+    back: [];
+    close: [];
+    open: [url: string];
+}>();
+
+const entity = computed(() => entities[props.id]);
+const isPerson = computed(() => entity.value.group === NodeType.TEAM_MEMBER);
+const related = computed(() => entity.value.connections.map((id) => entities[id]));
+
+const summary = computed(() => {
+    const n = related.value.length;
+    if (isPerson.value) {
+        return `Involved in ${n} ${n === 1 ? "project" : "projects"} at BISS.`;
+    }
+    return `${n} ${n === 1 ? "person" : "people"} from BISS ${n === 1 ? "works" : "work"} on this project.`;
+});
+
+const teammates = (project: Entity) => project.connections.slice(0, 6).map((id) => entities[id]);
+</script>
+<style scoped>
+.panel {
+    position: absolute;
+    top: var(--gap);
+    right: var(--gap);
+    bottom: var(--gap);
+    width: var(--panel-width);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 30;
+}
+
+.toolbar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.2rem 1.2rem 0;
+}
+
+.body {
+    flex: 1;
+    padding: 0.5rem 1.8rem 2.2rem;
+}
+
+.hero {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.9rem;
+    padding: 1.2rem 0 1.8rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.hero.person {
+    align-items: center;
+    text-align: center;
+}
+
+.hero-photo {
+    width: 10rem;
+    height: 10rem;
+}
+
+.hero-bar {
+    width: 3rem;
+    height: 0.35rem;
+    border-radius: 999px;
+    background: var(--tone);
+}
+
+.title {
+    margin: 0;
+    font-size: 2.1rem;
+    line-height: 1.15;
+    font-weight: 600;
+    text-wrap: balance;
+}
+
+.role {
+    margin: -0.3rem 0 0;
+    font-size: 1.15rem;
+    color: var(--text-2);
+}
+
+.summary {
+    margin: 0 0 0.4rem;
+    color: var(--text-3);
+    font-size: 1.05rem;
+}
+
+.section-title {
+    margin: 1.8rem 0 1rem;
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.projects {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.row {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.1rem;
+    text-align: left;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    transition: transform 140ms var(--ease-out), background-color 140ms ease;
+}
+
+.row:active {
+    transform: scale(0.985);
+    background: var(--surface-2);
+}
+
+.row-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.row-title {
+    font-weight: 500;
+    font-size: 1.1rem;
+    line-height: 1.3;
+}
+
+.faces {
+    display: flex;
+    align-items: center;
+}
+
+.face {
+    width: 2rem;
+    height: 2rem;
+    margin-right: -0.4rem;
+    box-shadow: 0 0 0 2px var(--surface);
+}
+
+.more {
+    margin-left: 0.8rem;
+    font-size: 0.85rem;
+    color: var(--text-3);
+}
+
+.chevron {
+    color: var(--text-3);
+}
+
+.team {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
+    gap: 0.6rem;
+}
+
+.member {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 1.1rem 0.6rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    transition: transform 140ms var(--ease-out), background-color 140ms ease;
+}
+
+.member:active {
+    transform: scale(0.97);
+    background: var(--surface-2);
+}
+
+.member-photo {
+    width: 5rem;
+    height: 5rem;
+}
+
+.member-name {
+    font-size: 0.95rem;
+    font-weight: 500;
+    line-height: 1.25;
+    text-align: center;
+    text-wrap: balance;
+}
+
+.swap-enter-active,
+.swap-leave-active {
+    transition: opacity 200ms ease, transform 280ms var(--ease-out);
+}
+
+.swap-enter-from {
+    opacity: 0;
+    transform: translateY(0.75rem);
+}
+
+.swap-leave-to {
+    opacity: 0;
+}
+</style>

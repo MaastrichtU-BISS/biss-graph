@@ -1,11 +1,287 @@
-/* @tailwind base; */
-/* @tailwind components; */
 @tailwind utilities;
 
-/* @layer primevue; */
+/* Mirrors biss-institute.com: white cards, black type, grey body copy, small radii, tinted tags. */
+:root {
+  --ink: #060914;
+  --surface: #ffffff;
+  --surface-2: #f5f5f5;
+  --border: #e5e7eb;
+  --border-strong: #d1d5db;
+  --text: #000000;
+  --text-2: #4b4b4b;
+  --text-3: #616161;
+  --on-dark: #ffffff;
+  --on-dark-2: rgba(255, 255, 255, 0.72);
 
-/* @layer reset {
-    button,
-    input {
-    }
-} */
+  --tag-project-bg: #def7ec;
+  --tag-project-fg: #03543f;
+  --tag-person-bg: #e1effe;
+  --tag-person-fg: #1e429f;
+
+  --radius: 0.4rem;
+  --radius-sm: 0.3rem;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.25);
+  --gap: clamp(1rem, 1.6vw, 2.5rem);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  /* Everything is sized in rem, so the UI scales with the screen. */
+  font-size: clamp(15px, 0.55vw + 8px, 30px);
+}
+
+/* "Larger text" setting: scales the whole interface by a quarter */
+:root.large-text {
+  font-size: clamp(19px, 0.69vw + 10px, 38px);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: radial-gradient(ellipse 80% 70% at 40% 35%, #121a3a 0%, var(--ink) 70%);
+  color: var(--text);
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+  /* kiosk hygiene: no selection, callouts, overscroll or tap flashes */
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+  touch-action: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+img {
+  -webkit-user-drag: none;
+}
+
+.surface {
+  background: var(--surface);
+  color: var(--text);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+}
+
+/*
+ * Night theme for panels and cards on the graph: dark glass, light text. It redefines the
+ * same colour variables the components use, so their styles carry over unchanged.
+ */
+.night {
+  --surface: #121933;
+  --surface-2: rgba(255, 255, 255, 0.06);
+  --border: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.2);
+  --text: #f2f4ff;
+  --text-2: rgba(242, 244, 255, 0.78);
+  --text-3: rgba(242, 244, 255, 0.55);
+  background: rgba(14, 20, 44, 0.84);
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.2rem;
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.45);
+}
+
+.night .tag-project {
+  background: rgba(94, 224, 160, 0.14);
+  color: #7ee8b4;
+}
+
+.night .tag-person {
+  background: rgba(108, 184, 255, 0.16);
+  color: #9fcdff;
+}
+
+.night .tag-content {
+  background: rgba(185, 160, 255, 0.16);
+  color: #cbb8ff;
+}
+
+.night .tag-running {
+  background: rgba(255, 179, 71, 0.16);
+  color: #ffc878;
+}
+
+.night .tag-finished {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(242, 244, 255, 0.7);
+}
+
+.night .btn-primary {
+  background: #fff;
+  color: #000;
+}
+
+.night .btn-primary:active {
+  background: #dfe4f5;
+}
+
+.night .btn-secondary {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: var(--text);
+}
+
+.night .btn-secondary:active,
+.night .icon-button:active {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.night .icon-button {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-2);
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.15rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.tag-project {
+  background: var(--tag-project-bg);
+  color: var(--tag-project-fg);
+}
+
+.tag-content {
+  background: #ede9fe;
+  color: #5b21b6;
+}
+
+.tag-running {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.tag-finished {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.tag-person {
+  background: var(--tag-person-bg);
+  color: var(--tag-person-fg);
+}
+
+/* Large, finger-sized button. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: 3.4rem;
+  padding: 0 1.4rem;
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+  font-size: 1.05rem;
+  transition: transform 140ms var(--ease-out), background-color 140ms ease;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn-primary {
+  background: #000;
+  color: #fff;
+}
+
+.btn-primary:active {
+  background: #262626;
+}
+
+.btn-secondary {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border-strong);
+}
+
+.btn-secondary:active {
+  background: var(--surface-2);
+}
+
+.icon-button {
+  display: grid;
+  place-items: center;
+  width: 3.4rem;
+  height: 3.4rem;
+  flex: none;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--text-2);
+  transition: transform 140ms var(--ease-out), background-color 140ms ease, color 140ms ease;
+}
+
+.icon-button .icon {
+  width: 1.15em;
+  height: 1.15em;
+}
+
+.icon-button:active {
+  transform: scale(0.92);
+  background: var(--border);
+  color: var(--text);
+}
+
+.avatar {
+  border-radius: 999px;
+  object-fit: cover;
+  background: var(--surface-2);
+}
+
+.dot {
+  width: 0.75rem;
+  height: 0.75rem;
+  flex: none;
+  border-radius: 999px;
+  background: var(--tone);
+}
+
+.scroll {
+  overflow-y: auto;
+  touch-action: pan-y;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+
+.scroll::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+}

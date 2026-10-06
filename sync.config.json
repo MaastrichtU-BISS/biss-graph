@@ -1,0 +1,20 @@
+{
+  "excludePeople": ["peter-de-kock"],
+  "excludeProjects": [],
+  "areas": {
+    "legal-research-software": ["Law"],
+    "flying-forward": ["Law", "Mobility"],
+    "benedrone-cross-border-innovation-in-medical-drone-deployment": ["Health", "Mobility", "Law"],
+    "better-responsible-data-analytics-in-healthcare": ["Health"],
+    "how-can-we-recognize-sound-when-it-is-out-of-sight": ["Health"],
+    "fair4ai-making-ai-models-practically-usable": ["Responsible AI"],
+    "enhancing-customer-support-with-ai": ["Business"],
+    "can-automated-systems-give-good-financial-advice": ["Finance"],
+    "choosing-under-financial-pressure-a-vr-experience": ["Finance", "Society"],
+    "working-towards-a-clear-and-simple-welfare-application": ["Society"],
+    "priceless-assets-of-subversion-financial-crime-and-the-valuation-of-unique-goods": ["Law", "Finance"],
+    "digimach-smart-sustainable-and-connected-manufacturing": ["Industry"],
+    "preventfactoryshutdowns": ["Industry"],
+    "what-is-the-content-of-livestock-feed": ["Industry"]
+  }
+}

@@ -1,12 +1,7 @@
 <template>
-  <Graph />
+  <Kiosk />
 </template>
 
 <script setup lang="ts">
-import Graph from './components/Graph.vue'
+import Kiosk from './components/Kiosk.vue'
 </script>
-
-
-<style scoped>
-
-</style>

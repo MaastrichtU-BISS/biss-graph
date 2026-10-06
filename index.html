@@ -2,13 +2,76 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.png" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>BISS-Projects</title>
+    <title>BISS: Who works on what</title>
+    <!--
+      Inline so the screen is dark with a loader from the very first frame, before any
+      script or stylesheet arrives. The app shows the same loader until the graph is ready.
+    -->
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: #060914;
+      }
+
+      .boot-loader {
+        position: fixed;
+        inset: 0;
+        z-index: 5;
+        display: grid;
+        place-content: center;
+        justify-items: center;
+        gap: 28px;
+        color: rgba(255, 255, 255, 0.72);
+        font: 500 clamp(15px, 0.55vw + 8px, 30px) ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+        pointer-events: none;
+      }
+
+      .boot-orbit {
+        position: relative;
+        width: 4.5em;
+        height: 4.5em;
+        border-radius: 50%;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        animation: boot-spin 2.4s linear infinite;
+      }
+
+      /* a few "nodes" circling, like the graph being gathered */
+      .boot-orbit span {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0.7em;
+        height: 0.7em;
+        margin: -0.35em;
+        border-radius: 50%;
+        background: #fff;
+        transform: rotate(var(--a)) translateX(2.25em);
+      }
+
+      .boot-orbit span:nth-child(1) { --a: 0deg; }
+      .boot-orbit span:nth-child(2) { --a: 120deg; opacity: 0.6; width: 0.5em; height: 0.5em; margin: -0.25em; }
+      .boot-orbit span:nth-child(3) { --a: 240deg; opacity: 0.35; width: 0.4em; height: 0.4em; margin: -0.2em; }
+
+      @keyframes boot-spin {
+        to { transform: rotate(1turn); }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .boot-orbit { animation-duration: 12s; }
+      }
+    </style>
   </head>
-  <body class="m-0">
-    <div id="app"></div>
+  <body>
+    <div id="app">
+      <div class="boot-loader" role="status">
+        <div class="boot-orbit"><span></span><span></span><span></span></div>
+        Loading the BISS team…
+      </div>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
-

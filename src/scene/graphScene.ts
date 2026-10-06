@@ -8,6 +8,16 @@ import type { Lang } from "../i18n";
 
 export const BACKGROUND = "#060914";
 
+export type Theme = "dark" | "light";
+
+/** Colours that differ between the dark and light theme; `setTheme` swaps them. */
+type Palette = { bg: string; labelBg: string; labelText: string; stars: number; glow: THREE.Blending; active: string };
+const PALETTES: Record<Theme, Palette> = {
+  dark: { bg: BACKGROUND, labelBg: "rgba(6, 9, 22, 0.72)", labelText: "#f4f6ff", stars: 0.8, glow: THREE.AdditiveBlending, active: "#ffffff" },
+  light: { bg: "#f4f6fb", labelBg: "rgba(255, 255, 255, 0.92)", labelText: "#0b1020", stars: 0, glow: THREE.NormalBlending, active: "#0b1020" },
+};
+let palette: Palette = PALETTES.dark;
+
 type SimNode = { id: string; x?: number; y?: number; z?: number; fx?: number; fy?: number; fz?: number };
 type SimLink = { source?: string | number | SimNode; target?: string | number | SimNode };
 
@@ -215,7 +225,7 @@ const labelTexture = (lines: string[], accent: string | undefined, fontPx: numbe
   canvas.width = Math.ceil(textWidth + padX * 2 + bar);
   canvas.height = Math.ceil(lines.length * lineHeight + padY * 2);
 
-  ctx.fillStyle = "rgba(6, 9, 22, 0.72)";
+  ctx.fillStyle = palette.labelBg;
   ctx.beginPath();
   ctx.roundRect(0, 0, canvas.width, canvas.height, 26 * k);
   ctx.fill();
@@ -228,7 +238,7 @@ const labelTexture = (lines: string[], accent: string | undefined, fontPx: numbe
   }
 
   ctx.font = `600 ${fontPx}px ${FONT}`;
-  ctx.fillStyle = "#f4f6ff";
+  ctx.fillStyle = palette.labelText;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   lines.forEach((l, i) => ctx.fillText(l, bar + padX + textWidth / 2, padY + lineHeight * (i + 0.5) + 2 * k));
@@ -318,6 +328,7 @@ export class GraphScene {
   private focusMode: FocusMode = "select";
   private filterIds: Set<string> | null = null;
   private frame = 0;
+  private stars?: THREE.Points;
   private paused = false;
   private tick = 0;
   private controlsTimer?: number;
@@ -388,7 +399,8 @@ export class GraphScene {
     this.applyLinkStyle();
 
     const scene = this.graph.scene();
-    scene.add(starfield());
+    this.stars = starfield();
+    scene.add(this.stars);
     scene.fog = new THREE.FogExp2(BACKGROUND, 0.0011);
 
     const renderer = this.graph.renderer();
@@ -631,14 +643,14 @@ export class GraphScene {
     this.graph
       .linkColor((l: SimLink) => {
         const c = this.linkColorOf(l);
-        if (!focused) return mix(c, BACKGROUND, 0.45);
-        return this.isActive(l) ? mix(c, "#ffffff", 0.15) : mix(c, BACKGROUND, 0.88);
+        if (!focused) return mix(c, palette.bg, 0.45);
+        return this.isActive(l) ? mix(c, palette.active, 0.15) : mix(c, palette.bg, 0.88);
       })
       .linkWidth((l: SimLink) => (!focused ? 0.35 : this.isActive(l) ? 1.1 : 0.2))
       .linkDirectionalParticles((l: SimLink) => (!focused ? 1 : this.isActive(l) ? 4 : 0))
       .linkDirectionalParticleWidth((l: SimLink) => (this.isActive(l) ? 1.4 : 0.9))
       .linkDirectionalParticleColor((l: SimLink) =>
-        this.isActive(l) ? "#ffffff" : mix(this.linkColorOf(l), "#ffffff", 0.4)
+        this.isActive(l) ? palette.active : mix(this.linkColorOf(l), palette.active, 0.4)
       );
   }
 
@@ -879,6 +891,26 @@ export class GraphScene {
     // a drifting camera would carry nodes underneath the overlays again
     this.setAutoRotate(false);
     this.flyToClear(id, overlays, 3000);
+  }
+
+  /** Switches the scene between the dark and light look. */
+  setTheme(theme: Theme) {
+    palette = PALETTES[theme];
+    const scene = this.graph.scene();
+    (scene.fog as THREE.FogExp2).color.set(palette.bg);
+    if (this.stars) (this.stars.material as THREE.PointsMaterial).opacity = palette.stars;
+    for (const v of Object.values(this.visuals)) {
+      v.halo.material.blending = palette.glow;
+      v.halo.material.needsUpdate = true;
+      const info = v.label.userData.label;
+      if (info) {
+        // redraw at the same size, in the new colours
+        const size = info.fontPx;
+        info.fontPx = -1;
+        sharpenLabel(v.label, size * 1.22);
+      }
+    }
+    this.applyLinkStyle();
   }
 
   /** Stops rendering while something covers the whole screen, e.g. a showcase. */

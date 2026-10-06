@@ -7,6 +7,25 @@ import { computed, ref, watch } from "vue";
 export type Lang = "en" | "nl";
 
 export const lang = ref<Lang>("en");
+
+/**
+ * Dark or light look. A setting for the screen, not the visitor: remembered across reloads
+ * and not reset by the idle loop. `?theme=light` or `?theme=dark` sets it from the URL.
+ */
+export type Theme = "dark" | "light";
+const THEME_KEY = "biss-graph:theme";
+const requested = new URLSearchParams(location.search).get("theme");
+export const theme = ref<Theme>(
+  requested === "light" || requested === "dark" ? requested : localStorage.getItem(THEME_KEY) === "light" ? "light" : "dark"
+);
+watch(
+  theme,
+  (th) => {
+    document.documentElement.classList.toggle("light", th === "light");
+    localStorage.setItem(THEME_KEY, th);
+  },
+  { immediate: true }
+);
 export const largeText = ref(false);
 
 watch(largeText, (on) => document.documentElement.classList.toggle("large-text", on), { immediate: true });
@@ -64,6 +83,8 @@ const en = {
   areas: "Areas",
   show: "Show",
   largerText: "Larger text",
+  lightTheme: "Light theme",
+  darkTheme: "Dark theme",
   worksOnCount: (n: number) => `Works on ${plural(n, "project", "projects")}`,
   involvedIn: (n: number) => `Involved in ${plural(n, "project", "projects")} at BISS.`,
   partOfTeam: "Part of the BISS team.",
@@ -129,6 +150,8 @@ const nl: typeof en = {
   areas: "Gebieden",
   show: "Toon",
   largerText: "Grotere tekst",
+  lightTheme: "Licht thema",
+  darkTheme: "Donker thema",
   worksOnCount: (n: number) => `Werkt aan ${plural(n, "project", "projecten")}`,
   involvedIn: (n: number) => `Betrokken bij ${plural(n, "project", "projecten")} bij BISS.`,
   partOfTeam: "Onderdeel van het BISS-team.",

@@ -71,6 +71,10 @@
                             <span :class="{ on: lang === 'en' }">EN</span>
                             <span :class="{ on: lang === 'nl' }">NL</span>
                         </button>
+                        <button class="ghost setting" :aria-label="theme === 'dark' ? t.lightTheme : t.darkTheme"
+                            @click="theme = theme === 'dark' ? 'light' : 'dark'">
+                            <Icon :name="theme === 'dark' ? 'sun' : 'moon'" />
+                        </button>
                         <button class="ghost setting" :class="{ active: largeText }" :aria-pressed="largeText"
                             :aria-label="t.largerText" @click="largeText = !largeText">
                             <span class="aa">A<small>A</small></span>
@@ -119,7 +123,7 @@ import InfoSheet from "./InfoSheet.vue";
 import ShowcasePlayer from "./ShowcasePlayer.vue";
 import FilterPanel, { type Filters, emptyFilters, filterMatches } from "./FilterPanel.vue";
 import { aboutShowcase, preloadShowcases, showcaseById, showcasesForProject, type Showcase } from "../showcases";
-import { lang, largeText, resetSettings, t } from "../i18n";
+import { lang, largeText, resetSettings, t, theme } from "../i18n";
 import { sound } from "../sound";
 import { GraphScene, type ScreenRect } from "../scene/graphScene";
 import { entities, graphData, highlights, people, titleOf } from "../data/graph";
@@ -436,6 +440,7 @@ const toggleLanguage = () => {
 };
 
 watch(lang, (l) => scene?.setLanguage(l));
+watch(theme, (th) => scene?.setTheme(th));
 // the graph is hidden behind a showcase; give the animation the whole GPU, once it has faded in
 let pauseTimer: number | undefined;
 watch(showcase, (s) => {
@@ -473,6 +478,7 @@ onMounted(async () => {
 
     scene = new GraphScene(stage.value!, onSceneTap);
     await scene.init();
+    if (theme.value !== "dark") scene.setTheme(theme.value);
     if (import.meta.env.DEV) Object.assign(window, { __scene: scene });
     ready.value = true;
     enterAttract();

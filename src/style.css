@@ -285,3 +285,69 @@ img {
     transition-duration: 1ms !important;
   }
 }
+
+/*
+ * Light theme. Components style themselves for the dark scene; these overrides (doubled
+ * class names, to win over their scoped styles) turn the same pieces light.
+ */
+:root.light body {
+  background: radial-gradient(ellipse 80% 70% at 40% 35%, #ffffff 0%, #eef1f8 70%);
+  color: #0b1020;
+}
+
+:root.light .night.night {
+  --surface: #ffffff;
+  --surface-2: #f3f5fa;
+  --border: #e5e7eb;
+  --border-strong: #d1d5db;
+  --text: #0b1020;
+  --text-2: #374151;
+  --text-3: #6b7280;
+  background: rgba(255, 255, 255, 0.92);
+  border-color: rgba(11, 16, 32, 0.08);
+  box-shadow: 0 1.2rem 3rem rgba(15, 23, 42, 0.12);
+}
+
+:root.light .night .tag-project { background: #def7ec; color: #03543f; }
+:root.light .night .tag-person { background: #e1effe; color: #1e429f; }
+:root.light .night .tag-content { background: #ede9fe; color: #5b21b6; }
+:root.light .night .tag-running { background: #fef3c7; color: #92400e; }
+:root.light .night .tag-finished { background: #f3f4f6; color: #374151; }
+:root.light .night .btn-primary { background: #0b1020; color: #fff; }
+:root.light .night .btn-secondary { background: #fff; border-color: #d1d5db; color: #0b1020; }
+:root.light .night .icon-button { background: #f3f5fa; color: #374151; }
+:root.light .night .chip[aria-pressed="true"] { background: #0b1020; border-color: #0b1020; color: #fff; }
+
+:root.light .dock.dock,
+:root.light .top-right.top-right,
+:root.light .qr.qr,
+:root.light .cta.cta,
+:root.light .hint.hint {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(11, 16, 32, 0.08);
+  color: #0b1020;
+  box-shadow: 0 0.8rem 2rem rgba(15, 23, 42, 0.1);
+}
+
+:root.light .ghost.ghost { color: #374151; }
+:root.light .ghost.ghost:active { background: rgba(11, 16, 32, 0.06); }
+:root.light .ghost.active { background: #0b1020; color: #fff; }
+:root.light .setting.setting span { color: #9ca3af; }
+:root.light .setting.setting span.on { color: #0b1020; }
+:root.light .divider.divider { background: rgba(11, 16, 32, 0.12); }
+:root.light .hints.hints { color: #6b7280; text-shadow: none; }
+:root.light .hints.hints li:first-child { color: #0b1020; }
+:root.light .qr.qr span,
+:root.light .cta-sub.cta-sub { color: #6b7280; }
+:root.light .press.press { background: rgba(11, 16, 32, 0.08); color: #0b1020; }
+:root.light .ring.ring { border-color: rgba(11, 16, 32, 0.4); }
+:root.light .brand.brand { color: #0b1020; }
+:root.light .brand.brand p { color: #4b5563; }
+:root.light .brand-text.brand-text { border-left-color: rgba(11, 16, 32, 0.2); }
+/* the logo file is white; darken it for the light background */
+:root.light .logo.logo { filter: brightness(0); }
+:root.light .vignette.vignette {
+  background:
+    linear-gradient(to bottom, rgba(244, 246, 251, 0.8), transparent 16%),
+    linear-gradient(to top, rgba(244, 246, 251, 0.7), transparent 20%);
+}

@@ -885,6 +885,15 @@ export class GraphScene {
     this.moveCamera(center.clone().add(dir.multiplyScalar(distance)), center, ms);
   }
 
+  /** Zoom toward the current orbit target, respecting the same limits as pinch. */
+  zoom(factor: number) {
+    const controls = this.controls();
+    const target = controls.target.clone();
+    const offset = (this.graph.camera() as THREE.PerspectiveCamera).position.clone().sub(target);
+    const distance = THREE.MathUtils.clamp(offset.length() * factor, controls.minDistance, controls.maxDistance);
+    this.moveCamera(target.clone().add(offset.normalize().multiplyScalar(distance)), target, 320);
+  }
+
   /**
    * Idle-loop highlight: a slow flight to a still shot of the node and its connections,
    * chosen so they stay clear of the overlays on screen.

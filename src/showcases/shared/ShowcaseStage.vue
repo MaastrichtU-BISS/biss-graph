@@ -4,7 +4,7 @@
 
         <div class="scrim" aria-hidden="true"></div>
         <Transition name="backdrop">
-            <div v-if="scene === 'outro'" class="backdrop" aria-hidden="true"></div>
+            <div v-if="scene === 'outro' || scene === 'credits'" class="backdrop" aria-hidden="true"></div>
         </Transition>
 
         <Transition name="fade">
@@ -23,20 +23,25 @@
                 <h1>{{ title }}</h1>
                 <p>{{ local.outro ?? outro }}</p>
                 <span v-if="url" class="url">{{ url }}</span>
-                <div v-if="partners?.length || funders?.length" class="credits">
-                    <div v-if="partners?.length" class="credit-row">
-                        <span class="credit-label">{{ lang === 'nl' ? 'Partners, waaronder' : 'Partners include' }}</span>
-                        <span v-for="name in partners" :key="name" class="credit-name">{{ name }}</span>
-                    </div>
-                    <div v-if="funders?.length" class="credit-row">
-                        <span class="credit-label">{{ lang === 'nl' ? 'Gefinancierd door' : 'Funded by' }}</span>
-                        <span v-for="name in funders" :key="name" class="credit-name">{{ name }}</span>
-                    </div>
-                </div>
                 <div v-if="members.length" class="faces">
                     <img v-for="(m, i) in members" :key="m.title" :src="m.photo" :alt="m.title" decoding="async"
                         :style="{ animationDelay: `${0.5 + i * 0.07}s` }" />
                 </div>
+            </div>
+            <div v-else-if="scene === 'credits'" key="credits" class="credits-page">
+                <span class="eyebrow">{{ title }}</span>
+                <h1>{{ lang === 'nl' ? 'Samen mogelijk gemaakt' : 'Made possible together' }}</h1>
+                <div class="credits">
+                    <section v-if="partners?.length" class="credit-row">
+                        <h2 class="credit-label">{{ lang === 'nl' ? 'Partners, waaronder' : 'Partners include' }}</h2>
+                        <ul><li v-for="name in partners" :key="name" class="credit-name">{{ name }}</li></ul>
+                    </section>
+                    <section v-if="funders?.length" class="credit-row">
+                        <h2 class="credit-label">{{ lang === 'nl' ? 'Gefinancierd door' : 'Funded by' }}</h2>
+                        <ul><li v-for="name in funders" :key="name" class="credit-name">{{ name }}</li></ul>
+                    </section>
+                </div>
+                <span v-if="url" class="credit-url">{{ url }}</span>
             </div>
             <p v-else-if="captions[scene]" :key="scene + lang" class="caption">
                 {{ local.captions?.[scene] ?? captions[scene] }}
@@ -153,9 +158,8 @@ defineExpose({ canvas });
     color: #3b4150;
 }
 
-.light .credit-name {
-    border-color: rgba(11, 16, 32, 0.17);
-}
+.light .credit-row { border-color: rgba(11, 16, 32, 0.2); }
+.light .credit-label, .light .credit-url { color: #626b79; }
 
 canvas {
     position: absolute;
@@ -232,7 +236,8 @@ canvas {
 
 /* the title card builds up line by line */
 .intro > *,
-.outro > * {
+.outro > *,
+.credits-page > * {
     animation: rise 900ms var(--ease-out) both;
 }
 
@@ -274,7 +279,8 @@ canvas {
 }
 
 .intro,
-.outro {
+.outro,
+.credits-page {
     position: absolute;
     inset: 0;
     display: flex;
@@ -314,31 +320,43 @@ h1 {
 
 .credits {
     display: grid;
-    gap: 0.6rem;
-    width: min(82%, 70rem);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(2rem, 6vw, 7rem);
+    width: min(82%, 62rem);
     color: rgba(255, 255, 255, 0.76);
+    text-align: left;
 }
 
 .credit-row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    justify-content: center;
-    gap: 0.4rem 0.65rem;
-    font-size: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.28);
+    padding-top: 1.1rem;
+}
+
+.credit-row ul {
+    display: grid;
+    gap: 0.65rem;
+    padding: 0;
+    margin: 1.2rem 0 0;
+    list-style: none;
 }
 
 .credit-label {
-    font-weight: 800;
+    margin: 0;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.56);
 }
 
 .credit-name {
-    padding: 0.25rem 0.55rem;
-    border: 1px solid rgba(255, 255, 255, 0.22);
-    border-radius: 999px;
+    font-size: clamp(1.05rem, 1.7vw, 1.5rem);
+    line-height: 1.22;
+}
+
+.credit-url {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.54);
 }
 
 .faces img {
@@ -398,11 +416,11 @@ h1 {
 }
 
 @media (max-width: 700px) {
-    .intro, .outro {
+    .intro, .outro, .credits-page {
         gap: 0.7rem;
         padding: calc(env(safe-area-inset-top) + 4.3rem) 1rem calc(env(safe-area-inset-bottom) + 2.5rem);
     }
-    .outro {
+    .outro, .credits-page {
         justify-content: safe center;
         overflow-y: auto;
         touch-action: pan-y;
@@ -411,10 +429,11 @@ h1 {
     h1 { font-size: clamp(2.1rem, 11vw, 3rem); line-height: 1.05; }
     .intro p, .outro p { font-size: 1.05rem; line-height: 1.3; }
     .url { margin-top: 0.3rem; padding: 0.45rem 0.9rem; font-size: 0.95rem; }
-    .credits { width: 100%; gap: 0.4rem; }
-    .credit-row { gap: 0.25rem; font-size: 0.78rem; }
-    .credit-label { width: 100%; font-size: 0.67rem; }
-    .credit-name { padding: 0.16rem 0.4rem; }
+    .credits { width: min(100%, 27rem); grid-template-columns: 1fr; gap: 1.1rem; }
+    .credit-row { padding-top: 0.65rem; }
+    .credit-row ul { gap: 0.35rem; margin-top: 0.6rem; }
+    .credit-label { font-size: 0.67rem; }
+    .credit-name { font-size: 0.95rem; }
     .faces { max-width: 21rem; justify-content: center; flex-wrap: wrap; margin-top: 0.3rem; }
     .faces img { width: 2.5rem; height: 2.5rem; margin-right: -0.35rem; }
     .caption { bottom: calc(env(safe-area-inset-bottom) + 5%); width: calc(100% - 2rem); font-size: clamp(1.15rem, 5vw, 1.55rem); }

@@ -21,13 +21,13 @@ const files = import.meta.glob<Component>("./*/*.vue", { import: "default" });
 const ENTRIES = [
   { id: "case-law-explorer", project: "legal-research-software", title: "Case Law Explorer", file: "./caseLawExplorer/CaseLawExplorer.vue" },
   { id: "lawnotation", project: "legal-research-software", title: "Lawnotation", file: "./lawnotation/Lawnotation.vue" },
-  { id: "digimach", project: "digimach-smart-sustainable-and-connected-manufacturing", title: "DigiMach", file: "./digimach/DigiMach.vue" },
-  { id: "benedrone", project: "benedrone-cross-border-innovation-in-medical-drone-deployment", title: "BeNeDrone", file: "./benedrone/BeNeDrone.vue" },
-  { id: "fair4ai", project: "fair4ai-making-ai-models-practically-usable", title: "FAIR4AI", file: "./fair4ai/Fair4ai.vue" },
-  { id: "better", project: "better-responsible-data-analytics-in-healthcare", title: "BETTER", file: "./better/Better.vue" },
+  { id: "digimach", project: "digimach-smart-sustainable-and-connected-manufacturing", title: "DigiMach", file: "./digimach/DigiMach.vue", duration: 46 },
+  { id: "benedrone", project: "benedrone-cross-border-innovation-in-medical-drone-deployment", title: "BeNeDrone", file: "./benedrone/BeNeDrone.vue", duration: 55 },
+  { id: "fair4ai", project: "fair4ai-making-ai-models-practically-usable", title: "FAIR4AI", file: "./fair4ai/Fair4ai.vue", duration: 46 },
+  { id: "better", project: "better-responsible-data-analytics-in-healthcare", title: "BETTER", file: "./better/Better.vue", duration: 46 },
   // about BISS itself, not one project; plays now and then in the idle loop and from the dock
   { id: "biss", project: "", title: "What is BISS?", file: "./biss/AboutBiss.vue", duration: 66.5 },
-  { id: "flying-forward", project: "flying-forward", title: "Flying Forward", file: "./flyingForward/FlyingForward.vue" },
+  { id: "flying-forward", project: "flying-forward", title: "Flying Forward", file: "./flyingForward/FlyingForward.vue", duration: 46 },
 ];
 
 export const showcases: Showcase[] = (ENTRIES as ((typeof ENTRIES)[number] & { duration?: number })[])

@@ -54,10 +54,10 @@ export const NL: Record<string, ShowcaseTexts> = {
     captions: {
       emergency: "Een noodgeval, net over de grens.",
       road: "Over de weg moet hulp zich een weg banen. Elke minuut telt.",
-      drone: "Een medische drone vliegt er rechtstreeks heen, over de grens.",
+      drone: "Een medische drone kan een directe route over de grens nemen.",
       cargo: "Met wat levens redt: defibrillatoren, bloed, zelfs organen.",
-      rules: "Maar welke regels gelden er in de lucht? BeNeDrone zoekt uit hoe je veilig, legaal en verantwoord vliegt.",
-      scale: "Een model voor andere Europese grensregio's, klaar voor de nieuwe Europese droneregels.",
+      rules: "Voor een vlucht is meer nodig dan een route: ook juridische, logistieke en maatschappelijke checks tellen mee.",
+      scale: "BeNeDrone ontwikkelt een model dat andere grensregio's kunnen gebruiken.",
     },
   },
 };

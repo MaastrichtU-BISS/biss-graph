@@ -105,7 +105,7 @@ const subtitle = computed(() => {
     position: absolute;
     left: var(--gap);
     bottom: var(--gap);
-    width: min(30rem, 32vw);
+    width: min(38rem, 40vw);
     display: flex;
     flex-direction: column;
     gap: 1rem;

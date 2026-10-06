@@ -7,6 +7,7 @@
 </template>
 <script setup lang="ts">
 import { computed, ref } from "vue";
+import { theme as screenTheme } from "../../i18n";
 import ShowcaseStage from "../shared/ShowcaseStage.vue";
 import {
     ease,
@@ -29,9 +30,9 @@ defineProps<{ members: { photo?: string; title: string }[] }>();
 const emit = defineEmits<{ done: [] }>();
 
 /** Seconds into the animation at which each part starts. */
-const T = { missions: 3.5, layers: 8.5, code: 14, fly: 21, labs: 28, outro: 34, end: 40 };
+const T = { missions: 3.5, layers: 8.5, code: 14, fly: 21, labs: 28, outro: 34, credits: 40, end: 46 };
 
-type Scene = "intro" | "missions" | "layers" | "code" | "fly" | "labs" | "outro";
+type Scene = "intro" | "missions" | "layers" | "code" | "fly" | "labs" | "outro" | "credits";
 const captions: Record<string, string> = {
     missions: "Drones that fly on their own could deliver parcels, meals and defibrillators, or inspect buildings.",
     layers: "But which rules apply? Those of the region, the country and the EU, all at once.",
@@ -50,6 +51,11 @@ const ORANGE = "#ffb347";
 const PINK = "#ff7eb6";
 const TEAL = "#4dd4c6";
 const RED = "#ff4d4f";
+// The shared stage inverts legacy canvas art for light mode. Paint the paper
+// surfaces in inverse source colours so they stay white with dark lettering.
+const paper = () => screenTheme.value === "light" ? "#000" : "#fff";
+const paperInk = () => screenTheme.value === "light" ? "#f5efdb" : "#0a1024";
+const paperMuted = () => screenTheme.value === "light" ? "#c8beae" : "#374151";
 
 //#region An illustrative city, on an isometric grid of N × N blocks
 
@@ -285,7 +291,7 @@ const pill = (ctx: CanvasRenderingContext2D, label: string, x: number, y: number
     ctx.roundRect(x - w / 2, y - h / 2, w, h, h / 2);
     ctx.fill();
     ctx.restore();
-    text(ctx, label, x, y + k, size, { color: "#0a1024", weight: 700, alpha });
+    text(ctx, label, x, y + k, size, { color: paperInk(), weight: 700, alpha });
 };
 
 const statusIcon = (ctx: CanvasRenderingContext2D, x: number, y: number, r: number, state: "wait" | "ok" | "no", t: number, k: number) => {
@@ -689,7 +695,7 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
                 if (f > 0) {
                     faded(ctx, chipsA * f, () => {
                         const yy = y + (1 - f) * 16 * k;
-                        ctx.fillStyle = "#fff";
+                        ctx.fillStyle = paper();
                         ctx.beginPath();
                         ctx.roundRect(x, yy - h / 2, w, h, h / 2);
                         ctx.fill();
@@ -698,7 +704,7 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
                         ctx.beginPath();
                         ctx.arc(x + 26 * k * scale, yy, 12 * k * scale, 0, Math.PI * 2);
                         ctx.fill();
-                        text(ctx, s.label, x + 48 * k * scale, yy, size * scale, { align: "left", color: "#0a1024", maxWidth: w - 60 * k * scale });
+                        text(ctx, s.label, x + 48 * k * scale, yy, size * scale, { align: "left", color: paperInk(), maxWidth: w - 60 * k * scale });
                     });
                 }
                 x += w + gap * scale;
@@ -726,12 +732,12 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
             ctx.shadowColor = "rgba(0,0,0,0.35)";
             ctx.shadowBlur = 24 * k;
             ctx.shadowOffsetY = 8 * k;
-            ctx.fillStyle = "#fff";
+            ctx.fillStyle = paper();
             ctx.beginPath();
             ctx.roundRect(lawLeft, lawTop, cw, ch, 10 * k);
             ctx.fill();
             ctx.restore();
-            text(ctx, "Example legal text", lawLeft + pad, lawTop + 34 * k, 17 * k, { align: "left", color: "#6b7280", weight: 600, maxWidth: cw * 0.6 });
+            text(ctx, "Example legal text", lawLeft + pad, lawTop + 34 * k, 17 * k, { align: "left", color: screenTheme.value === "light" ? "#948d7f" : "#6b7280", weight: 600, maxWidth: cw * 0.6 });
 
             // which language is showing
             const li = t < LANG_START ? 0 : Math.min(LAW.length - 1, 1 + Math.floor((t - LANG_START) / LANG_STEP));
@@ -771,14 +777,14 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
                 });
             });
             faded(ctx, swap, () => {
-                ctx.fillStyle = "#111";
+                ctx.fillStyle = screenTheme.value === "light" ? "#eee" : "#111";
                 ctx.font = `500 ${fs}px Georgia, "Times New Roman", serif`;
                 ctx.textAlign = "left";
                 ctx.textBaseline = "middle";
                 for (const w of words) ctx.fillText(w.text, lawLeft + pad + w.x, textTop + w.y * lineH);
             });
             // grey lines suggesting the rest of the article
-            ctx.fillStyle = "#e5e7eb";
+            ctx.fillStyle = screenTheme.value === "light" ? "#1a1814" : "#e5e7eb";
             const restTop = textTop + (line + 1) * lineH + 6 * k;
             for (let r = 0; r < 4; r++) {
                 const y = restTop + r * 22 * k;
@@ -1053,13 +1059,13 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
                 ctx.shadowColor = "rgba(0,0,0,0.35)";
                 ctx.shadowBlur = 24 * k;
                 ctx.shadowOffsetY = 8 * k;
-                ctx.fillStyle = "#fff";
+                ctx.fillStyle = paper();
                 ctx.beginPath();
                 ctx.roundRect(left, top, hw, hh, 10 * k);
                 ctx.fill();
                 ctx.restore();
-                text(ctx, "Rule check before take-off", left + 28 * k, top + head / 2 + 4 * k, 21 * k, { align: "left", color: "#0a1024", weight: 700, maxWidth: hw - 56 * k });
-                ctx.fillStyle = "#e5e7eb";
+                text(ctx, "Rule check before take-off", left + 28 * k, top + head / 2 + 4 * k, 21 * k, { align: "left", color: paperInk(), weight: 700, maxWidth: hw - 56 * k });
+                ctx.fillStyle = screenTheme.value === "light" ? "#1a1814" : "#e5e7eb";
                 ctx.fillRect(left + 28 * k, top + head, hw - 56 * k, 1.5 * k);
                 LAYERS.forEach((L, i) => {
                     const y = top + head + rowH * (i + 0.5) + 6 * k;
@@ -1068,10 +1074,10 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
                     ctx.beginPath();
                     ctx.roundRect(left + 28 * k, y - 15 * k, tagW, 30 * k, 15 * k);
                     ctx.fill();
-                    text(ctx, L.tag, left + 28 * k + tagW / 2, y + 1 * k, 16 * k, { color: "#0a1024", weight: 700, maxWidth: tagW - 16 * k });
+                    text(ctx, L.tag, left + 28 * k + tagW / 2, y + 1 * k, 16 * k, { color: paperInk(), weight: 700, maxWidth: tagW - 16 * k });
                     text(ctx, L.short, left + 28 * k + tagW + 18 * k, y, 20 * k, {
                         align: "left",
-                        color: "#1f2937",
+                        color: screenTheme.value === "light" ? "#e0d6c8" : "#1f2937",
                         weight: 500,
                         maxWidth: hw - tagW - 28 * k - 18 * k - 70 * k,
                     });
@@ -1181,15 +1187,15 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
                 if (f <= 0) return;
                 const y = top0 + i * (cardH + gap) + (1 - f) * 24 * k;
                 faded(ctx, f, () => {
-                    ctx.fillStyle = "#fff";
+                    ctx.fillStyle = paper();
                     ctx.beginPath();
                     ctx.roundRect(left, y, Math.min(cardW, W - left - 24 * k), cardH, 10 * k);
                     ctx.fill();
-                    text(ctx, s.value, left + 28 * k, y + cardH / 2, 44 * k, { align: "left", weight: 800, color: "#0a1024" });
+                    text(ctx, s.value, left + 28 * k, y + cardH / 2, 44 * k, { align: "left", weight: 800, color: paperInk() });
                     text(ctx, s.label, left + 100 * k, y + cardH / 2 + 2 * k, 24 * k, {
                         align: "left",
                         weight: 600,
-                        color: "#374151",
+                        color: paperMuted(),
                         maxWidth: Math.min(cardW, W - left - 24 * k) - 124 * k,
                     });
                 });
@@ -1208,6 +1214,7 @@ const updateDom = (t: number) => {
         ["fly", T.fly],
         ["labs", T.labs],
         ["outro", T.outro],
+        ["credits", T.credits],
     ]);
     if (scene.value !== next) scene.value = next;
 };

@@ -30,9 +30,9 @@ defineProps<{ members: { photo?: string; title: string }[] }>();
 const emit = defineEmits<{ done: [] }>();
 
 /** Seconds into the animation at which each part starts. */
-const T = { region: 3.5, challenge: 9.5, hub: 14, platform: 20, transform: 28, outro: 34, end: 40 };
+const T = { region: 3.5, challenge: 9.5, hub: 14, platform: 20, transform: 28, outro: 34, credits: 40, end: 46 };
 
-type Scene = "intro" | "region" | "challenge" | "hub" | "platform" | "transform" | "outro";
+type Scene = "intro" | "region" | "challenge" | "hub" | "platform" | "transform" | "outro" | "credits";
 const captions: Record<string, string> = {
     region: "Many small manufacturers work in the border region of the Netherlands, Belgium and Germany.",
     challenge: "Going digital on your own is hard: which tools, what does it cost, who trains the staff?",
@@ -420,6 +420,7 @@ const updateDom = (t: number) => {
         ["platform", T.platform],
         ["transform", T.transform],
         ["outro", T.outro],
+        ["credits", T.credits],
     ]);
     if (scene.value !== next) scene.value = next;
 };

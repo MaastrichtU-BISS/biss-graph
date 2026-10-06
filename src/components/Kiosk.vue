@@ -42,6 +42,12 @@
                     </button>
                 </div>
 
+                <div v-if="!selectedId && !browseOpen" class="zoom-controls" role="group" :aria-label="t.zoomControls">
+                    <button :aria-label="t.zoomIn" @click="scene?.zoom(0.75)"><Icon name="zoomIn" /></button>
+                    <span aria-hidden="true"></span>
+                    <button :aria-label="t.zoomOut" @click="scene?.zoom(1.33)"><Icon name="zoomOut" /></button>
+                </div>
+
                 <Transition name="pop">
                     <FilterPanel v-if="filterOpen" v-model="filters" class="filters" @close="filterOpen = false" />
                 </Transition>
@@ -101,7 +107,8 @@
         </Transition>
 
         <Transition name="sheet">
-            <BrowseDrawer v-if="browseOpen" v-model:tab="browseTab" @select="select" @close="browseOpen = false" />
+            <BrowseDrawer v-if="browseOpen" v-model:tab="browseTab" @select="select" @play="playFromDirectory"
+                @close="browseOpen = false" />
         </Transition>
 
         <Transition name="showcase">
@@ -114,7 +121,7 @@
     </div>
 </template>
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, shallowRef, watch } from "vue";
 import Icon from "./Icon.vue";
 import AttractOverlay from "./AttractOverlay.vue";
 import DetailPanel from "./DetailPanel.vue";
@@ -255,7 +262,7 @@ const nextSpotlight = () => {
 
 //#region Showcases
 
-const showcase = ref<Showcase | null>(null);
+const showcase = shallowRef<Showcase | null>(null);
 /** The project whose showcase is playing; a touch opens it. */
 const showcaseProject = ref<string | null>(null);
 const lastPlayed = new Map<string, number>();
@@ -293,6 +300,14 @@ const playFromPanel = (id: string) => {
     if (!s) return;
     sound.open();
     playShowcase(s, selectedId.value);
+};
+
+const playFromDirectory = (showcaseId: string, projectId: string) => {
+    selectedId.value = projectId;
+    browseOpen.value = false;
+    filterOpen.value = false;
+    scene?.focus(projectId);
+    playFromPanel(showcaseId);
 };
 
 const playShowcase = (s: Showcase, project: string | null) => {
@@ -593,6 +608,30 @@ h1 {
     gap: 0.2rem;
 }
 
+.zoom-controls {
+    position: absolute;
+    right: var(--gap);
+    bottom: calc(var(--gap) + 8rem);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.3rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 999px;
+    background: rgba(12, 17, 38, 0.72);
+    backdrop-filter: blur(14px);
+}
+.zoom-controls button {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    color: #fff;
+}
+.zoom-controls button:active { background: rgba(255, 255, 255, 0.15); }
+.zoom-controls > span { width: 1.3rem; height: 1px; background: rgba(255, 255, 255, 0.16); }
+
 /* the controls stay quiet on the night sky: one dark translucent bar each, no white blocks */
 .dock,
 .top-right {
@@ -833,6 +872,7 @@ h1 {
 }
 
 @media (max-width: 700px) {
+    .zoom-controls { right: 0.75rem; bottom: calc(env(safe-area-inset-bottom) + 5.4rem); }
     .kiosk { --panel-width: 100%; }
     .brand {
         top: calc(env(safe-area-inset-top) + 0.5rem);

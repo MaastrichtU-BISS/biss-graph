@@ -26,9 +26,10 @@
                 </ul>
                 <ul v-else :key="tab" class="grid projects scroll">
                     <li v-for="p in tab === 'projects' ? projects : publications" :key="p.id">
-                        <button class="card project" :style="{ '--tone': p.color }" @click="emit('select', p.id)">
+                        <div class="card project" :style="{ '--tone': p.color }">
+                            <button class="project-main" @click="emit('select', p.id)">
                             <span class="bar" aria-hidden="true"></span>
-                            <span class="name">{{ titleOf(p, lang) }}</span>
+                            <span class="name" :class="{ 'has-showcase': showcasesForProject(p.infoUrl).length }">{{ titleOf(p, lang) }}</span>
                             <span class="footer">
                                 <span class="faces">
                                     <img v-for="m in p.connections.slice(0, 5)" :key="m" :src="entities[m].photo"
@@ -44,7 +45,19 @@
                                     {{ p.group === NodeType.EDUCATION ? t.education : t.publication }}
                                 </span>
                             </span>
-                        </button>
+                            </button>
+                            <button v-if="showcasesForProject(p.infoUrl).length === 1" class="play-button"
+                                :aria-label="t.watch(showcasesForProject(p.infoUrl)[0].title)"
+                                :title="t.watch(showcasesForProject(p.infoUrl)[0].title)"
+                                @click="emit('play', showcasesForProject(p.infoUrl)[0].id, p.id)">
+                                <Icon name="play" />
+                            </button>
+                            <button v-else-if="showcasesForProject(p.infoUrl).length > 1" class="play-count"
+                                :aria-label="lang === 'nl' ? `${showcasesForProject(p.infoUrl).length} animaties, open project` : `${showcasesForProject(p.infoUrl).length} animations, open project`"
+                                @click="emit('select', p.id)">
+                                <Icon name="play" /> {{ showcasesForProject(p.infoUrl).length }}
+                            </button>
+                        </div>
                     </li>
                 </ul>
             </Transition>
@@ -57,9 +70,10 @@ import Icon from "./Icon.vue";
 import { entities, people, projects, projectsOf, publications, roleOf, titleOf } from "../data/graph";
 import { NodeType, type BrowseTab } from "../types/graph";
 import { lang, t } from "../i18n";
+import { showcasesForProject } from "../showcases";
 
 const tab = defineModel<BrowseTab>("tab", { required: true });
-const emit = defineEmits<{ select: [id: string]; close: [] }>();
+const emit = defineEmits<{ select: [id: string]; play: [showcaseId: string, projectId: string]; close: [] }>();
 
 const tabs = computed(() => [
     { key: "people" as const, label: t.value.people, count: people.length },
@@ -187,10 +201,65 @@ const tabs = computed(() => [
 }
 
 .project {
+    position: relative;
     align-items: flex-start;
     text-align: left;
+}
+
+.project-main {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
     gap: 0.8rem;
     padding: 1.2rem 1.3rem;
+    text-align: left;
+    border-radius: inherit;
+}
+
+.project-main:focus-visible,
+.play-button:focus-visible {
+    outline: 2px solid var(--text);
+    outline-offset: -3px;
+}
+
+.project-main .name.has-showcase {
+    padding-right: 3.1rem;
+}
+
+.play-button,
+.play-count {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2rem;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 999px;
+    background: var(--surface-2);
+    color: var(--text);
+    border: 1px solid var(--border);
+}
+
+.play-button .icon,
+.play-count .icon {
+    width: 1.15rem;
+    height: 1.15rem;
+}
+
+.play-button:active {
+    transform: scale(0.94);
+    background: var(--border);
+}
+
+.play-count {
+    color: var(--text-2);
+    font-size: 0.85rem;
+    font-weight: 600;
 }
 
 .bar {
@@ -250,6 +319,6 @@ const tabs = computed(() => [
     .projects { grid-template-columns: minmax(0, 1fr); }
     .person { padding: 0.8rem 0.4rem; }
     .photo { width: 4.2rem; height: 4.2rem; }
-    .project { padding: 0.9rem 1rem; }
+    .project-main { padding: 0.9rem 1rem; }
 }
 </style>

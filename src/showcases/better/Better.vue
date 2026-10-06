@@ -30,9 +30,9 @@ defineProps<{ members: { photo?: string; title: string }[] }>();
 const emit = defineEmits<{ done: [] }>();
 
 /** Seconds into the animation at which each part starts. */
-const T = { problem: 3.5, train: 9.5, local: 16, results: 22, ethics: 28, outro: 34, end: 40 };
+const T = { problem: 3.5, train: 9.5, local: 16, results: 22, ethics: 28, outro: 34, credits: 40, end: 46 };
 
-type Scene = "intro" | "problem" | "train" | "local" | "results" | "ethics" | "outro";
+type Scene = "intro" | "problem" | "train" | "local" | "results" | "ethics" | "outro" | "credits";
 const captions: Record<string, string> = {
     problem: "Rare-disease research needs data from many hospitals. But patient data can't simply be pooled.",
     train: "So BETTER sends the analysis to the data: the Personal Health Train.",
@@ -777,6 +777,7 @@ const updateDom = (t: number) => {
         ["results", T.results],
         ["ethics", T.ethics],
         ["outro", T.outro],
+        ["credits", T.credits],
     ]);
     if (scene.value !== next) scene.value = next;
 };

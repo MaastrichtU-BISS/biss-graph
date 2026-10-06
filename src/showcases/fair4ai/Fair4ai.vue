@@ -29,9 +29,9 @@ defineProps<{ members: { photo?: string; title: string }[] }>();
 const emit = defineEmits<{ done: [] }>();
 
 /** Seconds into the animation at which each part starts. */
-const T = { papers: 3.5, describe: 8.5, find: 14, pack: 19.5, validate: 24.5, report: 29.5, outro: 34, end: 40 };
+const T = { papers: 3.5, describe: 8.5, find: 14, pack: 19.5, validate: 24.5, report: 29.5, outro: 34, credits: 40, end: 46 };
 
-type Scene = "intro" | "papers" | "describe" | "find" | "pack" | "validate" | "report" | "outro";
+type Scene = "intro" | "papers" | "describe" | "find" | "pack" | "validate" | "report" | "outro" | "credits";
 const captions: Record<string, string> = {
     papers: "Many AI models for healthcare are hard to find, run or reuse.",
     describe: "FAIRmodels.org describes each model with standard, machine-readable metadata.",
@@ -998,6 +998,7 @@ const updateDom = (t: number) => {
         ["validate", T.validate],
         ["report", T.report],
         ["outro", T.outro],
+        ["credits", T.credits],
     ]);
     if (scene.value !== next) scene.value = next;
 };

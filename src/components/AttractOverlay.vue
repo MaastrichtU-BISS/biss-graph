@@ -32,7 +32,7 @@
                     <span class="tag tag-content">BISS</span>
                 </span>
                 <span class="news-body">
-                    <span class="news-text">{{ highlight.text }}</span>
+                    <span class="news-text">{{ highlightTextOf(highlight, lang) }}</span>
                     <span class="news-qr">
                         <QrCode :url="highlight.url" class="qr-code" />
                         <span>{{ t.scanToRead }}</span>
@@ -60,7 +60,7 @@
 import { computed } from "vue";
 import Icon from "./Icon.vue";
 import QrCode from "./QrCode.vue";
-import { entities, isContent, projectsOf, roleOf, titleOf } from "../data/graph";
+import { entities, highlightTextOf, isContent, projectsOf, roleOf, titleOf } from "../data/graph";
 import { NodeType, type Highlight } from "../types/graph";
 import { lang, t } from "../i18n";
 

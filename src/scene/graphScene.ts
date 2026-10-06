@@ -565,7 +565,7 @@ export class GraphScene {
     const content = isContent(e);
     const label = content
       ? labelSprite(titleOf(e, lang), e.color, CONTENT_WRAP, CONTENT_LABEL_LINE)
-      : labelSprite(lang === "nl" && e.titleNl ? e.titleNl : e.name, e.color, LABEL_WRAP);
+      : labelSprite(titleOf(e, lang), e.color, LABEL_WRAP);
     const above = bodyRadius + label.height / 2 + 1.4;
     const beside = bodyRadius + label.sprite.scale.x / 2 + 1.4;
     return {

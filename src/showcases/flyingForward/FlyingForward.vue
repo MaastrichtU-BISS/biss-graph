@@ -9,6 +9,7 @@
 import { computed, ref } from "vue";
 import { theme as screenTheme } from "../../i18n";
 import ShowcaseStage from "../shared/ShowcaseStage.vue";
+import { canvasText } from "../translations";
 import {
     ease,
     easeOut,
@@ -281,6 +282,7 @@ const drawDrone = (ctx: CanvasRenderingContext2D, x: number, y: number, s: numbe
 /** A coloured pill with dark text, centred on (x, y). */
 const pill = (ctx: CanvasRenderingContext2D, label: string, x: number, y: number, size: number, color: string, k: number, alpha = 1) => {
     if (alpha <= 0.003) return;
+    label = canvasText(label);
     ctx.save();
     ctx.globalAlpha *= alpha;
     ctx.font = `700 ${size}px ${FONT}`;
@@ -743,6 +745,7 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
             const li = t < LANG_START ? 0 : Math.min(LAW.length - 1, 1 + Math.floor((t - LANG_START) / LANG_STEP));
             const since = t < LANG_START ? 1 : ((t - LANG_START) % LANG_STEP) / LANG_STEP;
             const swap = li === 0 ? 1 : Math.min(1, since * 4);
+            // This card deliberately cycles through legal text in six languages.
             const [lang, sentence] = LAW[li];
             pill(ctx, lang, lawLeft + cw - pad - 22 * k, lawTop + 34 * k, 16 * k, li === 0 ? "#e5e7eb" : ORANGE, k);
             pill(ctx, "EU", lawLeft + cw - pad - 72 * k, lawTop + 34 * k, 16 * k, GREEN, k, progress(t, T.code + 0.8, T.code + 1.2));

@@ -6,7 +6,7 @@ export enum NodeType {
 }
 
 /** A news post shown between spotlights in the idle loop. */
-export type Highlight = { text: string; url: string; image?: string };
+export type Highlight = { text: string; textNl?: string; url: string; image?: string };
 
 export type Graph = {
   nodes: Node[];

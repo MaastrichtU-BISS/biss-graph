@@ -15,6 +15,7 @@
 import { computed, ref } from "vue";
 import Icon from "../../components/Icon.vue";
 import ShowcaseStage from "../shared/ShowcaseStage.vue";
+import { canvasText } from "../translations";
 import { paper, paperLine } from "../shared/paper";
 import { callout as label, clamp01, ease, easeOut, FONT, Frame, lerp, MONO, progress, useCanvasTimeline } from "../shared/anim";
 import { buildNetwork, COURTS, Decision, FIRST_YEAR, LAST_YEAR, SEARCH_TOPIC, TOPICS } from "./network";
@@ -42,7 +43,7 @@ const captions: Record<string, string> = {
     time: "And see how case law develops over time.",
 };
 
-const SEARCH_WORD = TOPICS[SEARCH_TOPIC];
+const SEARCH_WORD = computed(() => canvasText(TOPICS[SEARCH_TOPIC]));
 const ACCENT = "#6cb8ff";
 
 const stage = ref<InstanceType<typeof ShowcaseStage>>();
@@ -146,7 +147,7 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
         ctx.font = `600 ${20 * k}px ${FONT}`;
         ctx.textBaseline = "middle";
         ctx.textAlign = "left";
-        const widths = COURTS.map((c) => ctx.measureText(c.label).width + 24 * k);
+        const widths = COURTS.map((c) => ctx.measureText(canvasText(c.label)).width + 24 * k);
         const gap = 36 * k;
         let x = cx - (widths.reduce((a, b) => a + b, 0) + gap * (COURTS.length - 1)) / 2;
         const y = H * 0.05;
@@ -157,7 +158,7 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
             ctx.arc(x + 7 * k, y, 7 * k, 0, Math.PI * 2);
             ctx.fill();
             ctx.fillStyle = "rgba(255,255,255,0.85)";
-            ctx.fillText(c.label, x + 24 * k, y);
+            ctx.fillText(canvasText(c.label), x + 24 * k, y);
             x += widths[i] + gap;
         });
     }
@@ -356,7 +357,8 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
         TOPICS.forEach((topic, i) => {
             const band = cy + (-1 + (2 / TOPICS.length) * (i + 0.5)) * span * 0.36;
             ctx.fillStyle = i === SEARCH_TOPIC ? "#fff" : "rgba(255,255,255,0.55)";
-            ctx.fillText(topic[0].toUpperCase() + topic.slice(1), x0 - 24 * k, band);
+            const label = canvasText(topic);
+            ctx.fillText(label[0].toUpperCase() + label.slice(1), x0 - 24 * k, band);
         });
         ctx.textAlign = "left";
     }
@@ -376,7 +378,7 @@ const updateDom = (t: number) => {
     if (scene.value !== next) scene.value = next;
     const shown = t >= T.search + 0.2 && t < T.time + 0.5;
     if (searchShown.value !== shown) searchShown.value = shown;
-    const typed = SEARCH_WORD.slice(0, Math.floor(clamp01((t - T.search - 0.6) / 0.9) * SEARCH_WORD.length));
+    const typed = SEARCH_WORD.value.slice(0, Math.floor(clamp01((t - T.search - 0.6) / 0.9) * SEARCH_WORD.value.length));
     if (searchText.value !== typed) searchText.value = typed;
 };
 

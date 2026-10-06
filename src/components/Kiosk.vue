@@ -14,7 +14,7 @@
         <Transition name="fade">
             <div v-if="!ready" class="boot-loader" role="status">
                 <div class="boot-orbit"><span></span><span></span><span></span></div>
-                Loading the BISS team…
+                {{ t.loadingTeam }}
             </div>
         </Transition>
 
@@ -92,7 +92,7 @@
 
         <Transition name="fade">
             <aside v-if="!selectedId" class="qr">
-                <img :src="qr" alt="QR code to biss-institute.com" />
+                <img :src="qr" :alt="t.qrCodeAlt" />
                 <div>
                     <span>{{ t.scanToVisit }}</span>
                     <strong>biss-institute.com</strong>
@@ -133,9 +133,10 @@ import { aboutShowcase, preloadShowcases, showcaseById, showcasesForProject, typ
 import { lang, largeText, t, theme } from "../i18n";
 import { sound } from "../sound";
 import { GraphScene, type ScreenRect } from "../scene/graphScene";
-import { entities, graphData, highlights, people, titleOf } from "../data/graph";
+import { entities, graphData, highlights, people, titleOf, websiteUrlOf } from "../data/graph";
 import { syncWithWebsite } from "../data/sync";
 import { RandomVisitor } from "../utils/visitor";
+import { enableMouseDragScroll } from "../utils/dragScroll";
 import type { BrowseTab, Highlight } from "../types/graph";
 import logo from "../assets/images/biss_um_logo.png";
 import qr from "../assets/images/biss_qr_code.png";
@@ -468,12 +469,13 @@ watch(showcase, (s) => {
 watch(filters, (f) => scene?.setFilter(filterMatches(f)), { deep: true });
 
 const openInfo = (url: string) => {
-    infoUrl.value = url;
+    infoUrl.value = websiteUrlOf(url, lang.value);
 };
 
 //#endregion
 
 const preventContextMenu = (e: Event) => e.preventDefault();
+let disableMouseDragScroll: (() => void) | undefined;
 
 const sync = async () => {
     try {
@@ -486,6 +488,7 @@ const sync = async () => {
 };
 
 onMounted(async () => {
+    disableMouseDragScroll = enableMouseDragScroll(stage.value!.parentElement!);
     window.addEventListener("pointerdown", markInteraction, true);
     window.addEventListener("wheel", markInteraction, { capture: true, passive: true });
     window.addEventListener("keydown", markInteraction, true);
@@ -495,6 +498,7 @@ onMounted(async () => {
 
     scene = new GraphScene(stage.value!, onSceneTap);
     await scene.init();
+    if (lang.value !== "en") scene.setLanguage(lang.value);
     if (theme.value !== "dark") scene.setTheme(theme.value);
     if (import.meta.env.DEV) Object.assign(window, { __scene: scene });
     ready.value = true;
@@ -515,6 +519,7 @@ onMounted(async () => {
 });
 
 onBeforeUnmount(() => {
+    disableMouseDragScroll?.();
     window.removeEventListener("pointerdown", markInteraction, true);
     window.removeEventListener("wheel", markInteraction, true);
     window.removeEventListener("keydown", markInteraction, true);

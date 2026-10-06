@@ -1,5 +1,6 @@
 import { onBeforeUnmount, onMounted, type Ref } from "vue";
 import { paper, paperInk, paperMuted } from "./paper";
+import { canvasText } from "../translations";
 
 /** Shared drawing and timing helpers for the project showcases. */
 
@@ -115,6 +116,8 @@ export function callout(
   { below = false, tail = true } = {}
 ) {
   if (alpha <= 0.003) return;
+  title = canvasText(title);
+  sub = canvasText(sub);
   ctx.save();
   ctx.font = `600 ${20 * k}px ${FONT}`;
   const titleWidth = ctx.measureText(title).width;
@@ -218,6 +221,7 @@ export function text(
   } = {}
 ) {
   if (alpha <= 0.003) return;
+  value = canvasText(value);
   ctx.save();
   ctx.globalAlpha *= alpha;
   ctx.fillStyle = color;

@@ -16,11 +16,11 @@
         <Transition name="caption" mode="out-in">
             <div v-if="scene === 'intro'" key="intro" class="intro">
                 <span class="eyebrow">{{ local.eyebrow ?? eyebrow }}</span>
-                <h1>{{ title }}</h1>
+                <h1>{{ local.title ?? title }}</h1>
                 <p>{{ local.tagline ?? tagline }}</p>
             </div>
             <div v-else-if="scene === 'outro'" key="outro" class="outro">
-                <h1>{{ title }}</h1>
+                <h1>{{ local.title ?? title }}</h1>
                 <p>{{ local.outro ?? outro }}</p>
                 <span v-if="url" class="url">{{ url }}</span>
                 <div v-if="members.length" class="faces">
@@ -29,16 +29,16 @@
                 </div>
             </div>
             <div v-else-if="scene === 'credits'" key="credits" class="credits-page">
-                <span class="eyebrow">{{ title }}</span>
+                <span class="eyebrow">{{ local.title ?? title }}</span>
                 <h1>{{ lang === 'nl' ? 'Samen mogelijk gemaakt' : 'Made possible together' }}</h1>
                 <div class="credits">
                     <section v-if="partners?.length" class="credit-row">
                         <h2 class="credit-label">{{ lang === 'nl' ? 'Partners, waaronder' : 'Partners include' }}</h2>
-                        <ul><li v-for="name in partners" :key="name" class="credit-name">{{ name }}</li></ul>
+                        <ul><li v-for="name in partners" :key="name" class="credit-name">{{ canvasText(name) }}</li></ul>
                     </section>
                     <section v-if="funders?.length" class="credit-row">
                         <h2 class="credit-label">{{ lang === 'nl' ? 'Gefinancierd door' : 'Funded by' }}</h2>
-                        <ul><li v-for="name in funders" :key="name" class="credit-name">{{ name }}</li></ul>
+                        <ul><li v-for="name in funders" :key="name" class="credit-name">{{ canvasText(name) }}</li></ul>
                     </section>
                 </div>
                 <span v-if="url" class="credit-url">{{ url }}</span>
@@ -54,7 +54,7 @@
 <script setup lang="ts">
 import { computed, inject, ref } from "vue";
 import { lang, theme as screenTheme } from "../../i18n";
-import { NL, type ShowcaseTexts } from "../translations";
+import { NL, canvasText, type ShowcaseTexts } from "../translations";
 
 /**
  * The frame every project showcase shares: a full-screen canvas, a title card at the

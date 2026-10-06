@@ -103,7 +103,7 @@
 import { computed } from "vue";
 import Icon from "./Icon.vue";
 import QrCode from "./QrCode.vue";
-import { contentOf, entities, isContent, projectsOf, roleOf, titleOf } from "../data/graph";
+import { contentOf, entities, isContent, projectsOf, roleOf, titleOf, websiteUrlOf } from "../data/graph";
 import { Entity, NodeType } from "../types/graph";
 import { lang, t } from "../i18n";
 
@@ -146,7 +146,10 @@ const summary = computed(() => {
 });
 
 /** What the QR code opens: the publication itself if there is one, else the page on the website. */
-const takeAway = computed(() => entity.value.links[0]?.url ?? entity.value.pageUrl);
+const takeAway = computed(() => {
+    const url = entity.value.links[0]?.url ?? entity.value.pageUrl;
+    return url ? websiteUrlOf(url, lang.value) : undefined;
+});
 
 const teammates = (project: Entity) => project.connections.slice(0, 6).map((id) => entities[id]);
 </script>

@@ -7,6 +7,8 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import ShowcaseStage from "../shared/ShowcaseStage.vue";
+import { canvasText } from "../translations";
+import { lang } from "../../i18n";
 import { paper, paperInk, paperLine, paperMuted } from "../shared/paper";
 import {
     ease,
@@ -80,6 +82,15 @@ const JSON_LINES = [
     '  "document": "contract-0142.pdf",',
     '  "label": "Deadline",',
     '  "text": "no later than 1 March 2026",',
+    '  "start": 87, "end": 113,',
+    '  "annotator": 1',
+    "}",
+];
+const JSON_LINES_NL = [
+    "{",
+    '  "document": "contract-0142.pdf",',
+    '  "label": "Termijn",',
+    '  "text": "uiterlijk 1 maart 2026",',
     '  "start": 87, "end": 113,',
     '  "annotator": 1',
     "}",
@@ -174,7 +185,7 @@ const layoutClause = (ctx: CanvasRenderingContext2D, pw: number) => {
     let x = pad;
     let y = pad + fs * 1.6;
     SEGMENTS.forEach((s, seg) => {
-        s.text.split(" ").forEach((w, j) => {
+        canvasText(s.text).split(" ").forEach((w, j) => {
             const width = ctx.measureText(w).width;
             if (x + width > pw - pad) {
                 x = pad;
@@ -253,7 +264,7 @@ const drawPage = (
         if (!tag || !w.first) return;
         const f = shown(w.seg, 0);
         if (f <= 0) return;
-        const label = TAGS[tag].label;
+        const label = canvasText(TAGS[tag].label);
         ctx.font = `700 ${fs * 0.55}px ${FONT}`;
         const lw = ctx.measureText(label).width + fs * 0.6;
         const lh = fs * 0.85;
@@ -405,9 +416,10 @@ const draw = ({ ctx, t, W, k, safe }: Frame) => {
     //#region export and publish
     const pub = progress(t, T.publish, T.publish + 0.6) * (1 - progress(t, T.outro, T.outro + 0.8) * 0.85);
     if (pub > 0) {
+        const jsonLines = lang.value === "nl" ? JSON_LINES_NL : JSON_LINES;
         const cardW = Math.min(W * 0.42, 720 * k);
         const lineH = 34 * k;
-        const cardH = JSON_LINES.length * lineH + 40 * k;
+        const cardH = jsonLines.length * lineH + 40 * k;
         const shrink = ease(progress(t, T.publish + 3.2, T.publish + 4));
         const cardX = lerp(cx - cardW / 2, cx - cardW * 0.22, shrink);
         const cardY = lerp(cy - cardH / 2, safe.top, shrink);
@@ -424,12 +436,12 @@ const draw = ({ ctx, t, W, k, safe }: Frame) => {
         ctx.roundRect(0, 0, cardW, cardH, 10 * k);
         ctx.fill();
         ctx.stroke();
-        const typed = progress(t, T.publish + 0.4, T.publish + 2.6) * JSON_LINES.join("").length;
+        const typed = progress(t, T.publish + 0.4, T.publish + 2.6) * jsonLines.join("").length;
         let used = 0;
         ctx.font = `500 ${22 * k}px ${MONO}`;
         ctx.textAlign = "left";
         ctx.textBaseline = "top";
-        JSON_LINES.forEach((line, i) => {
+        jsonLines.forEach((line, i) => {
             const visible = line.slice(0, Math.max(0, Math.floor(typed - used)));
             used += line.length;
             // keys in blue, everything after the first colon in green

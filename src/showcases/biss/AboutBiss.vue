@@ -10,6 +10,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import ShowcaseStage from "../shared/ShowcaseStage.vue";
+import { canvasText } from "../translations";
 import { ease, easeOut, FONT, Frame, lerp, mulberry32, progress, sceneAt, text, useCanvasTimeline, picture, preloadPictures, type Picture } from "../shared/anim";
 
 const props = defineProps<{ members: { photo?: string; title: string }[] }>();
@@ -253,6 +254,7 @@ const scaled = (ctx: CanvasRenderingContext2D, x: number, y: number, s: number, 
 
 /** Splits `value` into lines no wider than `maxWidth` at the current font. */
 function wrap(ctx: CanvasRenderingContext2D, value: string, maxWidth: number) {
+    value = canvasText(value);
     const lines: string[] = [];
     let current = "";
     for (const word of value.split(" ")) {
@@ -269,6 +271,7 @@ function wrap(ctx: CanvasRenderingContext2D, value: string, maxWidth: number) {
 /** A black pill with white capitals, like the city labels on Brightlands' map. */
 function pill(ctx: CanvasRenderingContext2D, label: string, x: number, y: number, size: number, alpha: number, align: "left" | "right" | "center" = "left", fill = INK) {
     if (alpha <= 0.003) return;
+    label = canvasText(label);
     ctx.save();
     ctx.globalAlpha *= alpha;
     ctx.font = `700 ${size}px ${FONT}`;

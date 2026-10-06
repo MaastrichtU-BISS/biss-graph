@@ -170,6 +170,10 @@ export async function fetchWebsiteGraph({
   const onTeam = new Set(team.map((p) => p.slug));
   const rolesNl = new Map(parseTeam(aboutNl, "nl").map((p) => [p.slug, p.role]));
   const titlesNl = new Map(parseCards(homeNl).map((c) => [slugOf(c.url), clean(c.title)]));
+  const newsNl = new Map(
+    parseCards(homeNl).filter((c) => c.tags.includes("news") && c.description)
+      .map((c) => [slugOf(c.url), excerpt(c.description)])
+  );
 
   const cards = parseCards(home).filter((c) => c.url.startsWith("/en/posts/") && c.published !== false);
   const membersOf = (c) => [
@@ -213,7 +217,7 @@ export async function fetchWebsiteGraph({
   const highlights = parseCards(home)
     .filter((c) => c.tags.includes("news") && c.description)
     .slice(0, 8)
-    .map((c) => ({ text: excerpt(c.description), url: c.url, image: absolute(c.coverImage?.src) }));
+    .map((c) => ({ text: excerpt(c.description), ...(newsNl.get(slugOf(c.url)) ? { textNl: newsNl.get(slugOf(c.url)) } : {}), url: c.url, image: absolute(c.coverImage?.src) }));
 
   const graph = {
     nodes: [

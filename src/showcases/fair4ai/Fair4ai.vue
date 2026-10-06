@@ -7,6 +7,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import ShowcaseStage from "../shared/ShowcaseStage.vue";
+import { canvasText } from "../translations";
 import { paper as paperFill, paperInk, paperInset, paperLine, paperMuted } from "../shared/paper";
 import {
     callout,
@@ -522,7 +523,8 @@ const draw = ({ ctx, t, W, k, safe }: Frame) => {
     const packMove = ease(progress(t, T.pack, T.pack + 0.9));
     const gridFade = 1 - progress(t, T.pack, T.pack + 0.6);
     if (t >= T.find && t < T.pack + 1) {
-        const typed = QUERY.slice(0, Math.floor(progress(t, T.find + 1.4, T.find + 2.1) * QUERY.length));
+        const queryLabel = canvasText(QUERY);
+        const typed = queryLabel.slice(0, Math.floor(progress(t, T.find + 1.4, T.find + 2.1) * queryLabel.length));
         const searched = ease(progress(t, T.find + 2.3, T.find + 2.8));
 
         // search bar

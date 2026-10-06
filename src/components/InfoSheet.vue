@@ -1,22 +1,22 @@
 <template>
     <div class="backdrop" @click.self="emit('close')">
         <section class="sheet surface" role="dialog" :aria-label="title">
-            <header class="head">
-                <div class="heading">
-                    <span class="source">biss-institute.com</span>
-                    <h2>{{ title }}</h2>
-                </div>
-                <button class="btn btn-secondary" @click="emit('close')">
-                    <Icon name="close" />
-                    {{ t.close }}
-                </button>
-            </header>
             <div class="frame">
                 <div v-if="!loaded" class="loading" aria-hidden="true">
                     <span class="spinner"></span>
                 </div>
                 <iframe :src="url" :title="title" :class="{ ready: loaded }" @load="loaded = true"></iframe>
             </div>
+            <header class="head">
+                <div class="heading">
+                    <span class="source">biss-institute.com</span>
+                    <h2>{{ title }}</h2>
+                </div>
+                <button class="btn btn-primary" @click="emit('close')">
+                    <Icon name="close" />
+                    {{ t.close }}
+                </button>
+            </header>
         </section>
     </div>
 </template>
@@ -56,7 +56,8 @@ watch(() => props.url, () => (loaded.value = false));
     justify-content: space-between;
     gap: 2rem;
     padding: 1rem 1.2rem 1rem 1.8rem;
-    border-bottom: 1px solid var(--border);
+    /* at the bottom, within easy reach on a tall touch screen */
+    border-top: 1px solid var(--border);
 }
 
 .heading {

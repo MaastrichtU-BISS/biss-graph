@@ -7,7 +7,7 @@
                     <span class="tag" :class="tagClass">{{ kind }}</span>
                 </span>
                 <span class="spot-main">
-                    <img v-if="isPerson" :src="spot.photo" alt="" class="avatar spot-photo" />
+                    <img v-if="isPerson" :src="spot.photo" alt="" class="avatar spot-photo" decoding="async" />
                     <span class="spot-text">
                         <span v-if="!isPerson" class="bar" :style="{ '--tone': spot.color }"
                             aria-hidden="true"></span>
@@ -23,7 +23,7 @@
                     <span v-if="related.length > 3" class="item more">{{ t.more(related.length - 3) }}</span>
                 </span>
                 <span v-else-if="!isPerson" class="faces">
-                    <img v-for="m in related.slice(0, 7)" :key="m.id" :src="m.photo" alt="" class="avatar face" />
+                    <img v-for="m in related.slice(0, 7)" :key="m.id" :src="m.photo" alt="" class="avatar face" decoding="async" />
                 </span>
             </button>
             <div v-else-if="highlight" :key="highlight.url" class="news night">

@@ -118,7 +118,7 @@ import BrowseDrawer from "./BrowseDrawer.vue";
 import InfoSheet from "./InfoSheet.vue";
 import ShowcasePlayer from "./ShowcasePlayer.vue";
 import FilterPanel, { type Filters, emptyFilters, filterMatches } from "./FilterPanel.vue";
-import { aboutShowcase, showcaseById, showcasesForProject, type Showcase } from "../showcases";
+import { aboutShowcase, preloadShowcases, showcaseById, showcasesForProject, type Showcase } from "../showcases";
 import { lang, largeText, resetSettings, t } from "../i18n";
 import { sound } from "../sound";
 import { GraphScene, type ScreenRect } from "../scene/graphScene";
@@ -436,6 +436,13 @@ const toggleLanguage = () => {
 };
 
 watch(lang, (l) => scene?.setLanguage(l));
+// the graph is hidden behind a showcase; give the animation the whole GPU, once it has faded in
+let pauseTimer: number | undefined;
+watch(showcase, (s) => {
+    window.clearTimeout(pauseTimer);
+    if (s) pauseTimer = window.setTimeout(() => scene?.setPaused(true), 1000);
+    else scene?.setPaused(false);
+});
 watch(filters, (f) => scene?.setFilter(filterMatches(f)), { deep: true });
 
 const openInfo = (url: string) => {
@@ -470,6 +477,8 @@ onMounted(async () => {
     ready.value = true;
     enterAttract();
     idleTimer = window.setInterval(checkIdle, 1000);
+    // fetch the animations' code while idle, so starting one never waits on a download
+    window.setTimeout(preloadShowcases, 5000);
     const requested = showcaseById(SHOWCASE_PARAM);
     if (requested) {
         window.clearTimeout(spotlightTimer);

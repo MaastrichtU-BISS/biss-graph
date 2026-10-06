@@ -227,3 +227,41 @@ export function text(
   ctx.fillText(value, x, y);
   ctx.restore();
 }
+
+/** An image, decoded off the main thread and scaled to the size it's drawn at. */
+export type Picture = { ready: boolean; source?: ImageBitmap; width: number; height: number };
+
+const pictures = new Map<string, Picture>();
+
+/**
+ * Starts loading `url` right away and returns a handle that becomes `ready` once the image
+ * is decoded into a bitmap no larger than `maxSize`. Drawing an undecoded image decodes it
+ * on the main thread mid-animation, which is what made frames stall.
+ */
+export function picture(url: string | undefined, maxSize = 400): Picture | undefined {
+  if (!url) return undefined;
+  let p = pictures.get(url);
+  if (p) return p;
+  const created: Picture = { ready: false, width: 0, height: 0 };
+  pictures.set(url, created);
+  const img = new Image();
+  img.crossOrigin = "anonymous";
+  img.decoding = "async";
+  img.src = url;
+  img
+    .decode()
+    .then(() => {
+      const s = Math.min(1, maxSize / Math.max(img.naturalWidth, img.naturalHeight));
+      const width = Math.max(1, Math.round(img.naturalWidth * s));
+      const height = Math.max(1, Math.round(img.naturalHeight * s));
+      return createImageBitmap(img, { resizeWidth: width, resizeHeight: height, resizeQuality: "high" }).then(
+        (bitmap) => Object.assign(created, { source: bitmap, width, height, ready: true })
+      );
+    })
+    .catch(() => undefined);
+  return created;
+}
+
+/** Warms up images an animation will need later, e.g. the team photos for its closing card. */
+export const preloadPictures = (urls: (string | undefined)[], maxSize?: number) =>
+  urls.forEach((u) => picture(u, maxSize));

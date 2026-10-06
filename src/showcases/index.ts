@@ -26,7 +26,7 @@ const ENTRIES = [
   { id: "fair4ai", project: "fair4ai-making-ai-models-practically-usable", title: "FAIR4AI", file: "./fair4ai/Fair4ai.vue" },
   { id: "better", project: "better-responsible-data-analytics-in-healthcare", title: "BETTER", file: "./better/Better.vue" },
   // about BISS itself, not one project; plays now and then in the idle loop and from the dock
-  { id: "biss", project: "", title: "What is BISS?", file: "./biss/AboutBiss.vue", duration: 51 },
+  { id: "biss", project: "", title: "What is BISS?", file: "./biss/AboutBiss.vue", duration: 56 },
   { id: "flying-forward", project: "flying-forward", title: "Flying Forward", file: "./flyingForward/FlyingForward.vue" },
 ];
 
@@ -47,3 +47,8 @@ export const showcaseById = (id: string | null) => showcases.find((s) => s.id ==
 
 /** The general "What is BISS?" showcase, once it exists. */
 export const aboutShowcase = () => showcaseById("biss");
+
+/** Downloads every showcase's code ahead of time. */
+export const preloadShowcases = () => {
+  for (const e of ENTRIES) void files[e.file]?.();
+};

@@ -318,6 +318,7 @@ export class GraphScene {
   private focusMode: FocusMode = "select";
   private filterIds: Set<string> | null = null;
   private frame = 0;
+  private paused = false;
   private tick = 0;
   private controlsTimer?: number;
   /** Whether the camera should drift on its own once no tween owns it. */
@@ -878,6 +879,19 @@ export class GraphScene {
     // a drifting camera would carry nodes underneath the overlays again
     this.setAutoRotate(false);
     this.flyToClear(id, overlays, 3000);
+  }
+
+  /** Stops rendering while something covers the whole screen, e.g. a showcase. */
+  setPaused(paused: boolean) {
+    if (paused === this.paused) return;
+    this.paused = paused;
+    if (paused) {
+      this.graph.pauseAnimation();
+      cancelAnimationFrame(this.frame);
+    } else {
+      this.graph.resumeAnimation();
+      this.animate();
+    }
   }
 
   setAutoRotate(on: boolean) {

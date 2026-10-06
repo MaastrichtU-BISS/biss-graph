@@ -23,7 +23,7 @@
                 <h1>{{ title }}</h1>
                 <p>{{ local.outro ?? outro }}</p>
                 <div v-if="members.length" class="faces">
-                    <img v-for="(m, i) in members" :key="m.title" :src="m.photo" :alt="m.title"
+                    <img v-for="(m, i) in members" :key="m.title" :src="m.photo" :alt="m.title" decoding="async"
                         :style="{ animationDelay: `${0.5 + i * 0.07}s` }" />
                 </div>
                 <span v-if="url" class="url">{{ url }}</span>
@@ -60,6 +60,15 @@ const props = defineProps<{
 }>();
 
 const canvas = ref<HTMLCanvasElement>();
+
+// the closing card shows the team: fetch and decode their photos from the start
+for (const m of props.members) {
+    if (!m.photo) continue;
+    const img = new Image();
+    img.decoding = "async";
+    img.src = m.photo;
+    img.decode().catch(() => undefined);
+}
 
 /** Translated texts for the visitor's language, if there are any for this showcase. */
 const showcaseId = inject<string>("showcaseId", "");

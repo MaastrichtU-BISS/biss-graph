@@ -2,12 +2,13 @@ import ForceGraph3D, { ForceGraph3DInstance } from "3d-force-graph";
 import * as THREE from "three";
 import { forceCollide } from "d3-force-3d";
 import type { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import { entities, graphData } from "../data/graph";
-import { NodeType } from "../types/graph";
+import { entities, graphData, isContent, titleOf } from "../data/graph";
+import { Entity, NodeType } from "../types/graph";
+import type { Lang } from "../i18n";
 
 export const BACKGROUND = "#060914";
 
-type SimNode = { id: string; x?: number; y?: number; z?: number };
+type SimNode = { id: string; x?: number; y?: number; z?: number; fx?: number; fy?: number; fz?: number };
 type SimLink = { source?: string | number | SimNode; target?: string | number | SimNode };
 
 type Visual = {
@@ -27,6 +28,9 @@ type Visual = {
   drawn: THREE.Object3D[];
   label: THREE.Sprite;
   labelSize: THREE.Vector2;
+  /** Label visibility, eased; publication labels hide unless in focus. */
+  labelFade: number;
+  labelTarget: number;
   /** Radius of the photo or orb, for keeping labels off it. */
   bodyRadius: number;
   /** Places the label may sit, as screen-aligned offsets from the node, preferred first. */
@@ -55,6 +59,11 @@ const PHOTO_SIZE = 13;
 const LABEL_LINE = 2.8;
 /** Project names longer than this many characters wrap onto more lines. */
 const LABEL_WRAP = 26;
+const PAGE_SIZE = 5;
+const CONTENT_WRAP = 30;
+const CONTENT_LABEL_LINE = 2.2;
+/** Radius of the ring of team members who aren't linked to anything yet. */
+const RING_RADIUS = 330;
 const PROJECT_CORE = 2.8;
 /** Fingers wobble; anything shorter than this still counts as a tap. */
 const TAP_SLOP_PX = 18;
@@ -154,6 +163,28 @@ const photoTexture = (img: HTMLImageElement | null, title: string) => {
   return canvasTexture(canvas);
 };
 
+/** A small document: white page with a coloured header and a few lines of "text". */
+const pageTexture = (color: string) => {
+  const w = 156;
+  const h = 200;
+  const canvas = document.createElement("canvas");
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext("2d")!;
+  ctx.fillStyle = "#fff";
+  ctx.beginPath();
+  ctx.roundRect(4, 4, w - 8, h - 8, 14);
+  ctx.fill();
+  ctx.save();
+  ctx.clip();
+  ctx.fillStyle = color;
+  ctx.fillRect(0, 0, w, 40);
+  ctx.restore();
+  ctx.fillStyle = "#cbd2e6";
+  for (let i = 0; i < 5; i++) ctx.fillRect(24, 64 + i * 24, i === 4 ? 60 : w - 48, 8);
+  return canvasTexture(canvas);
+};
+
 /** Greedy word wrap, for names that come from the website without line breaks. */
 const wrap = (text: string, width: number) =>
   text.split(/\s+/).reduce<string[]>((lines, word) => {
@@ -164,7 +195,7 @@ const wrap = (text: string, width: number) =>
   }, []);
 
 /** Text label rendered to a sprite; returns the sprite and its world height. */
-const labelSprite = (text: string, accent?: string, wrapAt?: number) => {
+const labelSprite = (text: string, accent?: string, wrapAt?: number, line = LABEL_LINE) => {
   const fontPx = 64;
   const lineHeight = fontPx * 1.22;
   const padX = 34;
@@ -207,7 +238,7 @@ const labelSprite = (text: string, accent?: string, wrapAt?: number) => {
     depthTest: false,
   });
   const sprite = new THREE.Sprite(material);
-  const worldPerPx = LABEL_LINE / lineHeight;
+  const worldPerPx = line / lineHeight;
   sprite.scale.set(canvas.width * worldPerPx, canvas.height * worldPerPx, 1);
   sprite.renderOrder = NODE_ORDER;
   return { sprite, height: canvas.height * worldPerPx };
@@ -253,6 +284,7 @@ export class GraphScene {
   private nodes: SimNode[] = [];
   private focusId: string | null = null;
   private focusMode: FocusMode = "select";
+  private filterIds: Set<string> | null = null;
   private frame = 0;
   private tick = 0;
   private controlsTimer?: number;
@@ -269,8 +301,17 @@ export class GraphScene {
     await document.fonts.load(`600 64px ${FONT}`).catch(() => undefined);
     await this.buildVisuals();
 
+    // people linked to nothing yet sit on a fixed ring around the graph, as "the BISS team"
+    const loose = graphData.nodes.filter((n) => !entities[n.id].connections.length);
+    const ringPosition = (i: number) => {
+      const a = (i / Math.max(1, loose.length)) * Math.PI * 2 + 0.4;
+      return { fx: Math.cos(a) * RING_RADIUS, fy: Math.sin(a) * RING_RADIUS * 0.75, fz: 0 };
+    };
     const data: { nodes: SimNode[]; links: SimLink[] } = {
-      nodes: graphData.nodes.map((n) => ({ id: n.id })),
+      nodes: graphData.nodes.map((n) => ({
+        id: n.id,
+        ...(loose.includes(n) ? ringPosition(loose.indexOf(n)) : {}),
+      })),
       links: graphData.links.map((l) => ({ source: l.source, target: l.target })),
     };
 
@@ -292,14 +333,22 @@ export class GraphScene {
       .warmupTicks(300)
       .cooldownTicks(0);
 
-    this.graph.d3Force("charge")?.strength(-110);
-    this.graph.d3Force("link")?.distance(34);
-    // keep room for a photo and its label around every node, so none sit on top of each other
+    this.graph.d3Force("charge")?.strength(-200);
+    this.graph.d3Force("link")?.distance(52);
+    // keep room for a photo or orb and its label around every node, so none crowd each other
     this.graph.d3Force(
       "collide",
-      forceCollide<SimNode>((n) => (entities[n.id].group === NodeType.TEAM_MEMBER ? PHOTO_SIZE : PROJECT_CORE * 3.5))
+      forceCollide<SimNode>((n) => {
+        const v = this.visuals[n.id];
+        const labelHalf = v.labelSize.x / 2;
+        const e = entities[n.id];
+        if (isContent(e)) return PAGE_SIZE * 1.6; // their labels only show when in focus
+        return e.group === NodeType.TEAM_MEMBER
+          ? Math.max(PHOTO_SIZE * 0.9, labelHalf * 0.85)
+          : Math.max(PROJECT_CORE * 3.5, labelHalf * 0.9);
+      })
         .strength(1)
-        .iterations(2) as never
+        .iterations(3) as never
     );
     this.graph.graphData(data);
     this.nodes = data.nodes;
@@ -379,10 +428,8 @@ export class GraphScene {
 
       let hitRadius: number;
       let haloBase: number;
-      let label: ReturnType<typeof labelSprite>;
-      let drawn: THREE.Object3D[];
+      let body: THREE.Object3D;
       let bodyRadius: number;
-      let anchors: THREE.Vector2[];
 
       if (e.group === NodeType.TEAM_MEMBER) {
         const photoMaterial = new THREE.SpriteMaterial({
@@ -391,25 +438,30 @@ export class GraphScene {
           depthWrite: false,
           depthTest: false,
         });
-        const photo = new THREE.Sprite(photoMaterial);
-        photo.renderOrder = NODE_ORDER;
-        photo.scale.set(PHOTO_SIZE, PHOTO_SIZE, 1);
-        root.add(photo);
+        body = new THREE.Sprite(photoMaterial);
+        body.scale.set(PHOTO_SIZE, PHOTO_SIZE, 1);
         materials.push(photoMaterial);
-
-        label = labelSprite(e.title);
-        root.add(label.sprite);
-        materials.push(label.sprite.material);
-        drawn = [photo, label.sprite];
         bodyRadius = PHOTO_SIZE / 2;
-        const gap = PHOTO_SIZE / 2 + label.height / 2 + 0.5;
-        anchors = [new THREE.Vector2(0, -gap), new THREE.Vector2(0, gap)];
-
         halo.scale.setScalar(PHOTO_SIZE * 2.4);
         haloBase = 0;
         hitRadius = PHOTO_SIZE * 0.62;
+      } else if (isContent(e)) {
+        // publications and teaching: a small page, so they read as documents, not projects
+        const pageMaterial = new THREE.SpriteMaterial({
+          map: pageTexture(e.color),
+          transparent: true,
+          depthWrite: false,
+          depthTest: false,
+        });
+        body = new THREE.Sprite(pageMaterial);
+        body.scale.set(PAGE_SIZE * 0.78, PAGE_SIZE, 1);
+        materials.push(pageMaterial);
+        bodyRadius = PAGE_SIZE / 2;
+        halo.scale.setScalar(PAGE_SIZE * 3);
+        haloBase = 0.35;
+        hitRadius = PAGE_SIZE * 0.9;
       } else {
-        const core = new THREE.Mesh(
+        body = new THREE.Mesh(
           new THREE.SphereGeometry(PROJECT_CORE, 32, 16),
           new THREE.MeshBasicMaterial({
             color: mix(e.color, "#ffffff", 0.25),
@@ -418,28 +470,20 @@ export class GraphScene {
             depthTest: false,
           })
         );
-        core.renderOrder = NODE_ORDER;
-        root.add(core);
-        materials.push(core.material as THREE.Material);
-
-        label = labelSprite(e.name, e.color, LABEL_WRAP);
-        root.add(label.sprite);
-        materials.push(label.sprite.material);
-        drawn = [core, label.sprite];
+        materials.push((body as THREE.Mesh).material as THREE.Material);
         bodyRadius = PROJECT_CORE;
-        const above = PROJECT_CORE + label.height / 2 + 1.4;
-        const beside = PROJECT_CORE + label.sprite.scale.x / 2 + 1.4;
-        anchors = [
-          new THREE.Vector2(0, above),
-          new THREE.Vector2(0, -above),
-          new THREE.Vector2(beside, 0),
-          new THREE.Vector2(-beside, 0),
-        ];
-
         halo.scale.setScalar(PROJECT_CORE * 9);
         haloBase = 0.75;
         hitRadius = PROJECT_CORE * 2.6;
       }
+      body.renderOrder = NODE_ORDER;
+      root.add(body);
+
+      const label = this.makeLabel(e, bodyRadius, "en");
+      root.add(label.sprite);
+      materials.push(label.sprite.material);
+      const drawn = [body, label.sprite];
+      const anchors = label.anchors;
 
       materials.forEach((m) => (m.userData.baseOpacity = m.opacity));
       this.visuals[n.id] = {
@@ -455,6 +499,8 @@ export class GraphScene {
         drawn,
         label: label.sprite,
         labelSize: new THREE.Vector2(label.sprite.scale.x, label.height),
+        labelFade: isContent(e) ? 0 : 1,
+        labelTarget: isContent(e) ? 0 : 1,
         bodyRadius,
         anchors,
         anchor: 0,
@@ -465,13 +511,67 @@ export class GraphScene {
 
   //#region Focus
 
+  /** The 3D name label of a node, and where around the node it may sit. */
+  private makeLabel(e: Entity, bodyRadius: number, lang: Lang) {
+    if (e.group === NodeType.TEAM_MEMBER) {
+      const label = labelSprite(e.title);
+      const gap = bodyRadius + label.height / 2 + 0.5;
+      return { ...label, anchors: [new THREE.Vector2(0, -gap), new THREE.Vector2(0, gap)] };
+    }
+    const content = isContent(e);
+    const label = content
+      ? labelSprite(titleOf(e, lang), e.color, CONTENT_WRAP, CONTENT_LABEL_LINE)
+      : labelSprite(lang === "nl" && e.titleNl ? e.titleNl : e.name, e.color, LABEL_WRAP);
+    const above = bodyRadius + label.height / 2 + 1.4;
+    const beside = bodyRadius + label.sprite.scale.x / 2 + 1.4;
+    return {
+      ...label,
+      anchors: [
+        new THREE.Vector2(0, above),
+        new THREE.Vector2(0, -above),
+        new THREE.Vector2(beside, 0),
+        new THREE.Vector2(-beside, 0),
+      ],
+    };
+  }
+
+  /** Swap project and publication labels to the visitor's language. */
+  setLanguage(lang: Lang) {
+    for (const [id, v] of Object.entries(this.visuals)) {
+      const e = entities[id];
+      if (e.group === NodeType.TEAM_MEMBER) continue;
+      const label = this.makeLabel(e, v.bodyRadius, lang);
+      v.root.remove(v.label);
+      v.label.material.map?.dispose();
+      v.label.material.dispose();
+      label.sprite.renderOrder = v.label.renderOrder;
+      label.sprite.material.userData.baseOpacity = label.sprite.material.opacity;
+      v.root.add(label.sprite);
+      v.materials[v.materials.indexOf(v.label.material)] = label.sprite.material;
+      v.drawn[v.drawn.indexOf(v.label)] = label.sprite;
+      v.label = label.sprite;
+      v.labelSize.set(label.sprite.scale.x, label.height);
+      v.anchors = label.anchors;
+      v.anchor = 0;
+    }
+  }
+
+  /** Dim everything outside `ids` (e.g. a filter), until something is focused. */
+  setFilter(ids: Set<string> | null) {
+    this.filterIds = ids;
+    this.focus(this.focusId, this.focusMode);
+  }
+
   focus(id: string | null, mode: FocusMode = "select") {
     this.focusId = id;
     this.focusMode = mode;
     const related = new Set(id ? [id, ...entities[id].connections] : []);
     const dim = mode === "spotlight" ? 0.14 : 0.12;
     for (const [nodeId, v] of Object.entries(this.visuals)) {
-      v.fadeTarget = !id || related.has(nodeId) ? 1 : dim;
+      const shown = id ? related.has(nodeId) : !this.filterIds || this.filterIds.has(nodeId);
+      v.fadeTarget = shown ? 1 : dim;
+      // publication labels only appear when they're part of what's in focus
+      v.labelTarget = isContent(entities[nodeId]) ? (id && related.has(nodeId) ? 1 : 0) : 1;
       // highlighted nodes always draw over dimmed ones
       v.drawn.forEach((o) => (o.renderOrder = related.has(nodeId) ? NODE_ORDER + 1 : NODE_ORDER));
     }
@@ -855,6 +955,7 @@ export class GraphScene {
     const placed: { box: Box; weight: number }[] = [];
     for (const item of items) {
       const { v, x, y, k } = item;
+      if (v.labelTarget < 0.5) continue; // hidden labels neither move nor block others
       const w = (v.labelSize.x / 2) * k;
       const h = (v.labelSize.y / 2) * k;
       let best = v.anchor;
@@ -905,7 +1006,10 @@ export class GraphScene {
       v.fade += (v.fadeTarget - v.fade) * (this.focusMode === "spotlight" ? 0.04 : 0.12);
       // dimmed nodes right in front of the camera would only be a big blur: hide them
       const near = v.fadeTarget < 1 ? THREE.MathUtils.smoothstep(camera.position.distanceTo(node), 30, 110) : 1;
-      for (const m of v.materials) m.opacity = m.userData.baseOpacity * v.fade * near;
+      v.labelFade += (v.labelTarget - v.labelFade) * 0.12;
+      for (const m of v.materials) {
+        m.opacity = m.userData.baseOpacity * v.fade * near * (m === v.label.material ? v.labelFade : 1);
+      }
 
       const focused = id === this.focusId;
       const breathe = 1 + 0.06 * Math.sin(t * 1.3 + v.phase);

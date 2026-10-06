@@ -12,6 +12,24 @@ pnpm dev
 Open the printed URL in Chrome, go full screen and refresh. After 45 seconds without a touch the screen returns
 to its idle spotlight loop; `?idle=60` in the URL changes that timeout (in seconds).
 
+## On the screen
+
+- **Idle loop:** spotlights on people, projects and publications, now and then a news post from the website
+  (with a QR code), and full-screen animations for projects that have one (`src/showcases/`). The general
+  "What is BISS?" animation also plays every so often.
+- **Exploring:** tap a node or use the dock (all people, all projects, filter by status and area, "What is
+  BISS?"). Panels show a QR code to take the page along on a phone. Top right: overview, EN/NL and larger text.
+  Language and text size reset when the screen returns to its idle loop.
+- **URL options:** `?idle=60` (seconds before the idle loop), `?sync=0` (no website sync), `?sound=1` (subtle
+  touch sounds), `?showcase=<id>` (play an animation right away, for trying one out).
+
+## Hosting
+
+The production build is a static site deployed on Vercel (team BISS-UM, project `biss-graph`), served at
+`graph.biss-institute.com`. For the screen, open that URL in Chrome in kiosk mode on startup, e.g.
+`chrome --kiosk --noerrdialogs --disable-pinch --overscroll-history-navigation=0 https://graph.biss-institute.com`,
+so reboots and power cuts recover by themselves and updates arrive with each deploy.
+
 ## Data
 
 The graph mirrors [biss-institute.com](https://www.biss-institute.com):
@@ -38,7 +56,8 @@ Notes:
 
 - **Exclusions:** people or projects that should stay off the screen are listed in `sync.config.json` (by the
   slug in their website URL). Both the app and `pnpm sync` respect it.
-- **People without projects:** only people linked to at least one project on the website are shown.
+- **People without projects:** people the website links to nothing sit on a ring around the graph.
+- **Areas of work:** the filter's areas come from `areas` in `sync.config.json` (the website has no such field).
 - **Replacing a photo:** to use a better crop, replace the file in `src/assets/images/team/` (any of `.jpg`,
   `.png`, `.webp`); `pnpm sync` never overwrites existing photos unless run with `--refresh-photos`.
 - **Parsing:** the website has no API, so `src/data/website.js` reads its pages. If the site's markup changes

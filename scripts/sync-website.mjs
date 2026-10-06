@@ -46,6 +46,7 @@ try {
     previous,
     excludePeople: config.excludePeople,
     excludeProjects: config.excludeProjects,
+    areas: config.areas,
     // the snapshot keeps photos in the repo instead of linking to the website
     photoUrls: false,
   });
@@ -75,12 +76,16 @@ try {
     .filter(([id, n]) => before.has(id) && before.get(id) !== n)
     .map(([id, n]) => `${before.get(id)} → ${n}`);
 
-  const projects = graph.nodes.length - people.length;
-  console.log(`${dryRun ? "[dry run] " : ""}${people.length} people, ${projects} projects, ${graph.links.length} links`);
+  const count = (group) => graph.nodes.filter((n) => n.group === group).length;
+  console.log(
+    `${dryRun ? "[dry run] " : ""}${people.length} people, ${count("Project")} projects, ` +
+      `${count("Publication")} publications, ${count("Education")} education, ${graph.links.length} links, ` +
+      `${graph.highlights?.length ?? 0} news highlights`
+  );
   if (added.length) console.log(`  added:   ${added.join(", ")}`);
   if (removed.length) console.log(`  removed: ${removed.join(", ")}`);
   if (renamed.length) console.log(`  renamed: ${renamed.join("; ")}`);
-  if (skipped.length) console.log(`  not shown (no projects on the website): ${skipped.map((p) => p.name).join(", ")}`);
+  if (skipped.length) console.log(`  in the team ring (linked to nothing on the website): ${skipped.map((p) => p.name).join(", ")}`);
   if (needPhotos.length) {
     console.log(`  ${dryRun ? "would download" : "downloaded"} photos: ${needPhotos.map((p) => p.name).join(", ")}`);
   }

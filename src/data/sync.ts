@@ -12,6 +12,7 @@ export async function syncWithWebsite(): Promise<boolean> {
     previous: graphData,
     excludePeople: config.excludePeople,
     excludeProjects: config.excludeProjects,
+    areas: config.areas,
     hasLocalPhoto,
   });
   if (JSON.stringify(graph) === JSON.stringify(graphData)) return false;

@@ -10,6 +10,9 @@ defineProps<{ name: keyof typeof paths }>();
 <script lang="ts">
 const paths = {
     close: ["M18 6 6 18", "M6 6l12 12"],
+    filter: ["M3 5h18", "M6 12h12", "M10 19h4"],
+    play: ["M7 4.5v15l12-7.5-12-7.5z"],
+    search: ["M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16z", "M21 21l-4.35-4.35"],
     back: ["M15 18l-6-6 6-6"],
     chevron: ["M9 18l6-6-6-6"],
     people: [

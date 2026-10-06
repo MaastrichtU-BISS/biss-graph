@@ -3,31 +3,42 @@
         <Transition name="spot" mode="out-in">
             <button v-if="spot" :key="spot.id" class="spotlight surface" @click="emit('select', spot.id)">
                 <span class="spot-head">
-                    <span class="label">In the spotlight</span>
-                    <span class="tag" :class="isPerson ? 'tag-person' : 'tag-project'">
-                        {{ isPerson ? "Team member" : "Project" }}
-                    </span>
+                    <span class="label">{{ t.inTheSpotlight }}</span>
+                    <span class="tag" :class="tagClass">{{ kind }}</span>
                 </span>
                 <span class="spot-main">
                     <img v-if="isPerson" :src="spot.photo" alt="" class="avatar spot-photo" />
                     <span class="spot-text">
                         <span v-if="!isPerson" class="bar" :style="{ '--tone': spot.color }"
                             aria-hidden="true"></span>
-                        <span class="spot-title">{{ spot.title }}</span>
+                        <span class="spot-title">{{ titleOf(spot, lang) }}</span>
                         <span class="spot-sub">{{ subtitle }}</span>
                     </span>
                 </span>
-                <span v-if="isPerson" class="list">
+                <span v-if="isPerson && related.length" class="list">
                     <span v-for="p in related.slice(0, 3)" :key="p.id" class="item" :style="{ '--tone': p.color }">
                         <span class="dot" aria-hidden="true"></span>
-                        {{ p.title }}
+                        {{ titleOf(p, lang) }}
                     </span>
-                    <span v-if="related.length > 3" class="item more">+{{ related.length - 3 }} more</span>
+                    <span v-if="related.length > 3" class="item more">{{ t.more(related.length - 3) }}</span>
                 </span>
-                <span v-else class="faces">
+                <span v-else-if="!isPerson" class="faces">
                     <img v-for="m in related.slice(0, 7)" :key="m.id" :src="m.photo" alt="" class="avatar face" />
                 </span>
             </button>
+            <div v-else-if="highlight" :key="highlight.url" class="news surface">
+                <span class="spot-head">
+                    <span class="label">{{ t.latestNews }}</span>
+                    <span class="tag tag-content">BISS</span>
+                </span>
+                <span class="news-body">
+                    <span class="news-text">{{ highlight.text }}</span>
+                    <span class="news-qr">
+                        <QrCode :url="highlight.url" class="qr-code" />
+                        <span>{{ t.scanToRead }}</span>
+                    </span>
+                </span>
+            </div>
         </Transition>
 
         <div class="cta surface">
@@ -39,8 +50,8 @@
                 </span>
             </span>
             <span class="cta-text">
-                <span class="cta-title">Touch the screen to explore</span>
-                <span class="cta-sub">Find out who at BISS works on which project</span>
+                <span class="cta-title">{{ t.touchToExplore }}</span>
+                <span class="cta-sub">{{ t.findOut }}</span>
             </span>
         </div>
     </div>
@@ -48,20 +59,37 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import Icon from "./Icon.vue";
-import { entities } from "../data/graph";
-import { NodeType } from "../types/graph";
+import QrCode from "./QrCode.vue";
+import { entities, isContent, projectsOf, roleOf, titleOf } from "../data/graph";
+import { NodeType, type Highlight } from "../types/graph";
+import { lang, t } from "../i18n";
 
-const props = defineProps<{ spotlightId: string | null }>();
+const props = defineProps<{ spotlightId: string | null; highlight?: Highlight | null }>();
 const emit = defineEmits<{ select: [id: string] }>();
 
 const spot = computed(() => (props.spotlightId ? entities[props.spotlightId] : null));
 const isPerson = computed(() => spot.value?.group === NodeType.TEAM_MEMBER);
-const related = computed(() => spot.value?.connections.map((id) => entities[id]) ?? []);
+const related = computed(() =>
+    !spot.value ? [] : isPerson.value ? projectsOf(spot.value) : spot.value.connections.map((id) => entities[id])
+);
+const kind = computed(() => {
+    const g = spot.value?.group;
+    return g === NodeType.TEAM_MEMBER
+        ? t.value.teamMember
+        : g === NodeType.PROJECT
+          ? t.value.project
+          : g === NodeType.EDUCATION
+            ? t.value.education
+            : t.value.publication;
+});
+const tagClass = computed(() =>
+    isPerson.value ? "tag-person" : spot.value && isContent(spot.value) ? "tag-content" : "tag-project"
+);
 const subtitle = computed(() => {
     const n = related.value.length;
-    return isPerson.value
-        ? spot.value?.role ?? `Works on ${n} ${n === 1 ? "project" : "projects"}`
-        : `A project by ${n} ${n === 1 ? "person" : "people"}`;
+    if (!spot.value) return "";
+    if (isPerson.value) return roleOf(spot.value, lang.value) ?? (n ? t.value.worksOnCount(n) : t.value.partOfTeam);
+    return spot.value.group === NodeType.PROJECT ? t.value.projectBy(n) : t.value.peopleWorkOn(n);
 });
 </script>
 <style scoped>
@@ -83,6 +111,52 @@ const subtitle = computed(() => {
     gap: 1rem;
     padding: 1.3rem 1.5rem 1.5rem;
     text-align: left;
+}
+
+.news {
+    position: absolute;
+    left: var(--gap);
+    bottom: var(--gap);
+    width: min(40rem, 42vw);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.3rem 1.5rem 1.5rem;
+    pointer-events: auto;
+}
+
+.news-body {
+    display: flex;
+    gap: 1.4rem;
+    align-items: flex-start;
+}
+
+.news-text {
+    flex: 1;
+    font-size: 1.15rem;
+    line-height: 1.45;
+    color: var(--text);
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.news-qr {
+    flex: none;
+    width: 7rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    text-align: center;
+    color: var(--text-3);
+}
+
+.qr-code {
+    width: 7rem;
+    height: 7rem;
 }
 
 .spot-head {

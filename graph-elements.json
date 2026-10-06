@@ -5,6 +5,7 @@
       "group": "Team Member",
       "name": "Dr. Judith Kamalski",
       "role": "Managing Director | Chief Scientific Officer",
+      "role_nl": "Managing Director | Chief Scientific Officer",
       "info_url": "https://www.biss-institute.com/en/team/iframe/judith-kamalski"
     },
     {
@@ -12,27 +13,63 @@
       "group": "Team Member",
       "name": "Aleksandra Draper",
       "role": "Junior Project Leader/Office Manager",
+      "role_nl": "Junior Projectleider/Office Manager",
       "info_url": "https://www.biss-institute.com/en/team/iframe/aleksandra-draper"
+    },
+    {
+      "id": "maud-modders",
+      "group": "Team Member",
+      "name": "Maud Modders",
+      "role": "Research Officer",
+      "role_nl": "Onderzoeksmedewerker",
+      "info_url": "https://www.biss-institute.com/en/team/iframe/maud-modders"
+    },
+    {
+      "id": "cassy-juhasz",
+      "group": "Team Member",
+      "name": "Cassy Juhasz",
+      "role": "PhD Candidate",
+      "role_nl": "Promovendus",
+      "info_url": "https://www.biss-institute.com/en/team/iframe/cassy-juhasz"
     },
     {
       "id": "max-louwerse",
       "group": "Team Member",
       "name": "Prof. Dr. Max Louwerse",
       "role": "Professor by Special Appointment | Principal Investigator",
+      "role_nl": "Bijzonder Hoogleraar | Hoofdonderzoeker",
       "info_url": "https://www.biss-institute.com/en/team/iframe/max-louwerse"
+    },
+    {
+      "id": "bastian-kuppers",
+      "group": "Team Member",
+      "name": "Dr. Bastian Küppers",
+      "role": "Assistant Professor",
+      "role_nl": "Universitair Docent",
+      "info_url": "https://www.biss-institute.com/en/team/iframe/bastian-kuppers"
     },
     {
       "id": "lisa-bruggen",
       "group": "Team Member",
       "name": "Prof. Lisa Brüggen",
       "role": "Full Professor | Principal Investigator",
+      "role_nl": "Hoogleraar | Hoofdonderzoeker",
       "info_url": "https://www.biss-institute.com/en/team/iframe/lisa-bruggen"
+    },
+    {
+      "id": "dani-shanley",
+      "group": "Team Member",
+      "name": "Dr. Dani Shanley",
+      "role": "Researcher | Assistant Professor",
+      "role_nl": "Onderzoeker | Universitair Docent",
+      "info_url": "https://www.biss-institute.com/en/team/iframe/dani-shanley"
     },
     {
       "id": "ali-reza-ghavamipour",
       "group": "Team Member",
       "name": "Dr. Ali Reza Ghavamipour",
       "role": "Postdoctoral Researcher",
+      "role_nl": "Postdoctoraal Onderzoeker",
       "info_url": "https://www.biss-institute.com/en/team/iframe/ali-reza-ghavamipour"
     },
     {
@@ -40,6 +77,7 @@
       "group": "Team Member",
       "name": "Dr. Hannes Westermann",
       "role": "Assistant Professor",
+      "role_nl": "Universitair Docent",
       "info_url": "https://www.biss-institute.com/en/team/iframe/hannes-westermann"
     },
     {
@@ -47,6 +85,7 @@
       "group": "Team Member",
       "name": "Prof. Dr. Darian Meacham",
       "role": "Full Professor | Principal Investigator",
+      "role_nl": "Hoogleraar | Hoofdonderzoeker",
       "info_url": "https://www.biss-institute.com/en/team/iframe/darian-meacham"
     },
     {
@@ -54,6 +93,7 @@
       "group": "Team Member",
       "name": "Stefan Bos",
       "role": "PhD candidate",
+      "role_nl": "Promovendus",
       "info_url": "https://www.biss-institute.com/en/team/iframe/stefan-bos"
     },
     {
@@ -61,6 +101,7 @@
       "group": "Team Member",
       "name": "Dr. Johan van Soest",
       "role": "Senior Researcher | Assistant Professor",
+      "role_nl": "Senior Onderzoeker | Universitair Docent",
       "info_url": "https://www.biss-institute.com/en/team/iframe/johan-van-soest"
     },
     {
@@ -68,6 +109,7 @@
       "group": "Team Member",
       "name": "Prof. Dr. ir. André Dekker",
       "role": "Smart Health Lead | Principal Investigator",
+      "role_nl": "Smart Health Lead | Hoofdonderzoeker",
       "info_url": "https://www.biss-institute.com/en/team/iframe/andre-dekker"
     },
     {
@@ -75,6 +117,7 @@
       "group": "Team Member",
       "name": "Dr. Yenisel Plasencia-Calaña",
       "role": "Assistant Professor",
+      "role_nl": "Universitair Docent",
       "info_url": "https://www.biss-institute.com/en/team/iframe/yenisel-plasencia"
     },
     {
@@ -82,6 +125,7 @@
       "group": "Team Member",
       "name": "Prof. Dr. Rudolf Müller",
       "role": "Full Professor | Principal Investigator",
+      "role_nl": "Hoogleraar | Hoofdonderzoeker",
       "info_url": "https://www.biss-institute.com/en/team/iframe/rudolf-muller"
     },
     {
@@ -89,6 +133,7 @@
       "group": "Team Member",
       "name": "Chris van der Lans",
       "role": "Front-end Developer",
+      "role_nl": "Front-end Developer",
       "info_url": "https://www.biss-institute.com/en/team/iframe/chris-van-der-lans"
     },
     {
@@ -96,6 +141,7 @@
       "group": "Team Member",
       "name": "Shashank Subramanya",
       "role": "Research Engineer",
+      "role_nl": "Research Engineer",
       "info_url": "https://www.biss-institute.com/en/team/iframe/shashank-subramanya"
     },
     {
@@ -103,6 +149,7 @@
       "group": "Team Member",
       "name": "Dr. Sushma Maranganti Bhatter",
       "role": "Postdoctoral Researcher",
+      "role_nl": "Postdoctoraal onderzoeker",
       "info_url": "https://www.biss-institute.com/en/team/iframe/sushma-maranganti"
     },
     {
@@ -110,6 +157,7 @@
       "group": "Team Member",
       "name": "Carlos Eduardo Aguilera Medina",
       "role": "Data Engineer",
+      "role_nl": "Data Engineer",
       "info_url": "https://www.biss-institute.com/en/team/iframe/carlos-aguilera"
     },
     {
@@ -117,6 +165,7 @@
       "group": "Team Member",
       "name": "Shashank Chakravarthy",
       "role": "Research Engineer | PhD Candidate",
+      "role_nl": "Research Engineer | Promovendus",
       "info_url": "https://www.biss-institute.com/en/team/iframe/shashank-chakravarthy"
     },
     {
@@ -124,6 +173,7 @@
       "group": "Team Member",
       "name": "Dr. Minou van der Werf",
       "role": "Senior Researcher | Assistant professor",
+      "role_nl": "Senior Onderzoeker | Universitair Docent",
       "info_url": "https://www.biss-institute.com/en/team/iframe/minou-van-der-werf"
     },
     {
@@ -131,6 +181,7 @@
       "group": "Team Member",
       "name": "Prof. Gijs van Dijck",
       "role": "Full Professor | Principal Investigator",
+      "role_nl": "Hoogleraar | Hoofdonderzoeker",
       "info_url": "https://www.biss-institute.com/en/team/iframe/gijs-van-dijck"
     },
     {
@@ -138,6 +189,7 @@
       "group": "Team Member",
       "name": "Vivienne Curvers",
       "role": "Senior Project Manager",
+      "role_nl": "Senior Project Manager",
       "info_url": "https://www.biss-institute.com/en/team/iframe/vivienne-curvers"
     },
     {
@@ -145,6 +197,7 @@
       "group": "Team Member",
       "name": "Prof. Elia Formisano",
       "role": "Full Professor | Principal Investigator",
+      "role_nl": "Hoogleraar | Hoofdonderzoeker",
       "info_url": "https://www.biss-institute.com/en/team/iframe/elia-formisano"
     },
     {
@@ -152,12 +205,18 @@
       "group": "Team Member",
       "name": "David Wicker",
       "role": "Full-stack developer",
+      "role_nl": "Full-stack developer",
       "info_url": "https://www.biss-institute.com/en/team/iframe/david-wicker"
     },
     {
       "id": "better",
       "group": "Project",
       "name": "BETTER: Responsible data analytics in healthcare",
+      "name_nl": "BETTER: verantwoordelijke data-analyse in de gezondheidszorg",
+      "status": "in-progress",
+      "areas": [
+        "Health"
+      ],
       "info_url": "https://www.biss-institute.com/en/posts/iframe/better-responsible-data-analytics-in-healthcare",
       "color": "#C71585"
     },
@@ -165,6 +224,11 @@
       "id": "audio-to-semantics",
       "group": "Project",
       "name": "How can we recognize sound when it is out of sight?",
+      "name_nl": "Hoe kunnen we geluiden herkennen die we niet kunnen zien?",
+      "status": "in-progress",
+      "areas": [
+        "Health"
+      ],
       "info_url": "https://www.biss-institute.com/en/posts/iframe/how-can-we-recognize-sound-when-it-is-out-of-sight",
       "color": "#F0C808"
     },
@@ -172,6 +236,11 @@
       "id": "fair-ai",
       "group": "Project",
       "name": "FAIR4AI: making AI models practically usable",
+      "name_nl": "FAIR4AI: AI-modellen praktisch bruikbaar maken",
+      "status": "finished",
+      "areas": [
+        "Responsible AI"
+      ],
       "info_url": "https://www.biss-institute.com/en/posts/iframe/fair4ai-making-ai-models-practically-usable",
       "color": "#2E8B57"
     },
@@ -179,6 +248,11 @@
       "id": "techalliance",
       "group": "Project",
       "name": "Enhancing customer support with AI",
+      "name_nl": "Verbeterde klantenservice dankzij AI voor veelgestelde vragen",
+      "status": "in-progress",
+      "areas": [
+        "Business"
+      ],
       "info_url": "https://www.biss-institute.com/en/posts/iframe/enhancing-customer-support-with-ai",
       "color": "#fe5629"
     },
@@ -186,6 +260,11 @@
       "id": "nijsen-project",
       "group": "Project",
       "name": "What is the content of Livestock feed?",
+      "name_nl": "Samenstelling van diervoeder via data",
+      "status": "finished",
+      "areas": [
+        "Industry"
+      ],
       "info_url": "https://www.biss-institute.com/en/posts/iframe/what-is-the-content-of-livestock-feed",
       "color": "#800080"
     },
@@ -193,6 +272,11 @@
       "id": "netspar-financial-advice",
       "group": "Project",
       "name": "Can automated systems give good financial advice?",
+      "name_nl": "Kunnen geautomatiseerde systemen goed financieel advies geven?",
+      "status": "finished",
+      "areas": [
+        "Finance"
+      ],
       "info_url": "https://www.biss-institute.com/en/posts/iframe/can-automated-systems-give-good-financial-advice",
       "color": "#FF1493"
     },
@@ -200,6 +284,13 @@
       "id": "benedrone",
       "group": "Project",
       "name": "BeNeDrone: Cross-border innovation in medical drone deployment",
+      "name_nl": "BeNeDrone: Grensoverschrijdende innovatie in de inzet van medische drones",
+      "status": "in-progress",
+      "areas": [
+        "Health",
+        "Mobility",
+        "Law"
+      ],
       "info_url": "https://www.biss-institute.com/en/posts/iframe/benedrone-cross-border-innovation-in-medical-drone-deployment",
       "color": "#FF4500"
     },
@@ -207,6 +298,11 @@
       "id": "lawnotation",
       "group": "Project",
       "name": "Legal Research Software",
+      "name_nl": "Software voor Juridisch Onderzoek",
+      "status": "in-progress",
+      "areas": [
+        "Law"
+      ],
       "info_url": "https://www.biss-institute.com/en/posts/iframe/legal-research-software",
       "color": "#0e5983"
     },
@@ -214,6 +310,11 @@
       "id": "digimach",
       "group": "Project",
       "name": "DigiMach: Smart, Sustainable, and Connected Manufacturing",
+      "name_nl": "DigiMach: Slim, Duurzaam en Verbonden MKBs",
+      "status": "in-progress",
+      "areas": [
+        "Industry"
+      ],
       "info_url": "https://www.biss-institute.com/en/posts/iframe/digimach-smart-sustainable-and-connected-manufacturing",
       "color": "#00FFFF"
     },
@@ -221,6 +322,11 @@
       "id": "sittard-geleen",
       "group": "Project",
       "name": "Working towards a clear and simple welfare application",
+      "name_nl": "Op weg naar een eenvoudige bijstandsaanvraag",
+      "status": "finished",
+      "areas": [
+        "Society"
+      ],
       "info_url": "https://www.biss-institute.com/en/posts/iframe/working-towards-a-clear-and-simple-welfare-application",
       "color": "#33c7ff"
     },
@@ -228,6 +334,12 @@
       "id": "choosing-under-financial-pressure-a-vr-experience",
       "group": "Project",
       "name": "Choosing under financial pressure: a VR experience",
+      "name_nl": "Kiezen onder financiële druk: een VR-ervaring",
+      "status": "in-progress",
+      "areas": [
+        "Finance",
+        "Society"
+      ],
       "info_url": "https://www.biss-institute.com/en/posts/iframe/choosing-under-financial-pressure-a-vr-experience",
       "color": "#df49aa"
     },
@@ -235,6 +347,12 @@
       "id": "flying-forward",
       "group": "Project",
       "name": "Flying Forward: Drones that fly on their own",
+      "name_nl": "Flying Forward: Drones die zelf kunnen vliegen",
+      "status": "finished",
+      "areas": [
+        "Law",
+        "Mobility"
+      ],
       "info_url": "https://www.biss-institute.com/en/posts/iframe/flying-forward",
       "color": "#7d3c52"
     },
@@ -242,6 +360,11 @@
       "id": "factory-shutdown",
       "group": "Project",
       "name": "Prevent factory shutdowns",
+      "name_nl": "Datascience om stilleggen productie te voorkomen",
+      "status": "finished",
+      "areas": [
+        "Industry"
+      ],
       "info_url": "https://www.biss-institute.com/en/posts/iframe/preventfactoryshutdowns",
       "color": "#ADFF2F"
     },
@@ -249,8 +372,157 @@
       "id": "priceless-assets",
       "group": "Project",
       "name": "Priceless Assets of Subversion: Financial Crime and the Valuation of Unique Goods",
+      "name_nl": "Priceless Assest of Subversion: Financiële Criminaliteit en de Waardering van Unieke Goederen",
+      "status": "in-progress",
+      "areas": [
+        "Law",
+        "Finance"
+      ],
       "info_url": "https://www.biss-institute.com/en/posts/iframe/priceless-assets-of-subversion-financial-crime-and-the-valuation-of-unique-goods",
       "color": "#f982e7"
+    },
+    {
+      "id": "recidivism-risk-assessment-and-the-ai-act-data-bias-and-human-oversight",
+      "group": "Publication",
+      "name": "Recidivism Risk Assessment and the AI Act: Data, Bias, and Human Oversight",
+      "name_nl": "Recidivism Risk Assessment and the AI Act: Data, Bias, and Human Oversight",
+      "links": [
+        {
+          "title": "Predicting Recidivism Risk Meets AI Act",
+          "url": "https://link.springer.com/article/10.1007/s10610-022-09516-8"
+        }
+      ],
+      "info_url": "https://www.biss-institute.com/en/posts/iframe/recidivism-risk-assessment-and-the-ai-act-data-bias-and-human-oversight"
+    },
+    {
+      "id": "incorporating-semantic-representations-in-deep-learning-for-improved-sound-recognition",
+      "group": "Publication",
+      "name": "Incorporating Semantic Representations in Deep Learning for Improved Sound Recognition",
+      "name_nl": "Incorporating Semantic Representations in Deep Learning for Improved Sound Recognition",
+      "links": [
+        {
+          "title": "Bridging auditory perception and natural language processing with semantically informed deep neural networks",
+          "url": "https://www.nature.com/articles/s41598-024-71693-9?utm_source=rct_congratemailt&utm_medium=email&utm_campaign=oa_20240909&utm_content=10.1038/s41598-024-71693-9"
+        }
+      ],
+      "info_url": "https://www.biss-institute.com/en/posts/iframe/incorporating-semantic-representations-in-deep-learning-for-improved-sound-recognition"
+    },
+    {
+      "id": "visualizing-case-law-networks-an-open-source-tool-for-legal-scholars",
+      "group": "Publication",
+      "name": "Visualizing Case Law Networks: An Open Source Tool for Legal Scholars",
+      "name_nl": "Visualizing Case Law Networks: An Open Source Tool for Legal Scholars",
+      "links": [
+        {
+          "title": "Answering Legal Research Questions About Dutch Case Law with Network Analysis and Visualization",
+          "url": "https://ebooks.iospress.nl/publication/48049"
+        }
+      ],
+      "info_url": "https://www.biss-institute.com/en/posts/iframe/visualizing-case-law-networks-an-open-source-tool-for-legal-scholars"
+    },
+    {
+      "id": "transforming-sound-into-something-meaningful",
+      "group": "Publication",
+      "name": "Transforming sound into something meaningful",
+      "name_nl": "Transforming sound into something meaningful",
+      "links": [
+        {
+          "title": "Intermediate acoustic-to-semantic representations link behavioral and neural responses to natural sounds",
+          "url": "https://www.nature.com/articles/s41593-023-01285-9 "
+        }
+      ],
+      "info_url": "https://www.biss-institute.com/en/posts/iframe/transforming-sound-into-something-meaningful"
+    },
+    {
+      "id": "comparison-of-online-pension-choices-and-traditional-advice",
+      "group": "Publication",
+      "name": "Comparison of Online Pension Choices and Traditional Advice",
+      "name_nl": "Vergelijking van Online Pensioenkeuze en Traditioneel Advies",
+      "links": [
+        {
+          "title": "Choice guidance for pension: are online tools alone enough?",
+          "url": "https://www.netspar.nl/en/publication/choice-guidance-for-pension-are-online-tools-alone-enough/"
+        }
+      ],
+      "info_url": "https://www.biss-institute.com/en/posts/iframe/comparison-of-online-pension-choices-and-traditional-advice"
+    },
+    {
+      "id": "rethinking-human-centered-ai-insights-from-lyotards-concept-of-the-inhuman-en",
+      "group": "Publication",
+      "name": "Rethinking Human-Centered AI: Insights from Lyotard's Concept of the Inhuman",
+      "links": [
+        {
+          "title": "A Plea for (In)Human-centred AI",
+          "url": "https://link.springer.com/article/10.1007/s13347-024-00785-1"
+        }
+      ],
+      "info_url": "https://www.biss-institute.com/en/posts/iframe/rethinking-human-centered-ai-insights-from-lyotards-concept-of-the-inhuman-en"
+    },
+    {
+      "id": "towards-holistic-automated-financial-advice-definition-and-ethical-challenges",
+      "group": "Publication",
+      "name": "Towards Holistic Automated Financial Advice: Definition and Ethical Challenges",
+      "name_nl": "Naar Holistisch Geautomatiseerd Financieel Advies: Definiëring en Ethische Uitdagingen",
+      "links": [
+        {
+          "title": "Challenges of automated financial advice: Definition and ethical considerations",
+          "url": "https://www.netspar.nl/en/publication/challenges-of-automated-financial-advice-definition-and-ethical-considerations/"
+        }
+      ],
+      "info_url": "https://www.biss-institute.com/en/posts/iframe/towards-holistic-automated-financial-advice-definition-and-ethical-challenges"
+    },
+    {
+      "id": "the-future-of-automated-financial-advice-value-creation-and-ethical-issues",
+      "group": "Publication",
+      "name": "The Future of Automated Financial Advice: Value Creation and Ethical Issues",
+      "name_nl": "De Toekomst van Geautomatiseerd Financieel Advies: Waardecreatie en Ethische Vraagstukken",
+      "links": [
+        {
+          "title": "Value considerations, ethical dilemmas, and resolving methods in automated financial advice",
+          "url": "https://www.netspar.nl/en/publication/value-considerations-ethical-dilemmas-and-resolving-methods-in-automated-financial-advice/"
+        }
+      ],
+      "info_url": "https://www.biss-institute.com/en/posts/iframe/the-future-of-automated-financial-advice-value-creation-and-ethical-issues"
+    },
+    {
+      "id": "public-adoption-of-adm-systems-the-impact-of-transparency-and-perceived-fairness",
+      "group": "Publication",
+      "name": "Public Adoption of ADM Systems: The Impact of Transparency and Perceived Fairness",
+      "name_nl": "Public Adoption of ADM Systems: The Impact of Transparency and Perceived Fairness",
+      "links": [
+        {
+          "title": "The public perceptions of algorithmic decision-making systems: Results from a large-scale survey",
+          "url": "https://www.sciencedirect.com/science/article/pii/S0736585323000187?via%3Dihub"
+        }
+      ],
+      "info_url": "https://www.biss-institute.com/en/posts/iframe/public-adoption-of-adm-systems-the-impact-of-transparency-and-perceived-fairness"
+    },
+    {
+      "id": "graph-augmented-dense-retrieval-for-statutory-article-retrieval",
+      "group": "Publication",
+      "name": "Graph-Augmented Dense Retrieval for Statutory Article Retrieval",
+      "name_nl": "Graph-Augmented Dense Retrieval for Statutory Article Retrieval",
+      "links": [
+        {
+          "title": "Finding the Law: Enhancing Statutory Article Retrieval via Graph Neural Networks",
+          "url": "https://aclanthology.org/2023.eacl-main.203/"
+        }
+      ],
+      "info_url": "https://www.biss-institute.com/en/posts/iframe/graph-augmented-dense-retrieval-for-statutory-article-retrieval"
+    },
+    {
+      "id": "inspiration-sessions",
+      "group": "Education",
+      "name": "Inspiration sessions Data science",
+      "name_nl": "Inspiratiesessies Datascience",
+      "info_url": "https://www.biss-institute.com/en/posts/iframe/inspiration-sessions"
+    },
+    {
+      "id": "training-data-interpretation-ethics--security",
+      "group": "Education",
+      "name": "Training Data Interpretation, Ethics & Security",
+      "name_nl": "Opleiding Datainterpretatie, ethiek & security",
+      "info_url": "https://www.biss-institute.com/en/posts/iframe/training-data-interpretation-ethics--security"
     }
   ],
   "links": [
@@ -477,6 +749,135 @@
     {
       "source": "ali-reza-ghavamipour",
       "target": "priceless-assets"
+    },
+    {
+      "source": "gijs-van-dijck",
+      "target": "recidivism-risk-assessment-and-the-ai-act-data-bias-and-human-oversight"
+    },
+    {
+      "source": "elia-formisano",
+      "target": "incorporating-semantic-representations-in-deep-learning-for-improved-sound-recognition"
+    },
+    {
+      "source": "yenisel-plasencia",
+      "target": "incorporating-semantic-representations-in-deep-learning-for-improved-sound-recognition"
+    },
+    {
+      "source": "gijs-van-dijck",
+      "target": "visualizing-case-law-networks-an-open-source-tool-for-legal-scholars"
+    },
+    {
+      "source": "elia-formisano",
+      "target": "transforming-sound-into-something-meaningful"
+    },
+    {
+      "source": "lisa-bruggen",
+      "target": "comparison-of-online-pension-choices-and-traditional-advice"
+    },
+    {
+      "source": "minou-van-der-werf",
+      "target": "comparison-of-online-pension-choices-and-traditional-advice"
+    },
+    {
+      "source": "darian-meacham",
+      "target": "rethinking-human-centered-ai-insights-from-lyotards-concept-of-the-inhuman-en"
+    },
+    {
+      "source": "lisa-bruggen",
+      "target": "towards-holistic-automated-financial-advice-definition-and-ethical-challenges"
+    },
+    {
+      "source": "minou-van-der-werf",
+      "target": "towards-holistic-automated-financial-advice-definition-and-ethical-challenges"
+    },
+    {
+      "source": "lisa-bruggen",
+      "target": "the-future-of-automated-financial-advice-value-creation-and-ethical-issues"
+    },
+    {
+      "source": "minou-van-der-werf",
+      "target": "the-future-of-automated-financial-advice-value-creation-and-ethical-issues"
+    },
+    {
+      "source": "darian-meacham",
+      "target": "public-adoption-of-adm-systems-the-impact-of-transparency-and-perceived-fairness"
+    },
+    {
+      "source": "rudolf-muller",
+      "target": "public-adoption-of-adm-systems-the-impact-of-transparency-and-perceived-fairness"
+    },
+    {
+      "source": "gijs-van-dijck",
+      "target": "graph-augmented-dense-retrieval-for-statutory-article-retrieval"
+    },
+    {
+      "source": "judith-kamalski",
+      "target": "inspiration-sessions"
+    },
+    {
+      "source": "cassy-juhasz",
+      "target": "inspiration-sessions"
+    },
+    {
+      "source": "johan-van-soest",
+      "target": "inspiration-sessions"
+    },
+    {
+      "source": "minou-van-der-werf",
+      "target": "inspiration-sessions"
+    },
+    {
+      "source": "rudolf-muller",
+      "target": "training-data-interpretation-ethics--security"
+    },
+    {
+      "source": "cassy-juhasz",
+      "target": "training-data-interpretation-ethics--security"
+    },
+    {
+      "source": "johan-van-soest",
+      "target": "training-data-interpretation-ethics--security"
+    },
+    {
+      "source": "minou-van-der-werf",
+      "target": "training-data-interpretation-ethics--security"
+    }
+  ],
+  "highlights": [
+    {
+      "text": "SPECIAL POST | 10 years of BISS 🎉 This year marks a special milestone for BISS as we celebrate 10 years of impact, innovation, and collaboration. To mark this celebration, we are proud to launch our…",
+      "url": "https://www.linkedin.com/feed/update/urn:li:share:7505632800117682176"
+    },
+    {
+      "text": "WELCOME TO THE TEAM | Bas Hack - BISS intern We are happy to welcome our new intern Bas Hack to BISS! Bas is starting the second year of the Research Master’s in European Studies at Maastricht…",
+      "url": "https://www.linkedin.com/feed/update/urn:li:share:7505531664475942912"
+    },
+    {
+      "text": "BISS NEWS | Kan VR helpen om financiële stress beter te begrijpen? Die vraag stond centraal in het gesprek met Tim 'S Jongers van De Correspondent over onze VR-ervaring Kiezen onder financiële druk.…",
+      "url": "https://www.linkedin.com/feed/update/urn:li:share:7504129629612527616"
+    },
+    {
+      "text": "BISS NEWS | New project granted We are proud to announce that our project DAZM - Digitale Autonomie voor Zorg en MKB has been awarded funding through the SIDN fonds & Digital Holland call “De…",
+      "url": "https://www.linkedin.com/feed/update/urn:li:share:7465688504102993920"
+    },
+    {
+      "text": "EVENT | PAS Festival At the upcoming PAS Festival in Maastricht, on September 4th, our PhD candidate Stefan Bos, together with Maud Modders, invites visitors to step into a Virtual Reality experience…",
+      "url": "https://www.linkedin.com/feed/update/urn:li:ugcPost:7499019764921540608",
+      "image": "https://www.biss-institute.com/_astro/biss_um_logo_white.B6SqVaOr.png"
+    },
+    {
+      "text": "Do you work for a manufacturing company? We would be very interested in hearing your perspective. As part of our DigiMach.eu project, Maastricht University Master's student Philip Schäuble is…",
+      "url": "https://www.linkedin.com/feed/update/urn:li:share:7464980917153955841",
+      "image": "https://www.biss-institute.com/_astro/biss_um_logo_white.B6SqVaOr.png"
+    },
+    {
+      "text": "BISS NEWS | Another project granted We are not slowing down and are happy to announce that our new NWO (Dutch Research Council) Thematic Digital Competence Centre (TDCC) project has been granted:…",
+      "url": "https://www.linkedin.com/feed/update/urn:li:share:7467873573496340480"
+    },
+    {
+      "text": "Wat een fantastische inzet en een geweldig resultaat! Vrijdag 12 juni heeft het team van BISS (@Brightlands Institute for Smart Society van Maastricht University) keihard gewerkt en maar liefst vier…",
+      "url": "https://www.linkedin.com/feed/update/urn:li:ugcPost:7483849615465922560",
+      "image": "https://www.biss-institute.com/_astro/biss_um_logo_white.B6SqVaOr.png"
     }
   ]
 }

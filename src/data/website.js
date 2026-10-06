@@ -62,9 +62,9 @@ const parseCards = (html) => {
   return [...cards.values()];
 };
 
-const parseTeam = (html) => {
+const parseTeam = (html, lang = "en") => {
   const people = new Map();
-  const card = /<a href="\/en\/team\/([a-z0-9-]+)"[^>]*data-test="team-member-card">([\s\S]*?)<\/a>/g;
+  const card = new RegExp(`<a href="/${lang}/team/([a-z0-9-]+)"[^>]*data-test="team-member-card">([\\s\\S]*?)</a>`, "g");
   for (const [, slug, body] of html.matchAll(card)) {
     if (people.has(slug)) continue;
     const name = body.match(/<div class="font-bold">([\s\S]*?)<\/div>/)?.[1];
@@ -121,43 +121,81 @@ const mapLimit = async (items, limit, fn) => {
   return results;
 };
 
+/** First sentences of a post, without links, hashtags or line breaks, up to `max` characters. */
+const excerpt = (value, max = 200) => {
+  const plain = clean(value)
+    .replace(/https?:\/\/\S+/g, "")
+    .replace(/#\w+/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (plain.length <= max) return plain;
+  const cut = plain.slice(0, max);
+  return cut.slice(0, Math.max(cut.lastIndexOf(". ") + 1, cut.lastIndexOf(" "))).trim() + "…";
+};
+
+const absolute = (src) => (src ? new URL(decodeEntities(src), SITE).href : undefined);
+
+/** Website post kinds that become nodes, besides projects. */
+const CONTENT = [
+  { tag: "publication", group: "Publication" },
+  { tag: "education", group: "Education" },
+];
+
 /**
  * Build the graph from the website.
  *
  * `previous` keeps ids and colours of nodes already on screen stable. People for whom
  * `hasLocalPhoto(slug)` is false get a `photo_url` pointing at the website, unless
- * `photoUrls` is false.
+ * `photoUrls` is false. `areas` maps project slugs to areas of work, for filtering.
  */
 export async function fetchWebsiteGraph({
   previous = { nodes: [], links: [] },
   excludePeople = [],
   excludeProjects = [],
+  areas = {},
   hasLocalPhoto = () => false,
   photoUrls = true,
 } = {}) {
-  const [home, about] = await Promise.all([fetchText("/en/"), fetchText("/en/about")]);
+  const [home, about, homeNl, aboutNl] = await Promise.all([
+    fetchText("/en/"),
+    fetchText("/en/about"),
+    // Dutch titles and roles are a bonus; the graph works without them
+    fetchText("/nl/").catch(() => ""),
+    fetchText("/nl/about").catch(() => ""),
+  ]);
 
   const excludedPeople = new Set(excludePeople);
   const excludedProjects = new Set(excludeProjects);
   const team = parseTeam(about).filter((p) => !excludedPeople.has(p.slug));
   const onTeam = new Set(team.map((p) => p.slug));
+  const rolesNl = new Map(parseTeam(aboutNl, "nl").map((p) => [p.slug, p.role]));
+  const titlesNl = new Map(parseCards(homeNl).map((c) => [slugOf(c.url), clean(c.title)]));
 
-  const projects = parseCards(home)
-    .filter((c) => c.tags.includes("project") && c.url.startsWith("/en/posts/") && c.published !== false)
-    .map((c) => ({
-      slug: slugOf(c.url),
-      title: clean(c.title),
-      members: [
-        ...new Set((c.team ?? []).map((t) => slugOf(t.teamMember?.id ?? "")).filter((s) => onTeam.has(s))),
-      ],
-    }))
+  const cards = parseCards(home).filter((c) => c.url.startsWith("/en/posts/") && c.published !== false);
+  const membersOf = (c) => [
+    ...new Set((c.team ?? []).map((t) => slugOf(t.teamMember?.id ?? "")).filter((s) => onTeam.has(s))),
+  ];
+
+  const projects = cards
+    .filter((c) => c.tags.includes("project"))
+    .map((c) => ({ slug: slugOf(c.url), title: clean(c.title), status: c.status || undefined, members: membersOf(c) }))
     .filter((p) => !excludedProjects.has(p.slug) && p.members.length > 0);
 
-  const working = new Set(projects.flatMap((p) => p.members));
-  const people = team.filter((p) => working.has(p.slug));
+  const content = CONTENT.flatMap(({ tag, group }) =>
+    cards
+      .filter((c) => c.tags.includes(tag))
+      .map((c) => ({
+        slug: slugOf(c.url),
+        group,
+        title: clean(c.title),
+        links: (c.publications ?? []).filter((x) => x?.link).map((x) => ({ title: clean(x.title ?? ""), url: x.link })),
+        members: membersOf(c),
+      }))
+      .filter((c) => c.members.length > 0)
+  );
 
-  if (people.length < MIN_PEOPLE || projects.length < MIN_PROJECTS) {
-    throw new Error(`website returned only ${people.length} people and ${projects.length} projects`);
+  if (team.length < MIN_PEOPLE || projects.length < MIN_PROJECTS) {
+    throw new Error(`website returned only ${team.length} people and ${projects.length} projects`);
   }
 
   // keep ids and colours of nodes that were already on the screen, matched by page url
@@ -167,18 +205,25 @@ export async function fetchWebsiteGraph({
 
   const photos = new Map();
   if (photoUrls) {
-    const missing = people.filter((p) => !hasLocalPhoto(p.slug));
+    const missing = team.filter((p) => !hasLocalPhoto(p.slug));
     const urls = await mapLimit(missing, 6, profilePhoto);
     missing.forEach((p, i) => urls[i] && photos.set(p.slug, urls[i]));
   }
 
+  const highlights = parseCards(home)
+    .filter((c) => c.tags.includes("news") && c.description)
+    .slice(0, 8)
+    .map((c) => ({ text: excerpt(c.description), url: c.url, image: absolute(c.coverImage?.src) }));
+
   const graph = {
     nodes: [
-      ...people.map((p) => ({
+      // everyone on the about page, also people without projects (they get their own ring)
+      ...team.map((p) => ({
         id: p.slug,
         group: "Team Member",
         name: p.name,
         ...(p.role ? { role: p.role } : {}),
+        ...(rolesNl.get(p.slug) ? { role_nl: rolesNl.get(p.slug) } : {}),
         ...(photos.has(p.slug) ? { photo_url: photos.get(p.slug) } : {}),
         info_url: `${SITE}/en/team/iframe/${p.slug}`,
       })),
@@ -189,18 +234,34 @@ export async function fetchWebsiteGraph({
           id: projectId(p.slug),
           group: "Project",
           name: p.title,
+          ...(titlesNl.get(p.slug) ? { name_nl: titlesNl.get(p.slug) } : {}),
+          ...(p.status ? { status: p.status } : {}),
+          ...(areas[p.slug]?.length ? { areas: areas[p.slug] } : {}),
           info_url: `${SITE}/en/posts/iframe/${p.slug}`,
           color,
         };
       }),
+      ...content.map((c) => ({
+        id: c.slug,
+        group: c.group,
+        name: c.title,
+        ...(titlesNl.get(c.slug) ? { name_nl: titlesNl.get(c.slug) } : {}),
+        ...(c.links.length ? { links: c.links } : {}),
+        info_url: `${SITE}/en/posts/iframe/${c.slug}`,
+      })),
     ],
-    links: projects.flatMap((p) => p.members.map((m) => ({ source: m, target: projectId(p.slug) }))),
+    links: [
+      ...projects.flatMap((p) => p.members.map((m) => ({ source: m, target: projectId(p.slug) }))),
+      ...content.flatMap((c) => c.members.map((m) => ({ source: m, target: c.slug }))),
+    ],
+    ...(highlights.length ? { highlights } : {}),
   };
 
+  const linked = new Set(graph.links.map((l) => l.source));
   return {
     graph,
     team,
-    /** People on the about page who aren't linked to any project. */
-    skipped: team.filter((p) => !working.has(p.slug)),
+    /** People on the about page who aren't linked to anything; shown in a ring. */
+    skipped: team.filter((p) => !linked.has(p.slug)),
   };
 }

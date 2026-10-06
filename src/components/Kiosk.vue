@@ -6,8 +6,8 @@
         <header class="brand">
             <img :src="logo" alt="BISS" class="logo" />
             <div class="brand-text">
-                <h1>Who works on what</h1>
-                <p>BISS is like the A-team, but with professors from Maastricht University</p>
+                <h1>{{ t.title }}</h1>
+                <p>{{ t.subtitle }}</p>
             </div>
         </header>
 
@@ -19,57 +19,89 @@
         </Transition>
 
         <Transition name="fade">
-            <AttractOverlay v-if="ready && mode === 'attract'" :spotlight-id="spotlightId" @select="select" />
+            <AttractOverlay v-if="ready && mode === 'attract'" :spotlight-id="spotlightId" :highlight="highlight"
+                @select="select" />
         </Transition>
 
         <Transition name="fade">
             <div v-if="mode === 'explore'" class="controls">
                 <div class="dock">
-                    <button class="btn btn-secondary" @click="openBrowse('people')">
-                        <Icon name="people" /> All people
+                    <button class="ghost" @click="openBrowse('people')">
+                        <Icon name="people" /> {{ t.allPeople }}
                     </button>
-                    <button class="btn btn-secondary" @click="openBrowse('projects')">
-                        <Icon name="projects" /> All projects
+                    <button class="ghost" @click="openBrowse('projects')">
+                        <Icon name="projects" /> {{ t.allProjects }}
+                    </button>
+                    <button class="ghost" :class="{ active: filterOpen || filterActive }"
+                        @click="filterOpen = !filterOpen">
+                        <Icon name="filter" /> {{ t.filter }}
+                        <span v-if="filterActive" class="badge" aria-hidden="true"></span>
+                    </button>
+                    <button v-if="about" class="ghost" @click="playAbout">
+                        <Icon name="play" /> {{ t.whatIsBiss }}
                     </button>
                 </div>
 
+                <Transition name="pop">
+                    <FilterPanel v-if="filterOpen" v-model="filters" class="filters" @close="filterOpen = false" />
+                </Transition>
+
                 <Transition name="fade">
-                    <ul v-if="!selectedId && !browseOpen" class="hints surface">
+                    <ul v-if="!selectedId && !browseOpen && !filterOpen" class="hints">
                         <li>
-                            <Icon name="tap" /> Tap a face or project
+                            <Icon name="tap" /> {{ t.hintTap }}
                         </li>
                         <li>
-                            <Icon name="drag" /> Drag to turn
+                            <Icon name="drag" /> {{ t.hintDrag }}
                         </li>
                         <li>
-                            <Icon name="pinch" /> Pinch to zoom
+                            <Icon name="pinch" /> {{ t.hintPinch }}
                         </li>
                     </ul>
                 </Transition>
 
-                <button class="btn btn-secondary reset" @click="enterAttract">
-                    <Icon name="overview" /> Overview
-                </button>
+                <div class="top-right">
+                    <button class="ghost" @click="enterAttract">
+                        <Icon name="overview" /> {{ t.overview }}
+                    </button>
+                    <span class="divider" aria-hidden="true"></span>
+                    <div class="settings">
+                        <button class="ghost setting" :aria-pressed="lang === 'nl'"
+                            :aria-label="lang === 'en' ? 'Nederlands' : 'English'" @click="toggleLanguage">
+                            <span :class="{ on: lang === 'en' }">EN</span>
+                            <span :class="{ on: lang === 'nl' }">NL</span>
+                        </button>
+                        <button class="ghost setting" :class="{ active: largeText }" :aria-pressed="largeText"
+                            :aria-label="t.largerText" @click="largeText = !largeText">
+                            <span class="aa">A<small>A</small></span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </Transition>
 
         <Transition name="fade">
-            <aside v-if="!selectedId" class="qr surface">
+            <aside v-if="!selectedId" class="qr">
                 <img :src="qr" alt="QR code to biss-institute.com" />
                 <div>
-                    <span>Scan to visit</span>
+                    <span>{{ t.scanToVisit }}</span>
                     <strong>biss-institute.com</strong>
                 </div>
             </aside>
         </Transition>
 
         <Transition name="panel">
-            <DetailPanel v-if="selectedId" :id="selectedId" :can-go-back="history.length > 0" @select="select"
-                @back="back" @close="resetView" @open="openInfo" />
+            <DetailPanel v-if="selectedId" :id="selectedId" :can-go-back="history.length > 0"
+                :showcases="selectedShowcases" @select="select" @back="back" @close="resetView" @open="openInfo"
+                @play="playFromPanel" />
         </Transition>
 
         <Transition name="sheet">
             <BrowseDrawer v-if="browseOpen" v-model:tab="browseTab" @select="select" @close="browseOpen = false" />
+        </Transition>
+
+        <Transition name="showcase">
+            <ShowcasePlayer v-if="showcase" :showcase="showcase" :members="showcaseMembers" @done="onShowcaseDone" />
         </Transition>
 
         <Transition name="fade">
@@ -78,17 +110,22 @@
     </div>
 </template>
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import Icon from "./Icon.vue";
 import AttractOverlay from "./AttractOverlay.vue";
 import DetailPanel from "./DetailPanel.vue";
 import BrowseDrawer from "./BrowseDrawer.vue";
 import InfoSheet from "./InfoSheet.vue";
+import ShowcasePlayer from "./ShowcasePlayer.vue";
+import FilterPanel, { type Filters, emptyFilters, filterMatches } from "./FilterPanel.vue";
+import { aboutShowcase, showcaseById, showcasesForProject, type Showcase } from "../showcases";
+import { lang, largeText, resetSettings, t } from "../i18n";
+import { sound } from "../sound";
 import { GraphScene, type ScreenRect } from "../scene/graphScene";
-import { entities, graphData } from "../data/graph";
+import { entities, graphData, highlights, people, titleOf } from "../data/graph";
 import { syncWithWebsite } from "../data/sync";
 import { RandomVisitor } from "../utils/visitor";
-import type { BrowseTab } from "../types/graph";
+import type { BrowseTab, Highlight } from "../types/graph";
 import logo from "../assets/images/biss_um_logo.png";
 import qr from "../assets/images/biss_qr_code.png";
 
@@ -104,6 +141,12 @@ const IDLE_MS = secondsParam("idle", 45) * 1000;
 const IDLE_READING_MS = 150_000;
 /** Each spotlight stays up for a slightly random time, so the loop doesn't feel mechanical. */
 const SPOTLIGHT_MS = [10_000, 15_000];
+/** A project's showcase plays at most this often in the idle loop. */
+const SHOWCASE_COOLDOWN_MS = 10 * 60 * 1000;
+/** Every this many spotlights, the idle loop shows a news post instead. */
+const HIGHLIGHT_EVERY = 4;
+/** `?showcase=<id>` plays that showcase right away, for trying one out. */
+const SHOWCASE_PARAM = new URLSearchParams(location.search).get("showcase");
 /** How often to check biss-institute.com for changes; `?sync=0` turns it off. */
 const SYNC_EVERY_MS = 6 * 60 * 60 * 1000;
 const SYNC_ENABLED = new URLSearchParams(location.search).get("sync") !== "0";
@@ -117,7 +160,13 @@ const history = ref<string[]>([]);
 const browseOpen = ref(false);
 const browseTab = ref<BrowseTab>("people");
 const infoUrl = ref<string | null>(null);
-const infoTitle = computed(() => (selectedId.value ? entities[selectedId.value].title : ""));
+const infoTitle = computed(() => (selectedId.value ? titleOf(entities[selectedId.value], lang.value) : ""));
+const filterOpen = ref(false);
+const filters = ref<Filters>(emptyFilters());
+const filterActive = computed(() => !!filterMatches(filters.value));
+/** The news post shown instead of a spotlight now and then in the idle loop. */
+const highlight = ref<Highlight | null>(null);
+const about = aboutShowcase();
 
 let scene: GraphScene | undefined;
 let lastInteraction = Date.now();
@@ -147,7 +196,7 @@ const overlayRects = (): ScreenRect[] => {
     const w = window.innerWidth;
     const h = window.innerHeight;
     const margin = 12;
-    const rects = [".brand", ".cta", ".qr", ".spotlight"]
+    const rects = [".brand", ".cta", ".qr", ".spotlight", ".news"]
         .map((selector) => document.querySelector(selector)?.getBoundingClientRect())
         .filter((r): r is DOMRect => !!r && r.width > 0)
         .map((r) => ({ left: r.left, top: r.top, right: r.right, bottom: r.bottom }));
@@ -165,7 +214,7 @@ const overlayRects = (): ScreenRect[] => {
 
 /** Controls drawn over the graph while exploring (the detail panel is accounted for separately). */
 const exploreOverlays = (): ScreenRect[] =>
-    [".brand", ".dock", ".reset"]
+    [".brand", ".dock", ".top-right"]
         .map((selector) => document.querySelector(selector)?.getBoundingClientRect())
         .filter((r): r is DOMRect => !!r && r.width > 0)
         .map((r) => ({
@@ -175,17 +224,102 @@ const exploreOverlays = (): ScreenRect[] =>
             y1: r.bottom / window.innerHeight,
         }));
 
+let spotlightCount = 0;
+let highlightIndex = Math.floor(Math.random() * Math.max(1, highlights.length));
+
 const nextSpotlight = () => {
+    spotlightCount++;
+    if (highlights.length && spotlightCount % HIGHLIGHT_EVERY === 0) {
+        // a news post, with the whole graph turning slowly behind it
+        highlight.value = highlights[highlightIndex++ % highlights.length];
+        spotlightId.value = null;
+        scene?.focus(null);
+        scene?.overview(2200);
+        scene?.setAutoRotate(true);
+        return;
+    }
+    highlight.value = null;
     visitor.moveNext();
     spotlightId.value = visitor.getCurrentNodeId();
     scene?.spotlight(spotlightId.value, overlayRects());
 };
+
+//#region Showcases
+
+const showcase = ref<Showcase | null>(null);
+/** The project whose showcase is playing; a touch opens it. */
+const showcaseProject = ref<string | null>(null);
+const lastPlayed = new Map<string, number>();
+// the general BISS animation first plays after a cooldown, not as the very first thing
+if (about) lastPlayed.set(about.id, Date.now());
+
+const showcaseMembers = computed(() =>
+    showcase.value?.id === about?.id
+        ? people
+        : showcaseProject.value
+          ? (entities[showcaseProject.value]?.connections.map((id) => entities[id]) ?? [])
+          : []
+);
+
+const playAbout = () => {
+    if (!about) return;
+    sound.open();
+    playShowcase(about, null);
+};
+
+/**
+ * A showcase for the spotlighted project that hasn't played recently, if any. Projects
+ * with several take turns: the one played longest ago goes first.
+ */
+const dueShowcase = (id: string | null) =>
+    [...(id ? showcasesForProject(entities[id]?.infoUrl) : []), ...(about ? [about] : [])]
+        .map((s) => ({ s, at: lastPlayed.get(s.id) ?? -Infinity }))
+        .filter(({ at }) => Date.now() - at > SHOWCASE_COOLDOWN_MS)
+        .sort((a, b) => a.at - b.at)[0]?.s;
+
+const selectedShowcases = computed(() =>
+    selectedId.value ? showcasesForProject(entities[selectedId.value]?.infoUrl) : []
+);
+
+const playFromPanel = (id: string) => {
+    const s = showcaseById(id);
+    if (!s) return;
+    sound.open();
+    playShowcase(s, selectedId.value);
+};
+
+const playShowcase = (s: Showcase, project: string | null) => {
+    showcaseProject.value = project;
+    showcase.value = s;
+};
+
+const stopShowcase = () => {
+    if (!showcase.value) return;
+    lastPlayed.set(showcase.value.id, Date.now());
+    showcase.value = null;
+    // the idle timeout counts from the end of the animation
+    lastInteraction = Date.now();
+};
+
+const onShowcaseDone = () => {
+    stopShowcase();
+    if (mode.value === "attract") scheduleSpotlight(1500);
+};
+
+//#endregion
 
 const scheduleSpotlight = (delay: number) => {
     window.clearTimeout(spotlightTimer);
     spotlightTimer = window.setTimeout(() => {
         if (mode.value !== "attract") return;
         nextSpotlight();
+        const due = dueShowcase(spotlightId.value);
+        if (due) {
+            // let the camera arrive at the project first; the loop resumes when it ends
+            const project = due === about ? null : spotlightId.value;
+            spotlightTimer = window.setTimeout(() => mode.value === "attract" && playShowcase(due, project), 3500);
+            return;
+        }
         const [min, max] = SPOTLIGHT_MS;
         scheduleSpotlight(min + Math.random() * (max - min));
     }, delay);
@@ -193,11 +327,17 @@ const scheduleSpotlight = (delay: number) => {
 
 const enterAttract = () => {
     if (dataUpdated) return location.reload();
+    stopShowcase();
     mode.value = "attract";
     selectedId.value = null;
     history.value = [];
     browseOpen.value = false;
     infoUrl.value = null;
+    // the next visitor starts in English, with normal text and no filter
+    resetSettings();
+    filterOpen.value = false;
+    filters.value = emptyFilters();
+    highlight.value = null;
     scene?.focus(null);
     scene?.overview(2200);
     scene?.setAutoRotate(true);
@@ -210,8 +350,10 @@ const enterAttract = () => {
 
 const enterExplore = () => {
     mode.value = "explore";
+    stopShowcase();
     window.clearTimeout(spotlightTimer);
     spotlightId.value = null;
+    highlight.value = null;
     scene?.setAutoRotate(false);
     scene?.focus(null);
 };
@@ -220,12 +362,16 @@ const markInteraction = (e: Event) => {
     lastInteraction = Date.now();
     // a tap on the spotlight card selects what's in it; leaving the idle loop here would
     // remove the card before its click lands
-    if ((e.target as Element | null)?.closest?.(".spotlight")) return;
+    if ((e.target as Element | null)?.closest?.(".spotlight, .news")) return;
+    // touching a showcase stops it and opens the project it is about
+    const project = showcase.value ? showcaseProject.value : null;
     if (mode.value === "attract" && ready.value) enterExplore();
+    else stopShowcase();
+    if (project && project !== selectedId.value) select(project);
 };
 
 const checkIdle = () => {
-    if (mode.value !== "explore") return;
+    if (mode.value !== "explore" || showcase.value) return;
     const limit = infoUrl.value ? IDLE_READING_MS : IDLE_MS;
     if (Date.now() - lastInteraction > limit) enterAttract();
 };
@@ -241,6 +387,8 @@ const select = (id: string, remember = true) => {
     }
     selectedId.value = id;
     browseOpen.value = false;
+    filterOpen.value = false;
+    sound.select();
     scene?.focus(id);
     scene?.flyTo(id, panelFraction(), 1400, exploreOverlays());
 };
@@ -252,6 +400,7 @@ const back = () => {
 
 /** Nothing in focus means the overview, orbiting the centre of the graph. */
 const resetView = () => {
+    if (selectedId.value) sound.close();
     selectedId.value = null;
     history.value = [];
     scene?.focus(null);
@@ -264,9 +413,24 @@ const onSceneTap = (id: string | null) => {
 };
 
 const openBrowse = (tab: BrowseTab) => {
+    // one panel at a time: the drawer replaces whatever is open on the side
+    if (selectedId.value) {
+        selectedId.value = null;
+        history.value = [];
+        scene?.focus(null);
+    }
+    sound.open();
     browseTab.value = tab;
     browseOpen.value = true;
+    filterOpen.value = false;
 };
+
+const toggleLanguage = () => {
+    lang.value = lang.value === "en" ? "nl" : "en";
+};
+
+watch(lang, (l) => scene?.setLanguage(l));
+watch(filters, (f) => scene?.setFilter(filterMatches(f)), { deep: true });
 
 const openInfo = (url: string) => {
     infoUrl.value = url;
@@ -300,6 +464,12 @@ onMounted(async () => {
     ready.value = true;
     enterAttract();
     idleTimer = window.setInterval(checkIdle, 1000);
+    const requested = showcaseById(SHOWCASE_PARAM);
+    if (requested) {
+        window.clearTimeout(spotlightTimer);
+        const project = Object.values(entities).find((e) => showcasesForProject(e.infoUrl).includes(requested))?.id ?? null;
+        playShowcase(requested, project);
+    }
     if (SYNC_ENABLED) {
         sync();
         syncTimer = window.setInterval(sync, SYNC_EVERY_MS);
@@ -397,51 +567,142 @@ h1 {
     left: var(--gap);
     bottom: var(--gap);
     display: flex;
-    gap: 0.6rem;
+    gap: 0.2rem;
 }
 
-.dock .btn,
-.reset {
-    box-shadow: var(--shadow-lg);
-    border-color: transparent;
+/* the controls stay quiet on the night sky: one dark translucent bar each, no white blocks */
+.dock,
+.top-right {
+    align-items: center;
+    padding: 0.35rem;
+    border-radius: 999px;
+    background: rgba(12, 17, 38, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
 }
 
+.ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 3rem;
+    padding: 0 1.1rem;
+    border-radius: 999px;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 1rem;
+    font-weight: 500;
+    transition: background-color 140ms ease, color 140ms ease, transform 140ms var(--ease-out);
+}
+
+.ghost:active {
+    transform: scale(0.96);
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.ghost.active {
+    background: #fff;
+    color: #000;
+}
+
+.divider {
+    width: 1px;
+    height: 1.6rem;
+    margin: 0 0.2rem;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+/* above the dock, so the two never collide however long the button labels get */
 .hints {
     position: absolute;
-    left: 50%;
-    bottom: var(--gap);
-    transform: translateX(-50%);
+    left: calc(var(--gap) + 1.2rem);
+    bottom: calc(var(--gap) + 4.4rem);
     display: flex;
-    gap: 2rem;
+    gap: 1.6rem;
     margin: 0;
-    padding: 1rem 1.8rem;
+    padding: 0;
     list-style: none;
-    color: var(--text-2);
-    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 0.95rem;
     white-space: nowrap;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.8);
     pointer-events: none !important;
 }
 
 .hints li {
     display: flex;
     align-items: center;
-    gap: 0.55rem;
+    gap: 0.5rem;
 }
 
 .hints li:first-child {
-    color: var(--text);
+    color: #fff;
     font-weight: 500;
 }
 
-.reset {
+.top-right {
     position: absolute;
     top: var(--gap);
     right: var(--gap);
-    transition: right 500ms var(--ease-out), transform 140ms var(--ease-out);
+    display: flex;
+    gap: 0.2rem;
+    transition: right 500ms var(--ease-out);
 }
 
-.has-panel .reset {
+.has-panel .top-right {
     right: calc(var(--panel-width) + var(--gap) * 2);
+}
+
+.settings {
+    display: flex;
+    gap: 0.2rem;
+}
+
+.setting {
+    padding: 0 0.9rem;
+    gap: 0.35rem;
+}
+
+.setting span {
+    color: rgba(255, 255, 255, 0.45);
+}
+
+.setting span.on {
+    color: #fff;
+    font-weight: 700;
+}
+
+.aa {
+    font-weight: 700;
+    color: inherit !important;
+}
+
+.aa small {
+    font-size: 0.7em;
+}
+
+.badge {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background: #ff4d4f;
+}
+
+.filters {
+    position: absolute;
+    left: var(--gap);
+    bottom: calc(var(--gap) + 4.4rem);
+}
+
+.pop-enter-active,
+.pop-leave-active {
+    transition: opacity 200ms ease, transform 260ms var(--ease-out);
+}
+
+.pop-enter-from,
+.pop-leave-to {
+    opacity: 0;
+    transform: translateY(0.75rem);
 }
 
 .qr {
@@ -451,13 +712,22 @@ h1 {
     z-index: 15;
     display: flex;
     align-items: center;
-    gap: 1.1rem;
-    padding: 0.8rem 1.5rem 0.8rem 0.8rem;
+    gap: 1rem;
+    padding: 0.6rem 1.3rem 0.6rem 0.6rem;
+    border-radius: 1.1rem;
+    background: rgba(12, 17, 38, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    color: #fff;
 }
 
 .qr img {
-    width: 6.2rem;
-    height: 6.2rem;
+    width: 5.2rem;
+    height: 5.2rem;
+    padding: 0.3rem;
+    border-radius: 0.6rem;
+    background: #fff;
 }
 
 .qr div {
@@ -467,12 +737,12 @@ h1 {
 }
 
 .qr span {
-    font-size: 0.9rem;
-    color: var(--text-3);
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
 }
 
 .qr strong {
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     font-weight: 600;
 }
 
@@ -483,6 +753,19 @@ h1 {
 
 .fade-enter-from,
 .fade-leave-to {
+    opacity: 0;
+}
+
+.showcase-enter-active {
+    transition: opacity 900ms ease;
+}
+
+.showcase-leave-active {
+    transition: opacity 600ms ease;
+}
+
+.showcase-enter-from,
+.showcase-leave-to {
     opacity: 0;
 }
 

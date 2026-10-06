@@ -12,6 +12,7 @@ export declare function fetchWebsiteGraph(options?: {
   previous?: Graph;
   excludePeople?: string[];
   excludeProjects?: string[];
+  areas?: Record<string, string[]>;
   hasLocalPhoto?: (slug: string) => boolean;
   photoUrls?: boolean;
 }): Promise<{ graph: Graph; team: WebsitePerson[]; skipped: WebsitePerson[] }>;

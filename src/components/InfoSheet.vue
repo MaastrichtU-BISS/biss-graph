@@ -8,7 +8,7 @@
                 </div>
                 <button class="btn btn-secondary" @click="emit('close')">
                     <Icon name="close" />
-                    Close
+                    {{ t.close }}
                 </button>
             </header>
             <div class="frame">
@@ -23,6 +23,7 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 import Icon from "./Icon.vue";
+import { t } from "../i18n";
 
 const props = defineProps<{ url: string; title: string }>();
 const emit = defineEmits<{ close: [] }>();

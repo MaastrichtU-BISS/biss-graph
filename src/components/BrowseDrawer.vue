@@ -1,15 +1,15 @@
 <template>
     <div class="backdrop" @click.self="emit('close')">
-        <section class="sheet surface" role="dialog" aria-label="Browse">
+        <section class="sheet surface" role="dialog" :aria-label="t.allProjects">
             <header class="head">
                 <div class="tabs" role="tablist">
-                    <button v-for="t in tabs" :key="t.key" role="tab" class="tab" :aria-selected="tab === t.key"
-                        @click="tab = t.key">
-                        {{ t.label }}
-                        <span class="count">{{ t.count }}</span>
+                    <button v-for="tb in tabs" :key="tb.key" role="tab" class="tab" :aria-selected="tab === tb.key"
+                        @click="tab = tb.key">
+                        {{ tb.label }}
+                        <span class="count">{{ tb.count }}</span>
                     </button>
                 </div>
-                <button class="icon-button" aria-label="Close" @click="emit('close')">
+                <button class="icon-button" :aria-label="t.close" @click="emit('close')">
                     <Icon name="close" />
                 </button>
             </header>
@@ -20,22 +20,28 @@
                         <button class="card person" @click="emit('select', p.id)">
                             <img :src="p.photo" :alt="p.title" class="avatar photo" />
                             <span class="name">{{ p.title }}</span>
-                            <span class="meta">{{ p.connections.length }} {{ p.connections.length === 1 ? "project" :
-                                "projects" }}</span>
+                            <span class="meta">{{ roleOf(p, lang) ?? t.projectCount(projectsOf(p).length) }}</span>
                         </button>
                     </li>
                 </ul>
-                <ul v-else key="projects" class="grid projects scroll">
-                    <li v-for="p in projects" :key="p.id">
+                <ul v-else :key="tab" class="grid projects scroll">
+                    <li v-for="p in tab === 'projects' ? projects : publications" :key="p.id">
                         <button class="card project" :style="{ '--tone': p.color }" @click="emit('select', p.id)">
                             <span class="bar" aria-hidden="true"></span>
-                            <span class="name">{{ p.title }}</span>
+                            <span class="name">{{ titleOf(p, lang) }}</span>
                             <span class="footer">
                                 <span class="faces">
                                     <img v-for="m in p.connections.slice(0, 5)" :key="m" :src="entities[m].photo"
                                         alt="" class="avatar face" />
                                     <span v-if="p.connections.length > 5" class="meta">+{{ p.connections.length - 5
                                         }}</span>
+                                </span>
+                                <span v-if="p.status" class="tag"
+                                    :class="p.status === 'finished' ? 'tag-finished' : 'tag-running'">
+                                    {{ p.status === "finished" ? t.finished : t.running }}
+                                </span>
+                                <span v-else-if="tab === 'publications'" class="tag tag-content">
+                                    {{ p.group === NodeType.EDUCATION ? t.education : t.publication }}
                                 </span>
                             </span>
                         </button>
@@ -46,17 +52,22 @@
     </div>
 </template>
 <script setup lang="ts">
+import { computed } from "vue";
 import Icon from "./Icon.vue";
-import { entities, people, projects } from "../data/graph";
-import type { BrowseTab } from "../types/graph";
+import { entities, people, projects, projectsOf, publications, roleOf, titleOf } from "../data/graph";
+import { NodeType, type BrowseTab } from "../types/graph";
+import { lang, t } from "../i18n";
 
 const tab = defineModel<BrowseTab>("tab", { required: true });
 const emit = defineEmits<{ select: [id: string]; close: [] }>();
 
-const tabs = [
-    { key: "people" as const, label: "People", count: people.length },
-    { key: "projects" as const, label: "Projects", count: projects.length },
-];
+const tabs = computed(() => [
+    { key: "people" as const, label: t.value.people, count: people.length },
+    { key: "projects" as const, label: t.value.projects, count: projects.length },
+    ...(publications.length
+        ? [{ key: "publications" as const, label: t.value.publications, count: publications.length }]
+        : []),
+]);
 </script>
 <style scoped>
 .backdrop {
@@ -128,6 +139,7 @@ const tabs = [
 
 .people {
     grid-template-columns: repeat(auto-fill, minmax(10.5rem, 1fr));
+    grid-auto-rows: 1fr;
 }
 
 .projects {

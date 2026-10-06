@@ -9,7 +9,7 @@
   --border-strong: #d1d5db;
   --text: #000000;
   --text-2: #4b4b4b;
-  --text-3: #6f6f6f;
+  --text-3: #616161;
   --on-dark: #ffffff;
   --on-dark-2: rgba(255, 255, 255, 0.72);
 
@@ -29,6 +29,11 @@
 
   /* Everything is sized in rem, so the UI scales with the screen. */
   font-size: clamp(15px, 0.55vw + 8px, 30px);
+}
+
+/* "Larger text" setting: scales the whole interface by a quarter */
+:root.large-text {
+  font-size: clamp(19px, 0.69vw + 10px, 38px);
 }
 
 * {
@@ -93,6 +98,21 @@ img {
 .tag-project {
   background: var(--tag-project-bg);
   color: var(--tag-project-fg);
+}
+
+.tag-content {
+  background: #ede9fe;
+  color: #5b21b6;
+}
+
+.tag-running {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.tag-finished {
+  background: #f3f4f6;
+  color: #374151;
 }
 
 .tag-person {

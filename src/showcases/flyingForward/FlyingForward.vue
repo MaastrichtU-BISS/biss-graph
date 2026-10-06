@@ -2,7 +2,8 @@
     <ShowcaseStage ref="stage" :scene="scene" :captions="captions" eyebrow="A BISS project funded by EU Horizon 2020"
         title="Flying Forward" tagline="Drones that fly on their own, and by the rules"
         outro="Making drone laws machine-readable, so autonomous drones can follow the rules wherever they fly."
-        url="ff2020.eu" :members="members" />
+        url="ff2020.eu" :partners="['Brainport Development', 'EUROUSC Italia', 'Maastricht University', 'VERSES']"
+        :funders="['European Union (Horizon 2020)']" :members="members" />
 </template>
 <script setup lang="ts">
 import { computed, ref } from "vue";

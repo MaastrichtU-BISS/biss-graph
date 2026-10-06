@@ -1,5 +1,5 @@
 <template>
-    <div class="stage" :class="theme">
+    <div class="stage" :class="{ light: effectiveTheme === 'light', 'adapted-light': theme !== 'light' && effectiveTheme === 'light' }">
         <canvas ref="canvas"></canvas>
 
         <div class="scrim" aria-hidden="true"></div>
@@ -22,11 +22,21 @@
             <div v-else-if="scene === 'outro'" key="outro" class="outro">
                 <h1>{{ title }}</h1>
                 <p>{{ local.outro ?? outro }}</p>
+                <span v-if="url" class="url">{{ url }}</span>
+                <div v-if="partners?.length || funders?.length" class="credits">
+                    <div v-if="partners?.length" class="credit-row">
+                        <span class="credit-label">{{ lang === 'nl' ? 'Partners, waaronder' : 'Partners include' }}</span>
+                        <span v-for="name in partners" :key="name" class="credit-name">{{ name }}</span>
+                    </div>
+                    <div v-if="funders?.length" class="credit-row">
+                        <span class="credit-label">{{ lang === 'nl' ? 'Gefinancierd door' : 'Funded by' }}</span>
+                        <span v-for="name in funders" :key="name" class="credit-name">{{ name }}</span>
+                    </div>
+                </div>
                 <div v-if="members.length" class="faces">
                     <img v-for="(m, i) in members" :key="m.title" :src="m.photo" :alt="m.title" decoding="async"
                         :style="{ animationDelay: `${0.5 + i * 0.07}s` }" />
                 </div>
-                <span v-if="url" class="url">{{ url }}</span>
             </div>
             <p v-else-if="captions[scene]" :key="scene + lang" class="caption">
                 {{ local.captions?.[scene] ?? captions[scene] }}
@@ -38,7 +48,7 @@
 </template>
 <script setup lang="ts">
 import { computed, inject, ref } from "vue";
-import { lang } from "../../i18n";
+import { lang, theme as screenTheme } from "../../i18n";
 import { NL, type ShowcaseTexts } from "../translations";
 
 /**
@@ -54,12 +64,15 @@ const props = defineProps<{
     tagline: string;
     outro: string;
     url?: string;
+    partners?: string[];
+    funders?: string[];
     members: { photo?: string; title: string }[];
     /** "light" for a white, Brightlands-like look; the showcase paints its own background. */
     theme?: "dark" | "light";
 }>();
 
 const canvas = ref<HTMLCanvasElement>();
+const effectiveTheme = computed(() => props.theme ?? screenTheme.value);
 
 // the closing card shows the team: fetch and decode their photos from the start
 for (const m of props.members) {
@@ -89,6 +102,12 @@ defineExpose({ canvas });
 /* light theme: dark text on white, with a white scrim and backdrop */
 .stage.light {
     color: #0b1020;
+}
+
+/* Legacy showcase art was authored on a dark canvas. Invert its luminance while
+   preserving accent hues; the Brightlands BISS film already has native light art. */
+.adapted-light canvas {
+    filter: invert(1) hue-rotate(180deg);
 }
 
 .light .scrim {
@@ -128,6 +147,14 @@ defineExpose({ canvas });
 .light .url {
     background: #0b1020;
     color: #fff;
+}
+
+.light .credits {
+    color: #3b4150;
+}
+
+.light .credit-name {
+    border-color: rgba(11, 16, 32, 0.17);
 }
 
 canvas {
@@ -219,9 +246,9 @@ canvas {
     animation-delay: 300ms;
 }
 
-.outro > .url {
-    animation-delay: 900ms;
-}
+.outro > .url { animation-delay: 300ms; }
+.outro > .credits { animation-delay: 450ms; }
+.outro > .faces { animation-delay: 600ms; }
 
 .outro .faces {
     animation: none;
@@ -283,6 +310,35 @@ h1 {
 .faces {
     display: flex;
     margin-top: 1.5rem;
+}
+
+.credits {
+    display: grid;
+    gap: 0.6rem;
+    width: min(82%, 70rem);
+    color: rgba(255, 255, 255, 0.76);
+}
+
+.credit-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.4rem 0.65rem;
+    font-size: 1rem;
+}
+
+.credit-label {
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.8rem;
+}
+
+.credit-name {
+    padding: 0.25rem 0.55rem;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 999px;
 }
 
 .faces img {

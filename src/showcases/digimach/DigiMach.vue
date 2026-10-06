@@ -2,6 +2,9 @@
     <ShowcaseStage ref="stage" :scene="scene" :captions="captions" eyebrow="A BISS project funded by Interreg Meuse-Rhine"
         title="DigiMach" tagline="Smart, sustainable and connected manufacturing"
         outro="BISS builds the multilingual DigiMach platform, connecting manufacturers across borders."
+        url="digimach.eu/en"
+        :partners="['Sirris', 'Technifutur', 'Maastricht University', 'Brightlands Smart Services Campus']"
+        :funders="['European Union (Interreg Meuse-Rhine)', 'Walloon Region', 'Land NRW', 'Ministry of Economic Affairs']"
         :members="members" />
 </template>
 <script setup lang="ts">

@@ -2,7 +2,7 @@
     <ShowcaseStage ref="stage" :scene="scene" :captions="captions" eyebrow="A BISS project in smart health"
         title="FAIR4AI" tagline="Making AI models practically usable"
         outro="Findable, Accessible, Interoperable and Reusable AI models, starting with healthcare."
-        url="fairmodels.org" :members="members" />
+        url="fairmodels.org" :partners="['Netherlands eScience Center']" :funders="['NWO']" :members="members" />
 </template>
 <script setup lang="ts">
 import { computed, ref } from "vue";

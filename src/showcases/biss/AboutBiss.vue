@@ -22,16 +22,17 @@ const emit = defineEmits<{ done: [] }>();
 const CAMPUS_NAME = "Brightlands Data & AI Campus";
 const CAMPUS_SHORT = CAMPUS_NAME.replace(/^Brightlands\s+/, "");
 
-const T = { map: 3.5, team: 11.5, decade: 17.5, domains: 24, how: 30.5, partners: 37.5, outro: 50, end: 56 };
+const T = { map: 3.5, team: 11.5, decade: 17.5, domains: 24, how: 30.5, partners: 37.5, funders: 55.2, outro: 60.5, end: 66.5 };
 
-type Scene = "intro" | "map" | "team" | "decade" | "domains" | "how" | "partners" | "outro";
+type Scene = "intro" | "map" | "team" | "decade" | "domains" | "how" | "partners" | "funders" | "outro";
 const captions: Record<string, string> = {
     map: `BISS is a Maastricht University institute on the ${CAMPUS_NAME} in Heerlen, Limburg.`,
     team: "Its team brings together ethics, law, privacy, consumer behaviour, neuroscience and data science.",
     decade: "Founded in 2016, BISS counts 24 projects and 35 partners after ten years.",
     domains: "Those projects reach into health, finance, law, public services, mobility and industry.",
     how: "Challenge, team, prototype, impact: a clearer welfare application with Sittard-Geleen.",
-    partners: "Each project brings in partners and funders, such as NWO and the European Union.",
+    partners: "BISS works with partners across Europe and the Netherlands.",
+    funders: "BISS projects are also backed by NWO and the European Union.",
 };
 
 const stage = ref<InstanceType<typeof ShowcaseStage>>();
@@ -459,33 +460,39 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
     }
     //#endregion
 
+    /** Scenes overlap by this long, so there is never an empty frame between them. */
+    const HANDOVER = 0.35;
     /** Each scene arrives with a small zoom and leaves with a quick zoom-out, like a camera cut. */
     const camera = (a: number, b: number, fn: (enter: number) => void, { zoomIn = 0.06, zoomOut = 0.05 } = {}) => {
-        if (t < a || t >= b) return;
-        const enter = easeOut(progress(t, a, a + 0.5));
-        const leave = ease(progress(t, b - 0.45, b));
+        if (t < a || t >= b + HANDOVER) return;
+        const enter = easeOut(progress(t, a, a + 0.45));
+        const leave = ease(progress(t, b - 0.1, b + HANDOVER));
         const s = 1 + zoomIn * (1 - enter) - zoomOut * leave;
         ctx.save();
-        ctx.globalAlpha = Math.min(enter * 1.5, 1) * (1 - leave);
+        ctx.globalAlpha = Math.min(enter * 1.6, 1) * (1 - leave);
         scaled(ctx, W / 2, cy, s, () => fn(enter));
         ctx.restore();
     };
 
     //#region map: Limburg, the four campuses, then into Heerlen
-    if (t >= T.map && t < T.team + 0.2) {
+    if (t >= T.map && t < T.team + HANDOVER) {
         const m = t - T.map;
         const COS = Math.cos((51 * Math.PI) / 180);
         const s0 = Math.min((span * 0.45) / 0.95, (W * 0.44) / (1.45 * COS));
-        const zoom = ease(progress(m, 4.3, 5.9));
-        const dive = Math.pow(progress(t, T.team - 0.8, T.team + 0.2), 2);
+        const zoom = ease(progress(m, 3.9, 6.2));
+        const dive = Math.pow(progress(t, T.team - 0.8, T.team + HANDOVER), 2);
         const cam = {
             lon: lerp(5.55, HEERLEN.lon, zoom),
             lat: lerp(51.4, HEERLEN.lat, zoom),
             s: s0 * Math.exp(Math.log(3.3) * zoom + 2.2 * dive),
         };
         const P = (lon: number, lat: number) => ({ x: W / 2 + (lon - cam.lon) * COS * cam.s, y: cy + (cam.lat - lat) * cam.s });
-        const mapAlpha = easeOut(progress(m, 0, 0.4)) * (1 - progress(t, T.team - 0.5, T.team + 0.1));
-        const details = 1 - ease(progress(m, 4.0, 4.6)); // cities and capitals step back for the zoom
+        const mapAlpha = easeOut(progress(m, 0, 0.4)) * (1 - ease(progress(t, T.team - 0.5, T.team + 0.2)));
+        /** City pills and arrows shrink away one by one as the camera starts to move. */
+        const away = (i: number) => 1 - ease(progress(m, 3.6 + i * 0.05, 4.2 + i * 0.05));
+        /** Campus labels and the BISS label pop in after the zoom and pop out before the dive. */
+        const zoomLabel = (at: number) => Math.max(0, pop(m, at, 0.5)) * (1 - ease(progress(t, T.team - 1.0, T.team - 0.7)));
+        const details = 1 - ease(progress(m, 3.6, 4.4)); // cities and capitals step back for the zoom
 
         ctx.save();
         ctx.globalAlpha = mapAlpha;
@@ -569,14 +576,13 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
             ctx.arc(q.x, q.y, 4.5 * k * (1 + 0.3 * Math.sin(t * 4 + i)), 0, Math.PI * 2);
             ctx.stroke();
             ctx.restore();
-            scaled(ctx, q.x, q.y, a, () =>
-                pill(ctx, c.name, q.x + c.side * 12 * k, q.y, 14 * k, Math.min(1, a) * details, c.side > 0 ? "left" : "right")
-            );
+            const sc = Math.max(0, a) * away(i);
+            if (sc > 0.02) scaled(ctx, q.x, q.y, sc, () => pill(ctx, c.name, q.x + c.side * 12 * k, q.y, 14 * k, Math.min(1, sc * 3), c.side > 0 ? "left" : "right"));
         });
 
         // capitals, as outlined arrow boxes at the edges
         CAPITALS.forEach((c, i) => {
-            const a = easeOut(progress(m, 2.0 + i * 0.2, 2.6 + i * 0.2)) * details;
+            const a = easeOut(progress(m, 2.0 + i * 0.2, 2.6 + i * 0.2)) * away(CITIES.length + i);
             if (a <= 0.003) return;
             const x = c.at.x * W + (c.align === "left" ? -1 : 1) * (1 - a) * 60 * k;
             const y = safe.top + c.at.y * span;
@@ -620,43 +626,40 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
                     ctx.restore();
                 }
             }
-            campusDisc(ctx, q.x, q.y, r, c.from, c.to, Math.min(1, a));
+            if (isBiss) {
+                // BISS stays solid through the dive and becomes the team's hub
+                ctx.save();
+                ctx.globalAlpha = 1 - progress(t, T.team + 0.05, T.team + HANDOVER);
+                campusDisc(ctx, q.x, q.y, r, c.from, c.to, Math.min(1, a));
+                ctx.restore();
+            } else campusDisc(ctx, q.x, q.y, r, c.from, c.to, Math.min(1, a));
             // campus names once zoomed in
-            const label = progress(m, 5.2 + i * 0.1, 5.6 + i * 0.1) * (1 - dive * 3);
-            if (!isBiss) pill(ctx, c.name, q.x + c.side * (r + 10 * k), q.y, 14 * k, label, c.side > 0 ? "left" : "right", "rgba(11,16,32,0.85)");
+            const label = zoomLabel(5.5 + i * 0.1);
+            const lx = q.x + c.side * (r + 10 * k);
+            if (!isBiss && label > 0.02)
+                scaled(ctx, lx, q.y, label, () => pill(ctx, c.name, lx, q.y, 14 * k, Math.min(1, label * 3), c.side > 0 ? "left" : "right"));
         });
 
         // BISS, at the Data & AI Campus
-        const card = pop(m, 5.6, 0.6) * (1 - Math.min(1, dive * 3));
-        if (card > 0) {
+        const tag = zoomLabel(5.8);
+        if (tag > 0.02) {
             const r = (22 + 22 * zoom) * k;
-            const x = h.x + r + 22 * k;
-            const y = h.y - r - 30 * k;
-            scaled(ctx, x, y + 40 * k, card, () => {
-                ctx.save();
-                ctx.globalAlpha *= Math.min(1, card);
-                ctx.shadowColor = "rgba(11,16,32,0.18)";
-                ctx.shadowBlur = 20 * k;
-                ctx.shadowOffsetY = 6 * k;
-                ctx.fillStyle = "#fff";
-                const w = Math.min(430 * k, W - x - 20 * k);
-                ctx.beginPath();
-                ctx.roundRect(x, y - 44 * k, w, 92 * k, 12 * k);
-                ctx.fill();
-                ctx.shadowColor = "transparent";
-                const g = ctx.createLinearGradient(x, 0, x + w, 0);
-                g.addColorStop(0, CYAN);
-                g.addColorStop(1, MAGENTA);
-                ctx.fillStyle = g;
-                ctx.fillRect(x, y - 44 * k, 6 * k, 92 * k);
-                text(ctx, "BISS", x + 24 * k, y - 14 * k, 30 * k, { color: INK, weight: 800, align: "left" });
-                text(ctx, `${CAMPUS_NAME}, Heerlen`, x + 24 * k, y + 22 * k, 17 * k, {
-                    color: GREY,
+            const x = h.x + r + 44 * k;
+            const y = h.y - r - 26 * k;
+            ctx.save();
+            ctx.strokeStyle = INK;
+            ctx.lineWidth = 1.4 * k;
+            line(ctx, h.x + r * 0.72, h.y - r * 0.72, x, y, Math.min(1, tag));
+            ctx.restore();
+            scaled(ctx, x, y, tag, () => {
+                pill(ctx, "BISS", x, y, 20 * k, Math.min(1, tag * 3), "left");
+                text(ctx, `${CAMPUS_NAME}, Heerlen`, x + 2 * k, y + 36 * k, 16 * k, {
+                    color: "#3b4150",
                     weight: 600,
                     align: "left",
-                    maxWidth: w - 40 * k,
+                    alpha: Math.min(1, tag * 3),
+                    maxWidth: W - x - 20 * k,
                 });
-                ctx.restore();
             });
         }
         ctx.restore();
@@ -858,9 +861,9 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
     const cellY = (d: number) => safe.top + Math.floor(d / 3) * (span / 2);
     const ringAt = (d: number) => ({ x: cellX(d) + ringR + 12 * k, y: cellY(d) + span * 0.28 });
     const flyAt = (o: (typeof ORBS)[number]) => T.domains + 0.45 + o.index * 0.1 + (o.copy ? 0.25 : 0);
-    const domainLeave = ease(progress(t, T.how - 0.45, T.how));
+    const domainLeave = ease(progress(t, T.how - 0.1, T.how + HANDOVER));
 
-    if (t >= T.domains && t < T.how) {
+    if (t >= T.domains && t < T.how + HANDOVER) {
         DOMAINS.forEach((d, i) => {
             const first = Math.min(...ORBS.filter((o) => o.domain === i).map(flyAt));
             const a = pop(t, first + 0.35, 0.6);
@@ -893,8 +896,8 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
     }
 
     // the orbs themselves, from the constellation to their rings
-    if (t >= T.decade && t < T.how) {
-        const decadeLeave = ease(progress(t, T.domains - 0.45, T.domains));
+    if (t >= T.decade && t < T.how + HANDOVER) {
+        const decadeLeave = ease(progress(t, T.domains - 0.1, T.domains + HANDOVER));
         ORBS.forEach((o) => {
             const a = back(progress(t, popAt(o.index), popAt(o.index) + 0.5));
             if (a <= 0) return;
@@ -1095,13 +1098,13 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
 
     //#region partners: a map of Europe, arcs out from BISS, then into the Netherlands; funders rise
     camera(T.partners, T.outro, () => {
-        // the scene was paced for 7.5 s; play it at 60% speed so the logos have time to land
-        const m = (t - T.partners) * 0.6;
+        // Give the partner logos several seconds together before funding takes the stage.
+        const m = (t - T.partners) * 0.75;
         const COS = Math.cos((51 * Math.PI) / 180);
         const sEu = Math.min((span * 0.93) / 15.4, (W * 0.9) / (22 * COS));
         const sNl = Math.min((span * 0.92) / 2.75, (W * 0.5) / (3.6 * COS));
-        const zoom = ease(progress(m, 2.9, 3.9));
-        const intro = easeOut(progress(m, 0, 0.9));
+        const zoom = ease(progress(m, 4.6, 6.2));
+        const intro = easeOut(progress(m, 0, 1.0));
         const cam = {
             lon: lerp(lerp(5.6, 4.6, intro), 5.25, zoom),
             lat: lerp(lerp(50.2, 46.6, intro), 52.0, zoom),
@@ -1109,8 +1112,9 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
         };
         const P = (lon: number, lat: number) => ({ x: W / 2 + (lon - cam.lon) * COS * cam.s, y: cy + (cam.lat - lat) * cam.s });
         const H = P(HEERLEN.lon, HEERLEN.lat);
-        const funders = progress(m, 5.5, 6.1);
-        const dim = 1 - 0.8 * funders;
+        const funders = progress(m, 13.2, 13.5);
+        // the map and partner logos clear completely before the funders take over
+        const dim = 1 - ease(progress(m, 12.7, 13.5));
 
         ctx.save();
         ctx.beginPath();
@@ -1135,8 +1139,8 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
             });
             ctx.restore();
         };
-        const eu = 1 - progress(zoom, 0.5, 0.9);
-        const nl = progress(zoom, 0.4, 0.9);
+        const eu = 1 - progress(zoom, 0.55, 0.95);
+        const nl = progress(zoom, 0.45, 0.85);
         if (nl > 0) {
             ctx.save();
             ctx.globalAlpha *= nl;
@@ -1152,10 +1156,26 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
             });
             ctx.restore();
         }
+        // the detailed Benelux linework only covers its own box; outside it, Europe's stays
+        const tl = P(2.3, 53.8);
+        const br = P(8.9, 49.2);
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(-W, -W, W * 3, W * 3);
+        ctx.rect(tl.x, tl.y, br.x - tl.x, br.y - tl.y);
+        ctx.clip("evenodd");
+        lines(EUROPE.coast, false, 1);
+        lines(EUROPE.border, true, 1);
+        ctx.restore();
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(tl.x, tl.y, br.x - tl.x, br.y - tl.y);
+        ctx.clip();
         lines(EUROPE.coast, false, eu);
         lines(EUROPE.border, true, eu);
         lines(GEO.coast, false, nl);
         lines(GEO.border, true, nl);
+        ctx.restore();
 
         // arcs out from BISS (drawn first: under every logo)
         const arc = (q: { x: number; y: number }, start: number, alpha: number, bow = 0.28) => {
@@ -1187,12 +1207,12 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
             }
             ctx.restore();
         };
-        const abroadAt = (j: number) => 0.6 + j * 0.26;
+        const abroadAt = (j: number) => 0.9 + j * 0.55;
         const abroadAlpha = 1 - progress(zoom, 0, 0.35);
         ABROAD.forEach((o, j) => arc(P(o.lon, o.lat), abroadAt(j), abroadAlpha));
 
         // Dutch partners: two columns of logos either side of the country, with leaders to their pins
-        const dutchAt = (j: number) => 3.75 + j * 0.09;
+        const dutchAt = (j: number) => 6.1 + j * 0.16;
         const left = DUTCH.filter((o) => o.lon < 5.3).sort((a, b) => b.lat - a.lat);
         const right = DUTCH.filter((o) => o.lon >= 5.3).sort((a, b) => b.lat - a.lat);
         const lw = Math.min(W * 0.15, 200 * k);
@@ -1261,7 +1281,7 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
 
         // the funders rise as one bold band
         if (funders > 0) {
-            const rise = back(progress(m, 5.5, 6.2));
+            const rise = back(progress(m, 13.2, 13.9));
             const bh = Math.min(span * 0.3, 210 * k);
             const by = lerp(safe.bottom + bh, cy, rise);
             ctx.save();
@@ -1281,7 +1301,7 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
             const fx0 = W * 0.2;
             const fstep = (W * 0.77) / FUNDERS.length;
             FUNDERS.forEach((f, j) => {
-                const a = back(progress(m, 5.8 + j * 0.1, 6.3 + j * 0.1));
+                const a = back(progress(m, 13.5 + j * 0.12, 14.0 + j * 0.12));
                 if (a <= 0) return;
                 const x = fx0 + fstep * (j + 0.5);
                 scaled(ctx, x, by, Math.max(0, a), () => logo(ctx, f.id, x, by, fstep * 0.8, bh * 0.5, k, Math.min(1, a)));
@@ -1300,6 +1320,7 @@ const updateDom = (t: number) => {
         ["domains", T.domains],
         ["how", T.how],
         ["partners", T.partners],
+        ["funders", T.funders],
         ["outro", T.outro],
     ]);
     if (scene.value !== next) scene.value = next;

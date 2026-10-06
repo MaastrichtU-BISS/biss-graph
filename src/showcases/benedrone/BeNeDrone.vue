@@ -2,7 +2,9 @@
     <ShowcaseStage ref="stage" :scene="scene" :captions="captions" eyebrow="A BISS project funded by Interreg Flanders-Netherlands"
         title="BeNeDrone" tagline="Medical drones across the Dutch-Belgian border"
         outro="Preparing the Southern Netherlands and Flanders for responsible, cross-border medical drones."
-        url="interregvlaned.eu/benedrone" :members="members" />
+        url="interregvlaned.eu/benedrone"
+        :partners="['Maastricht University', 'Maastricht UMC+', 'KU Leuven', 'Dutch Drone Centre Aviolanda']"
+        :funders="['Interreg Flanders–Netherlands (ERDF)']" :members="members" />
 </template>
 <script setup lang="ts">
 import { computed, ref } from "vue";
@@ -11,10 +13,10 @@ import {
     callout,
     ease,
     easeOut,
-    FONT,
     Frame,
     glow,
     lerp,
+    mulberry32,
     Point,
     progress,
     sceneAt,
@@ -73,6 +75,20 @@ const CARGO = [
     { label: "Donor organ", color: "#9fb6ff", icon: "organ" },
 ] as const;
 const CHECKS = ["Legal", "Logistical", "Societal"];
+
+/** A quiet street and building layer gives the route a place to travel through. */
+const blocks = (() => {
+    const random = mulberry32(42);
+    return Array.from({ length: 120 }, () => {
+        const centre = random() < 0.5 ? HOSPITAL : EMERGENCY;
+        return {
+            x: centre.x + (random() - 0.5) * 0.55,
+            y: centre.y + (random() - 0.5) * 0.55,
+            w: 0.008 + random() * 0.016,
+            h: 0.008 + random() * 0.024,
+        };
+    }).filter((b) => b.x > 0.07 && b.x < 0.93 && b.y > 0.09 && b.y < 0.88);
+})();
 
 //#endregion
 
@@ -189,6 +205,31 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
         ctx.closePath();
         ctx.fill();
 
+        // Street grid and neighbourhoods, revealed as the camera settles on the border.
+        const detail = mapAlpha * ease(progress(t, T.emergency + 0.2, T.emergency + 2));
+        ctx.save();
+        ctx.globalAlpha = detail * 0.28;
+        ctx.strokeStyle = "#9fb6ff";
+        ctx.lineWidth = k;
+        for (let i = 0; i < 12; i++) {
+            const x = W * (0.1 + i * 0.073);
+            ctx.beginPath();
+            ctx.moveTo(x, safe.top);
+            ctx.lineTo(x + Math.sin(i * 2.2) * 80 * k, safe.bottom);
+            ctx.stroke();
+        }
+        for (let i = 0; i < 8; i++) {
+            const y = safe.top + span * (0.08 + i * 0.115);
+            ctx.beginPath();
+            ctx.moveTo(W * 0.08, y);
+            ctx.lineTo(W * 0.92, y + Math.sin(i * 2.7) * 42 * k);
+            ctx.stroke();
+        }
+        ctx.globalAlpha = detail * 0.22;
+        ctx.fillStyle = "#9fb6ff";
+        for (const b of blocks) ctx.fillRect(mx(b), my(b), b.w * W * 0.9, b.h * span);
+        ctx.restore();
+
         ctx.globalAlpha = mapAlpha * 0.6;
         ctx.strokeStyle = "rgba(255,255,255,0.7)";
         ctx.lineWidth = 2 * k;
@@ -204,6 +245,7 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
         // country names at the sides, clear of the cards along the top
         text(ctx, "NETHERLANDS", mx({ x: -0.03, y: 0 }), my({ x: 0, y: 0.5 }), 22 * k, { align: "left", weight: 700, color: "rgba(255,255,255,0.5)", alpha: mapAlpha });
         text(ctx, "FLANDERS (BELGIUM)", mx({ x: 1.03, y: 0 }), my({ x: 0, y: 0.62 }), 22 * k, { align: "right", weight: 700, color: "rgba(255,255,255,0.5)", alpha: mapAlpha });
+        text(ctx, "BORDER REGION", W / 2, safe.top + 20 * k, 15 * k, { weight: 700, color: "rgba(255,255,255,0.55)", alpha: mapAlpha });
         //#endregion
 
         //#region hospital and emergency
@@ -213,7 +255,7 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
         ctx.beginPath();
         ctx.roundRect(hospital.x - 30 * k, hospital.y - 30 * k, 60 * k, 60 * k, 10 * k);
         ctx.fill();
-        text(ctx, "H", hospital.x, hospital.y + 2 * k, 36 * k, { color: BLUE, weight: 800, alpha: mapAlpha });
+        text(ctx, "H", hospital.x, hospital.y + 2 * k, 36 * k, { color: "#0b1020", weight: 800, alpha: mapAlpha });
         // beside the icon: the road and flight paths leave downwards
         text(ctx, "Hospital & drone base", hospital.x + 46 * k, hospital.y, 18 * k, { align: "left", weight: 500, color: "rgba(255,255,255,0.8)", alpha: mapAlpha });
 
@@ -263,6 +305,10 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
             ctx.fillStyle = (t * 3) % 1 < 0.5 ? RED : BLUE;
             ctx.fillRect(a.x - 5 * k, a.y - 16 * k, 10 * k, 5 * k);
             if (t > T.drone + 1) callout(ctx, a.x, a.y - 26 * k, "By road", "still on the way", k, mapAlpha * window01(t, T.drone + 3, T.rules, 0.4));
+            text(ctx, "THE ROAD ROUTE", W * 0.51, safe.bottom - 32 * k, 17 * k, {
+                color: "rgba(255,255,255,0.76)", weight: 700,
+                alpha: mapAlpha * window01(t, T.road + 0.3, T.rules, 0.5),
+            });
         }
         //#endregion
 
@@ -303,27 +349,29 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
             ctx.globalAlpha = mapAlpha;
             quadcopter(ctx, d.x, d.y - 4 * k * Math.sin(t * 3), 20 * k, t);
             if (t < T.cargo) callout(ctx, d.x, d.y - 36 * k, "Medical drone", "direct flight", k, mapAlpha * window01(t, T.drone + 0.8, T.cargo, 0.4));
+            text(ctx, "DIRECT FLIGHT", W * 0.48, safe.top + 82 * k, 23 * k, {
+                color: BLUE, weight: 800,
+                alpha: mapAlpha * window01(t, T.drone + 0.5, T.rules, 0.6),
+            });
         }
         //#endregion
 
         //#region what drones carry
-        ctx.font = `600 ${19 * k}px ${FONT}`;
-        const cardW = CARGO.map((c) => ctx.measureText(c.label).width + 104 * k);
-        const gap = 24 * k;
-        const rowStart = W / 2 - (cardW.reduce((a, b) => a + b, 0) + gap * (CARGO.length - 1)) / 2;
         CARGO.forEach((c, i) => {
             const f = easeOut(window01(t, T.cargo + 0.5 + i * 0.8, T.rules, 0.5));
             if (f <= 0) return;
-            const left = rowStart + cardW.slice(0, i).reduce((a, b) => a + b, 0) + gap * i;
-            const y = H * 0.12;
-            ctx.globalAlpha = mapAlpha * f;
-            ctx.fillStyle = "rgba(255,255,255,0.1)";
+            const x = W * (0.27 + i * 0.23);
+            const y = safe.top + 90 * k;
+            const rise = (1 - f) * 25 * k;
+            ctx.globalAlpha = mapAlpha * f * 0.6;
+            ctx.strokeStyle = c.color;
+            ctx.lineWidth = 1.5 * k;
             ctx.beginPath();
-            ctx.roundRect(left, y - 46 * k + (1 - f) * 20 * k, cardW[i], 92 * k, 12 * k);
-            ctx.fill();
-            cargoIcon(ctx, c.icon, left + 44 * k, y + (1 - f) * 20 * k, 22 * k);
-            // globalAlpha already carries the fade
-            text(ctx, c.label, left + 80 * k, y + (1 - f) * 20 * k, 19 * k, { align: "left" });
+            ctx.arc(x, y + rise, 38 * k, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.globalAlpha = mapAlpha * f;
+            cargoIcon(ctx, c.icon, x, y + rise, 20 * k);
+            text(ctx, c.label, x, y + rise + 65 * k, 18 * k, { color: "rgba(255,255,255,0.9)" });
         });
         //#endregion
 
@@ -332,28 +380,26 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
         if (books > 0) {
             const merge = ease(progress(t, T.rules + 3, T.rules + 4.2));
             const fade = 1 - progress(t, T.scale - 0.4, T.scale);
-            const book = (x: number, label: string, color: string, alpha: number) => {
-                const y = H * 0.14;
-                ctx.font = `600 ${21 * k}px ${FONT}`;
-                const half = Math.max(120 * k, ctx.measureText(label).width / 2 + 34 * k);
+            const rule = (x: number, label: string, color: string, alpha: number) => {
+                const y = safe.top + 78 * k;
                 ctx.globalAlpha = mapAlpha * alpha * fade;
-                ctx.fillStyle = "#fff";
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 3 * k;
                 ctx.beginPath();
-                ctx.roundRect(x - half, y - 44 * k, half * 2, 88 * k, 10 * k);
-                ctx.fill();
-                ctx.fillStyle = color;
-                ctx.fillRect(x - half, y - 44 * k, 14 * k, 88 * k);
-                text(ctx, label, x + 7 * k, y, 21 * k, { color: "#000", alpha: mapAlpha * alpha * fade });
+                ctx.moveTo(x - 120 * k, y + 28 * k);
+                ctx.lineTo(x + 120 * k, y + 28 * k);
+                ctx.stroke();
+                text(ctx, label, x, y, 23 * k, { color, weight: 700 });
             };
-            book(lerp(W * 0.3, W * 0.5, merge), "Dutch drone rules", "#ff9f43", books * (1 - merge));
-            book(lerp(W * 0.7, W * 0.5, merge), "Belgian drone rules", "#ffd43b", books * (1 - merge));
+            rule(lerp(W * 0.29, W * 0.5, merge), "DUTCH RULES", "#ff9f43", books * (1 - merge));
+            rule(lerp(W * 0.71, W * 0.5, merge), "BELGIAN RULES", "#ffd43b", books * (1 - merge));
             if (merge > 0) {
-                book(W * 0.5, "One cross-border framework", BLUE, merge);
+                rule(W * 0.5, "ONE CROSS-BORDER FRAMEWORK", BLUE, merge);
                 CHECKS.forEach((c, i) => {
                     const f = progress(t, T.rules + 4.4 + i * 0.4, T.rules + 4.8 + i * 0.4) * fade;
                     if (f <= 0) return;
-                    const x = W * 0.5 + (i - 1) * 190 * k;
-                    const y = H * 0.14 + 82 * k;
+                    const x = W * 0.5 + (i - 1) * 200 * k;
+                    const y = safe.top + 154 * k;
                     ctx.globalAlpha = mapAlpha * f;
                     ctx.fillStyle = "#5ee0a0";
                     ctx.beginPath();

@@ -1,40 +1,45 @@
 import { computed, ref, watch } from "vue";
 
-/**
- * Visitor settings: language and text size. They reset to the defaults whenever the screen
- * returns to its idle loop, so the next visitor starts fresh.
- */
+/** Settings belong to this screen and survive reloads and the idle loop. */
 export type Lang = "en" | "nl";
+const LANG_KEY = "biss-graph:lang";
+const SIZE_KEY = "biss-graph:large-text";
+const saved = (key: string) => {
+  try { return localStorage.getItem(key); } catch { return null; }
+};
+const persist = (key: string, value: string) => {
+  try { localStorage.setItem(key, value); } catch { /* The current session still works without storage. */ }
+};
 
-export const lang = ref<Lang>("en");
+export const lang = ref<Lang>(saved(LANG_KEY) === "nl" ? "nl" : "en");
 
 /**
- * Dark or light look. A setting for the screen, not the visitor: remembered across reloads
- * and not reset by the idle loop. `?theme=light` or `?theme=dark` sets it from the URL.
+ * `?theme=light` or `?theme=dark` overrides the saved screen setting.
  */
 export type Theme = "dark" | "light";
 const THEME_KEY = "biss-graph:theme";
 const requested = new URLSearchParams(location.search).get("theme");
 export const theme = ref<Theme>(
-  requested === "light" || requested === "dark" ? requested : localStorage.getItem(THEME_KEY) === "light" ? "light" : "dark"
+  requested === "light" || requested === "dark" ? requested : saved(THEME_KEY) === "light" ? "light" : "dark"
 );
 watch(
   theme,
   (th) => {
     document.documentElement.classList.toggle("light", th === "light");
-    localStorage.setItem(THEME_KEY, th);
+    persist(THEME_KEY, th);
   },
   { immediate: true }
 );
-export const largeText = ref(false);
+export const largeText = ref(saved(SIZE_KEY) === "true");
 
-watch(largeText, (on) => document.documentElement.classList.toggle("large-text", on), { immediate: true });
-watch(lang, (l) => (document.documentElement.lang = l), { immediate: true });
-
-export const resetSettings = () => {
-  lang.value = "en";
-  largeText.value = false;
-};
+watch(largeText, (on) => {
+  document.documentElement.classList.toggle("large-text", on);
+  persist(SIZE_KEY, String(on));
+}, { immediate: true });
+watch(lang, (l) => {
+  document.documentElement.lang = l;
+  persist(LANG_KEY, l);
+}, { immediate: true });
 
 const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
 

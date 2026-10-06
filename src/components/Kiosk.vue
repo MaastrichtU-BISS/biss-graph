@@ -123,7 +123,7 @@ import InfoSheet from "./InfoSheet.vue";
 import ShowcasePlayer from "./ShowcasePlayer.vue";
 import FilterPanel, { type Filters, emptyFilters, filterMatches } from "./FilterPanel.vue";
 import { aboutShowcase, preloadShowcases, showcaseById, showcasesForProject, type Showcase } from "../showcases";
-import { lang, largeText, resetSettings, t, theme } from "../i18n";
+import { lang, largeText, t, theme } from "../i18n";
 import { sound } from "../sound";
 import { GraphScene, type ScreenRect } from "../scene/graphScene";
 import { entities, graphData, highlights, people, titleOf } from "../data/graph";
@@ -337,8 +337,7 @@ const enterAttract = () => {
     history.value = [];
     browseOpen.value = false;
     infoUrl.value = null;
-    // the next visitor starts in English, with normal text and no filter
-    resetSettings();
+    // Clear visitor-specific exploration filters; keep this screen's settings.
     filterOpen.value = false;
     filters.value = emptyFilters();
     highlight.value = null;

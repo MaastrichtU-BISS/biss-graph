@@ -2,7 +2,9 @@
     <ShowcaseStage ref="stage" :scene="scene" :captions="captions" eyebrow="A BISS project funded by Horizon Europe"
         title="BETTER" tagline="Responsible data analytics in healthcare"
         outro="Privacy-preserving health research across Europe: 14 partners, 8 countries, 3 rare-disease use cases."
-        url="better-health-project.eu" :members="members" />
+        url="better-health-project.eu"
+        :partners="['Datrix', 'Uniklinik Köln', 'Politecnico di Milano', 'University of Valencia']"
+        :funders="['European Union (Horizon Europe)']" :members="members" />
 </template>
 <script setup lang="ts">
 import { computed, ref } from "vue";

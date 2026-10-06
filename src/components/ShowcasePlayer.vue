@@ -1,5 +1,5 @@
 <template>
-    <div class="player">
+    <div class="player" :class="{ light: theme === 'light' }">
         <component :is="showcase.component" :members="members" @done="emit('done')" />
         <div class="hint">
             <Icon name="tap" /> {{ t.touchToExploreShort }}
@@ -9,7 +9,7 @@
 </template>
 <script setup lang="ts">
 import Icon from "./Icon.vue";
-import { t } from "../i18n";
+import { t, theme } from "../i18n";
 import { provide } from "vue";
 import type { Showcase } from "../showcases";
 
@@ -27,6 +27,20 @@ const emit = defineEmits<{ done: [] }>();
     background:
         radial-gradient(ellipse 70% 60% at 50% 40%, #101a3d 0%, transparent 70%),
         #060914;
+}
+
+.player.light {
+    background: #f6f7fb;
+}
+
+.player.light .hint {
+    color: #0b1020;
+    background: rgba(255, 255, 255, 0.88);
+    border-color: rgba(11, 16, 32, 0.14);
+}
+
+.player.light .progress {
+    background: #0b1020;
 }
 
 .hint {

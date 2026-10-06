@@ -7,6 +7,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import ShowcaseStage from "../shared/ShowcaseStage.vue";
+import { paper as paperFill, paperInk, paperInset, paperLine, paperMuted } from "../shared/paper";
 import {
     callout,
     ease,
@@ -216,19 +217,19 @@ const paper = (ctx: CanvasRenderingContext2D, x: number, y: number, w: number, r
     ctx.rotate(rot);
     // a shadow under a half-transparent page reads as grey, so only settled pages get one
     shadow(ctx, k, lifted);
-    ctx.fillStyle = "#fff";
+    ctx.fillStyle = paperFill();
     ctx.beginPath();
     ctx.roundRect(-w / 2, -h / 2, w, h, w * 0.05);
     ctx.fill();
     shadow(ctx, k, false);
-    ctx.fillStyle = "#1f2937";
+    ctx.fillStyle = paperInk();
     ctx.fillRect(-w * 0.36, -h * 0.4, w * 0.6, h * 0.035);
-    ctx.fillStyle = "#d1d5db";
+    ctx.fillStyle = paperLine();
     for (let i = 0; i < 4; i++) ctx.fillRect(-w * 0.36, -h * 0.31 + i * h * 0.055, w * (i === 3 ? 0.45 : 0.72), h * 0.022);
-    ctx.fillStyle = "#f1f5f9";
+    ctx.fillStyle = paperInset();
     ctx.fillRect(-w * 0.36, -h * 0.07, w * 0.72, h * 0.3);
     glyph(ctx, kind, -w * 0.36, -h * 0.07, w * 0.72, h * 0.3);
-    ctx.fillStyle = "#d1d5db";
+    ctx.fillStyle = paperLine();
     for (let i = 0; i < 3; i++) ctx.fillRect(-w * 0.36, h * 0.3 + i * h * 0.055, w * (i === 2 ? 0.5 : 0.72), h * 0.022);
     ctx.restore();
 };
@@ -250,7 +251,7 @@ const container = (ctx: CanvasRenderingContext2D, x: number, y: number, w: numbe
         ctx.fillRect(x - w / 2 + (i * w) / ribs - 2.5 * s, y - h * 0.38, 5 * s, h * 0.76);
     }
     // the same API port on both sides: data in, prediction out
-    ctx.fillStyle = "#fff";
+    ctx.fillStyle = paperFill();
     for (const side of [-1, 1]) {
         ctx.beginPath();
         ctx.roundRect(x + side * w / 2 - 9 * s, y - 16 * s, 18 * s, 32 * s, 5 * s);
@@ -259,11 +260,11 @@ const container = (ctx: CanvasRenderingContext2D, x: number, y: number, w: numbe
     if (label && h > 40 * k) {
         const pw = w * 0.66;
         const ph = h * 0.32;
-        ctx.fillStyle = "#fff";
+        ctx.fillStyle = paperFill();
         ctx.beginPath();
         ctx.roundRect(x - pw / 2, y - ph / 2, pw, ph, 6 * s);
         ctx.fill();
-        text(ctx, label, x, y + 1 * s, ph * 0.46, { color: NAVY, weight: 700, maxWidth: pw * 0.86 });
+        text(ctx, label, x, y + 1 * s, ph * 0.46, { color: paperInk(), weight: 700, maxWidth: pw * 0.86 });
     }
 };
 
@@ -296,7 +297,7 @@ const lock = (ctx: CanvasRenderingContext2D, x: number, y: number, s: number, co
 
 /** A model's card in the repository. */
 const miniCard = (ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, k: number, m: (typeof MODELS)[number], ours: boolean) => {
-    ctx.fillStyle = "#fff";
+    ctx.fillStyle = paperFill();
     ctx.beginPath();
     ctx.roundRect(x - w / 2, y - h / 2, w, h, 8 * k);
     ctx.fill();
@@ -304,8 +305,8 @@ const miniCard = (ctx: CanvasRenderingContext2D, x: number, y: number, w: number
     ctx.beginPath();
     ctx.roundRect(x - w / 2, y - h / 2, 7 * k, h, [8 * k, 0, 0, 8 * k]);
     ctx.fill();
-    text(ctx, m.title, x - w / 2 + 22 * k, y - h * 0.15, 19 * k, { align: "left", color: "#000", maxWidth: w - 36 * k });
-    text(ctx, m.domain, x - w / 2 + 22 * k, y + h * 0.2, 15 * k, { align: "left", color: "#4b4b4b", weight: 500, maxWidth: w - 36 * k });
+    text(ctx, m.title, x - w / 2 + 22 * k, y - h * 0.15, 19 * k, { align: "left", color: paperInk(), maxWidth: w - 36 * k });
+    text(ctx, m.domain, x - w / 2 + 22 * k, y + h * 0.2, 15 * k, { align: "left", color: paperMuted(), weight: 500, maxWidth: w - 36 * k });
 };
 
 /** A point along a quadratic curve. */
@@ -418,7 +419,7 @@ const draw = ({ ctx, t, W, k, safe }: Frame) => {
             ctx.scale(scale, scale);
             ctx.translate(-cardW / 2, -cardH / 2);
             shadow(ctx, k, true);
-            ctx.fillStyle = "#fff";
+            ctx.fillStyle = paperFill();
             ctx.beginPath();
             ctx.roundRect(0, 0, cardW, cardH, 10 * k);
             ctx.fill();
@@ -427,24 +428,24 @@ const draw = ({ ctx, t, W, k, safe }: Frame) => {
             ctx.beginPath();
             ctx.roundRect(0, 0, cardW, 6 * k, [10 * k, 10 * k, 0, 0]);
             ctx.fill();
-            text(ctx, "Model metadata", 28 * k, headH * 0.55, 24 * k, { align: "left", color: "#000", weight: 700, maxWidth: cardW * 0.5 });
+            text(ctx, "Model metadata", 28 * k, headH * 0.55, 24 * k, { align: "left", color: paperInk(), weight: 700, maxWidth: cardW * 0.5 });
             // a CEDAR template defines the fields before anything is filled in
             ctx.font = `600 ${15 * k}px ${FONT}`;
             const chipW = ctx.measureText("CEDAR template").width + 24 * k;
-            ctx.fillStyle = "#e8eefc";
+            ctx.fillStyle = paperInset();
             ctx.beginPath();
             ctx.roundRect(cardW - 24 * k - chipW, headH * 0.55 - 15 * k, chipW, 30 * k, 15 * k);
             ctx.fill();
             text(ctx, "CEDAR template", cardW - 24 * k - chipW / 2, headH * 0.55, 15 * k, { color: "#2f5aa8", maxWidth: chipW });
             FIELDS.forEach(([label, value], i) => {
                 const ry = headH + i * rowH + rowH / 2;
-                ctx.fillStyle = "#e5e7eb";
+                ctx.fillStyle = paperLine();
                 ctx.fillRect(24 * k, headH + i * rowH, cardW - 48 * k, 1.5 * k);
                 text(ctx, label, 28 * k, ry, 17 * k, { align: "left", color: "#6b7280", weight: 500, maxWidth: cardW * 0.32 });
                 const reveal = easeOut(progress(t, fieldAt(i), fieldAt(i) + 0.35));
                 if (reveal <= 0) {
                     // an empty slot waiting for its value
-                    ctx.fillStyle = "#f1f5f9";
+                    ctx.fillStyle = paperInset();
                     ctx.beginPath();
                     ctx.roundRect(cardW * 0.38, ry - 11 * k, cardW * 0.4, 22 * k, 4 * k);
                     ctx.fill();
@@ -454,7 +455,7 @@ const draw = ({ ctx, t, W, k, safe }: Frame) => {
                 ctx.beginPath();
                 ctx.rect(cardW * 0.38 - 4 * k, ry - rowH / 2, (cardW * 0.6 + 8 * k) * reveal, rowH);
                 ctx.clip();
-                text(ctx, value, cardW * 0.38, ry, 19 * k, { align: "left", color: "#000", maxWidth: cardW * 0.58 });
+                text(ctx, value, cardW * 0.38, ry, 19 * k, { align: "left", color: paperInk(), maxWidth: cardW * 0.58 });
                 ctx.restore();
                 // a brief flash as the value lands
                 const flash = 1 - progress(t, fieldAt(i), fieldAt(i) + 0.6);
@@ -744,7 +745,7 @@ const draw = ({ ctx, t, W, k, safe }: Frame) => {
                 ctx.fill();
             }
             shadow(ctx, k, true);
-            ctx.fillStyle = "#fff";
+            ctx.fillStyle = paperFill();
             ctx.beginPath();
             ctx.roundRect(rcx - rw / 2, repoTop, rw, repoH, 8 * k);
             ctx.fill();
@@ -753,13 +754,13 @@ const draw = ({ ctx, t, W, k, safe }: Frame) => {
             ctx.beginPath();
             ctx.roundRect(rcx - rw / 2, repoTop, 7 * k, repoH, [8 * k, 0, 0, 8 * k]);
             ctx.fill();
-            text(ctx, MODELS[OURS].title, rcx - rw / 2 + 24 * k, repoTop + 34 * k, 19 * k, { align: "left", color: "#000", maxWidth: rw - 100 * k });
-            text(ctx, "Oncology, logistic regression", rcx - rw / 2 + 24 * k, repoTop + 62 * k, 15 * k, { align: "left", color: "#4b4b4b", weight: 500, maxWidth: rw - 40 * k });
+            text(ctx, MODELS[OURS].title, rcx - rw / 2 + 24 * k, repoTop + 34 * k, 19 * k, { align: "left", color: paperInk(), maxWidth: rw - 100 * k });
+            text(ctx, "Oncology, logistic regression", rcx - rw / 2 + 24 * k, repoTop + 62 * k, 15 * k, { align: "left", color: paperMuted(), weight: 500, maxWidth: rw - 40 * k });
             badges.forEach((b, i) => {
                 if (b <= 0) return;
                 const y = repoTop + 92 * k + i * badgeH + badgeH / 2;
                 layer(ctx, b, () => {
-                    ctx.fillStyle = "#e9faf2";
+                    ctx.fillStyle = paperInset();
                     ctx.beginPath();
                     ctx.roundRect(rcx - rw / 2 + 18 * k, y - badgeH * 0.42 + (1 - b) * 8 * k, rw - 36 * k, badgeH * 0.84, 6 * k);
                     ctx.fill();
@@ -825,11 +826,11 @@ const draw = ({ ctx, t, W, k, safe }: Frame) => {
             ctx.lineTo(b - 9 * k, cy + 7 * k);
             ctx.fill();
             const chip = Math.min(84 * k, b - a - 8 * k);
-            ctx.fillStyle = "#fff";
+            ctx.fillStyle = paperFill();
             ctx.beginPath();
             ctx.roundRect((a + b) / 2 - chip / 2, cy - 15 * k, chip, 30 * k, 15 * k);
             ctx.fill();
-            text(ctx, "FAIVOR", (a + b) / 2, cy, 15 * k, { color: NAVY, weight: 700, maxWidth: chip - 12 * k });
+            text(ctx, "FAIVOR", (a + b) / 2, cy, 15 * k, { color: paperInk(), weight: 700, maxWidth: chip - 12 * k });
         });
         if (fetch > 0) {
             const a = iconAt;
@@ -873,12 +874,12 @@ const draw = ({ ctx, t, W, k, safe }: Frame) => {
             ctx.translate(plotX + plot / 2, plotY + plot / 2);
             ctx.scale(pop, pop);
             ctx.translate(-(plotX + plot / 2), -(plotY + plot / 2));
-            ctx.fillStyle = "#fff";
+            ctx.fillStyle = paperFill();
             ctx.beginPath();
             ctx.roundRect(plotX - 14 * k, plotY - 46 * k, plot + 28 * k, plot + 60 * k, 8 * k);
             ctx.fill();
-            text(ctx, "ROC curve", plotX, plotY - 24 * k, 16 * k, { align: "left", color: "#000", maxWidth: plot });
-            ctx.strokeStyle = "#cbd5e1";
+            text(ctx, "ROC curve", plotX, plotY - 24 * k, 16 * k, { align: "left", color: paperInk(), maxWidth: plot });
+            ctx.strokeStyle = paperLine();
             ctx.lineWidth = 1.5 * k;
             ctx.strokeRect(plotX, plotY, plot, plot);
             ctx.setLineDash([5 * k, 5 * k]);
@@ -933,13 +934,13 @@ const draw = ({ ctx, t, W, k, safe }: Frame) => {
             glow(ctx, p.x, p.y, w * 0.7, GREEN, 0.5 * report * out);
             layer(ctx, report * out, () => {
                 shadow(ctx, k, true);
-                ctx.fillStyle = "#fff";
+                ctx.fillStyle = paperFill();
                 ctx.beginPath();
                 ctx.roundRect(p.x - w / 2, p.y - h / 2, w, h, 8 * k);
                 ctx.fill();
                 shadow(ctx, k, false);
                 tick(ctx, p.x - w / 2 + 24 * k * s, p.y, 11 * k * s);
-                text(ctx, "Validation report", p.x + 14 * k * s, p.y, 18 * k * s, { color: "#000" });
+                text(ctx, "Validation report", p.x + 14 * k * s, p.y, 18 * k * s, { color: paperInk() });
             });
         }
     }

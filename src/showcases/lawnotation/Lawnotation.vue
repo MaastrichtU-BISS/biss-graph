@@ -7,6 +7,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import ShowcaseStage from "../shared/ShowcaseStage.vue";
+import { paper, paperInk, paperLine, paperMuted } from "../shared/paper";
 import {
     ease,
     easeOut,
@@ -99,17 +100,17 @@ const DATASETS = [
 const docCard = (ctx: CanvasRenderingContext2D, x: number, y: number, k: number, type: (typeof DOC_TYPES)[number], scale = 1) => {
     const w = 64 * k * scale;
     const h = 84 * k * scale;
-    ctx.fillStyle = "#fff";
+    ctx.fillStyle = paper();
     ctx.beginPath();
     ctx.roundRect(x - w / 2, y - h / 2, w, h, 5 * k * scale);
     ctx.fill();
-    ctx.fillStyle = "#d1d5db";
+    ctx.fillStyle = paperLine();
     for (let i = 0; i < 5; i++) ctx.fillRect(x - w * 0.36, y - h * 0.22 + i * h * 0.12, w * (i === 4 ? 0.4 : 0.72), Math.max(1, h * 0.03));
     ctx.fillStyle = type.color;
     ctx.beginPath();
     ctx.roundRect(x - w * 0.4, y - h * 0.44, w * 0.56, h * 0.17, 3 * k * scale);
     ctx.fill();
-    ctx.fillStyle = "#000";
+    ctx.fillStyle = paperInk();
     ctx.font = `700 ${11 * k * scale}px ${FONT}`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
@@ -208,7 +209,7 @@ const drawPage = (
     const y0 = cy - height / 2;
     ctx.save();
     ctx.globalAlpha *= alpha;
-    ctx.fillStyle = "#fff";
+    ctx.fillStyle = paper();
     ctx.beginPath();
     ctx.roundRect(x0, y0, pw, height, 8 * k);
     ctx.fill();
@@ -240,7 +241,7 @@ const drawPage = (
         if (cursor && f < 1) pointer = { x: x0 + w.x - left + width * easeOut(f), y: y0 + w.y + fs * 0.45 };
     });
 
-    ctx.fillStyle = "#111";
+    ctx.fillStyle = paperInk();
     ctx.font = `500 ${fs}px Georgia, "Times New Roman", serif`;
     ctx.textAlign = "left";
     ctx.textBaseline = "middle";
@@ -450,11 +451,11 @@ const draw = ({ ctx, t, W, k, safe }: Frame) => {
             const bh = 56 * k * press;
             const by = cy + cardH / 2 + 48 * k;
             ctx.globalAlpha = button * pub;
-            ctx.fillStyle = "#fff";
+            ctx.fillStyle = paper();
             ctx.beginPath();
             ctx.roundRect(cx - bw / 2, by - bh / 2, bw, bh, bh / 2);
             ctx.fill();
-            text(ctx, "Publish", cx, by, 22 * k * press, { color: "#000", alpha: button * pub });
+            text(ctx, "Publish", cx, by, 22 * k * press, { color: paperInk(), alpha: button * pub });
         }
 
         // published tasks others can discover
@@ -468,20 +469,20 @@ const draw = ({ ctx, t, W, k, safe }: Frame) => {
             const x = cx + (col - 1) * (w + 24 * k) - w / 2;
             const y = cy - span * 0.02 + row * (h + 24 * k) + (1 - f) * 30 * k;
             ctx.globalAlpha = pub * f;
-            ctx.fillStyle = i === 0 ? "#fff" : "rgba(255,255,255,0.1)";
+            ctx.fillStyle = i === 0 ? paper() : "rgba(255,255,255,0.1)";
             ctx.beginPath();
             ctx.roundRect(x, y, w, h, 8 * k);
             ctx.fill();
             text(ctx, name, x + 22 * k, y + 34 * k, 21 * k, {
                 align: "left",
-                color: i === 0 ? "#000" : "#fff",
+                color: i === 0 ? paperInk() : "#fff",
                 alpha: pub * f,
                 maxWidth: w - 44 * k,
             });
             text(ctx, i === 0 ? "Published just now" : `${120 + i * 37} annotations`, x + 22 * k, y + 62 * k, 16 * k, {
                 align: "left",
                 weight: 500,
-                color: i === 0 ? "#4b4b4b" : "rgba(255,255,255,0.6)",
+                color: i === 0 ? paperMuted() : "rgba(255,255,255,0.6)",
                 alpha: pub * f,
             });
         });

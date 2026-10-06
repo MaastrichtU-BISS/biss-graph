@@ -9,7 +9,9 @@
 </template>
 <script setup lang="ts">
 import { computed, ref } from "vue";
+import { theme as screenTheme } from "../../i18n";
 import ShowcaseStage from "../shared/ShowcaseStage.vue";
+import { paper, paperInk, paperInset, paperLine, paperMuted } from "../shared/paper";
 import {
     callout,
     ease,
@@ -145,17 +147,17 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
         const y0 = safe.top + span / 2 - h / 2 + (1 - platform) * 40 * k;
         ctx.save();
         ctx.globalAlpha = platform;
-        ctx.fillStyle = "#fff";
+        ctx.fillStyle = paper();
         ctx.beginPath();
         ctx.roundRect(x0, y0, w, h, 12 * k);
         ctx.fill();
 
         // header with the language switch
-        ctx.fillStyle = "#06201d";
+        ctx.fillStyle = screenTheme.value === "light" ? "#e5e5e5" : "#06201d";
         ctx.beginPath();
         ctx.roundRect(x0, y0, w, 70 * k, [12 * k, 12 * k, 0, 0]);
         ctx.fill();
-        text(ctx, "DigiMach platform", x0 + 28 * k, y0 + 35 * k, 24 * k, { align: "left" });
+        text(ctx, "DigiMach platform", x0 + 28 * k, y0 + 35 * k, 24 * k, { align: "left", color: screenTheme.value === "light" ? "#111" : "#fff" });
         LANGUAGES.forEach((l, i) => {
             const bx = x0 + w - 28 * k - (LANGUAGES.length - i) * 58 * k;
             const active = l === lang;
@@ -163,7 +165,7 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
             ctx.beginPath();
             ctx.roundRect(bx, y0 + 18 * k, 48 * k, 34 * k, 17 * k);
             ctx.fill();
-            text(ctx, l, bx + 24 * k, y0 + 35 * k, 16 * k, { color: active ? "#06201d" : "#fff", weight: 700 });
+            text(ctx, l, bx + 24 * k, y0 + 35 * k, 16 * k, { color: active ? "#06201d" : screenTheme.value === "light" ? "#111" : "#fff", weight: 700 });
         });
 
         const tileW = (w - 4 * 24 * k) / 3;
@@ -173,12 +175,12 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
         ["assess", "train", "share"].forEach((key, i) => {
             const f = easeOut(progress(t, T.platform + 0.8 + i * 0.4, T.platform + 1.4 + i * 0.4));
             ctx.globalAlpha = platform * f;
-            ctx.fillStyle = "#f3f6f9";
+            ctx.fillStyle = paperInset();
             ctx.beginPath();
             ctx.roundRect(tile(i), tileY, tileW, tileH, 10 * k);
             ctx.fill();
             text(ctx, WORDS[key][lang], tile(i) + 20 * k, tileY + 34 * k, 26 * k, {
-                color: "#000",
+                color: paperInk(),
                 weight: 700,
                 align: "left",
                 alpha: 1,
@@ -195,7 +197,7 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
         ctx.globalAlpha = dial;
         ctx.lineWidth = 14 * k;
         ctx.lineCap = "round";
-        ctx.strokeStyle = "#e1e7ee";
+        ctx.strokeStyle = paperLine();
         ctx.beginPath();
         ctx.arc(ax, ay, r, Math.PI * 0.75, Math.PI * 2.25);
         ctx.stroke();
@@ -204,8 +206,8 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
         ctx.arc(ax, ay, r, Math.PI * 0.75, Math.PI * 0.75 + Math.PI * 1.5 * (0.3 + 0.48 * score));
         ctx.stroke();
         ctx.lineCap = "butt";
-        text(ctx, `${Math.round(30 + 48 * score)}%`, ax, ay, 34 * k, { color: "#000", weight: 800, alpha: 1 });
-        text(ctx, WORDS.readiness[lang], ax, ay + r + 24 * k, 17 * k, { color: "#4b4b4b", weight: 500, alpha: 1, maxWidth: tileW - 32 * k });
+        text(ctx, `${Math.round(30 + 48 * score)}%`, ax, ay, 34 * k, { color: paperInk(), weight: 800, alpha: 1 });
+        text(ctx, WORDS.readiness[lang], ax, ay + r + 24 * k, 17 * k, { color: paperMuted(), weight: 500, alpha: 1, maxWidth: tileW - 32 * k });
 
         // train: courses being completed
         COURSES.forEach((c, i) => {
@@ -213,7 +215,7 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
             const done = progress(t, T.platform + 2.4 + i * 1.2, T.platform + 2.8 + i * 1.2);
             const a = platform * progress(t, T.platform + 1.6, T.platform + 2.2);
             ctx.globalAlpha = a;
-            ctx.fillStyle = done > 0 ? TEAL : "#e1e7ee";
+            ctx.fillStyle = done > 0 ? TEAL : paperLine();
             ctx.beginPath();
             ctx.arc(tile(1) + 34 * k, y, 14 * k, 0, Math.PI * 2);
             ctx.fill();
@@ -226,7 +228,7 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
                 ctx.lineTo(tile(1) + 41 * k, y - 6 * k);
                 ctx.stroke();
             }
-            text(ctx, c, tile(1) + 58 * k, y, 17 * k, { color: "#1f2937", weight: 500, align: "left", alpha: 1, maxWidth: tileW - 72 * k });
+            text(ctx, c, tile(1) + 58 * k, y, 17 * k, { color: paperInk(), weight: 500, align: "left", alpha: 1, maxWidth: tileW - 72 * k });
         });
 
         // share: posts from across the border
@@ -235,13 +237,13 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
             if (f <= 0) return;
             const y = tileY + 70 * k + i * 84 * k + (1 - f) * 16 * k;
             ctx.globalAlpha = platform * f;
-            ctx.fillStyle = "#fff";
+            ctx.fillStyle = paper();
             ctx.beginPath();
             ctx.roundRect(tile(2) + 16 * k, y, tileW - 32 * k, 70 * k, 8 * k);
             ctx.fill();
             text(ctx, p.from, tile(2) + 30 * k, y + 22 * k, 15 * k, { color: "#0f766e", weight: 700, align: "left" });
             text(ctx, p.text, tile(2) + 30 * k, y + 48 * k, 16 * k, {
-                color: "#1f2937",
+                color: paperInk(),
                 weight: 500,
                 align: "left",
                 alpha: 1,

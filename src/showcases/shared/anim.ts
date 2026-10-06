@@ -1,4 +1,5 @@
 import { onBeforeUnmount, onMounted, type Ref } from "vue";
+import { paper, paperInk, paperMuted } from "./paper";
 
 /** Shared drawing and timing helpers for the project showcases. */
 
@@ -134,7 +135,7 @@ export function callout(
   ctx.shadowColor = "rgba(0,0,0,0.35)";
   ctx.shadowBlur = 18 * k;
   ctx.shadowOffsetY = 6 * k;
-  ctx.fillStyle = "#fff";
+  ctx.fillStyle = paper();
   ctx.beginPath();
   ctx.roundRect(bx - w / 2, top, w, h, 8 * k);
   if (tail) {
@@ -150,11 +151,11 @@ export function callout(
 
   ctx.textAlign = "center";
   ctx.textBaseline = "top";
-  ctx.fillStyle = "#000";
+  ctx.fillStyle = paperInk();
   ctx.font = `600 ${20 * k}px ${FONT}`;
   ctx.fillText(title, bx, top + (sub ? 10 : 10) * k);
   if (sub) {
-    ctx.fillStyle = "#4b4b4b";
+    ctx.fillStyle = paperMuted();
     ctx.font = `500 ${16 * k}px ${FONT}`;
     ctx.fillText(sub, bx, top + 35 * k);
   }

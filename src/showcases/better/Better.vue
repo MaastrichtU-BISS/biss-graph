@@ -9,6 +9,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import ShowcaseStage from "../shared/ShowcaseStage.vue";
+import { paper, paperInk, paperLine, paperMuted } from "../shared/paper";
 import {
     callout,
     ease,
@@ -146,7 +147,7 @@ const drawStation = (
     ctx.shadowColor = "rgba(0,0,0,0.35)";
     ctx.shadowBlur = 16 * k;
     ctx.shadowOffsetY = 5 * k;
-    ctx.fillStyle = "#fff";
+    ctx.fillStyle = paper();
     ctx.beginPath();
     ctx.roundRect(x0, y0, g.cw, g.ch, 8 * k);
     ctx.fill();
@@ -168,7 +169,7 @@ const drawStation = (
     ctx.fillStyle = "#fff";
     ctx.fillRect(x0 + 19 * k, y0 + 12 * k, 4 * k, 12 * k);
     ctx.fillRect(x0 + 15 * k, y0 + 16 * k, 12 * k, 4 * k);
-    text(ctx, s.name, x0 + 38 * k, y0 + 18 * k, 15 * k, { align: "left", color: "#111", weight: 700, maxWidth: g.cw - 90 * k });
+    text(ctx, s.name, x0 + 38 * k, y0 + 18 * k, 15 * k, { align: "left", color: paperInk(), weight: 700, maxWidth: g.cw - 90 * k });
     if (docked > 0) {
         const d = easeOut(docked);
         const bw = 34 * k * (0.6 + 0.4 * d);
@@ -182,7 +183,7 @@ const drawStation = (
         text(ctx, "{ }", x0 + g.cw - 12 * k - bw / 2, y0 + 18.5 * k, 12 * k * (0.6 + 0.4 * d), { color: BLUE, weight: 700, font: MONO });
         ctx.restore();
     }
-    ctx.fillStyle = "#e6e9f2";
+    ctx.fillStyle = paperLine();
     ctx.fillRect(x0 + 10 * k, y0 + 34 * k, g.cw - 20 * k, 1.5 * k);
 
     // records: deliberately abstract, a person and two grey lines each
@@ -203,7 +204,7 @@ const drawStation = (
             ctx.beginPath();
             ctx.arc(rp.x, rp.y, 6 * k, 0, TAU);
             ctx.fill();
-            ctx.fillStyle = "#d4d9e4";
+            ctx.fillStyle = paperLine();
             ctx.fillRect(rp.x + 12 * k, rp.y - 5 * k, 56 * k, 4 * k);
             ctx.fillRect(rp.x + 12 * k, rp.y + 2 * k, 36 * k, 4 * k);
         }
@@ -238,7 +239,7 @@ const drawCar = (ctx: CanvasRenderingContext2D, x: number, y: number, a: number,
     ctx.rotate(a);
     ctx.shadowColor = "rgba(0,0,0,0.4)";
     ctx.shadowBlur = 8 * k;
-    ctx.fillStyle = loco ? BLUE : "#fff";
+    ctx.fillStyle = loco ? BLUE : paper();
     ctx.beginPath();
     ctx.roundRect(-L / 2, -h / 2, L, h, loco ? [4 * k, 11 * k, 11 * k, 4 * k] : 3 * k);
     ctx.fill();
@@ -249,7 +250,7 @@ const drawCar = (ctx: CanvasRenderingContext2D, x: number, y: number, a: number,
         ctx.roundRect(L * 0.08, -h * 0.3, L * 0.26, h * 0.6, 2 * k);
         ctx.fill();
     } else {
-        ctx.fillStyle = "#c9d0de";
+        ctx.fillStyle = paperLine();
         for (let i = -2; i <= 2; i++) ctx.fillRect(i * L * 0.17 - 0.75 * k, -h * 0.36, 1.5 * k, h * 0.72);
     }
     ctx.restore();
@@ -538,11 +539,11 @@ const draw = ({ ctx, t, W, k, safe }: Frame) => {
             const a = net * progress(f, 0, 0.15) * (1 - progress(f, 0.85, 1));
             ctx.globalAlpha = a;
             glow(ctx, p.x, p.y, 34 * k, s.color, 0.9);
-            ctx.fillStyle = "#fff";
+            ctx.fillStyle = paper();
             ctx.beginPath();
             ctx.roundRect(p.x - 17 * k, p.y - 12 * k, 34 * k, 24 * k, 5 * k);
             ctx.fill();
-            text(ctx, "Σ", p.x, p.y + 0.5 * k, 15 * k, { color: "#111", weight: 800 });
+            text(ctx, "Σ", p.x, p.y + 0.5 * k, 15 * k, { color: paperInk(), weight: 800 });
         });
         const update = T.results + 4.3;
         STATIONS.forEach((_, i) => {
@@ -623,12 +624,12 @@ const draw = ({ ctx, t, W, k, safe }: Frame) => {
             ctx.shadowColor = "rgba(0,0,0,0.35)";
             ctx.shadowBlur = 18 * u;
             ctx.shadowOffsetY = 6 * u;
-            ctx.fillStyle = "#fff";
+            ctx.fillStyle = paper();
             ctx.beginPath();
             ctx.roundRect(x, y, cw, chH, 8 * u);
             ctx.fill();
             ctx.shadowColor = "transparent";
-            text(ctx, "Aggregated result", x + 20 * u, y + 28 * u, 20 * u, { align: "left", color: "#000", maxWidth: cw - 40  * u });
+            text(ctx, "Aggregated result", x + 20 * u, y + 28 * u, 20 * u, { align: "left", color: paperInk(), maxWidth: cw - 40  * u });
             const bw = 26 * u;
             BARS.forEach((b, i) => {
                 const grow = easeOut(progress(t, T.local + 4.2 + i * 0.08, T.local + 4.8 + i * 0.08));
@@ -638,9 +639,9 @@ const draw = ({ ctx, t, W, k, safe }: Frame) => {
                 ctx.roundRect(x + 20  * u + i * (bw + 8 * u), y + 100  * u - bh, bw, Math.max(bh, 0.1), 3 * u);
                 ctx.fill();
             });
-            ctx.fillStyle = "#e6e9f2";
+            ctx.fillStyle = paperLine();
             ctx.fillRect(x + 20 * u, y + 100 * u, cw - 40 * u, 1.5 * u);
-            text(ctx, "summary statistics only", x + 20 * u, y + 120 * u, 15 * u, { align: "left", color: "#4b4b4b", weight: 500, maxWidth: cw - 40  * u });
+            text(ctx, "summary statistics only", x + 20 * u, y + 120 * u, 15 * u, { align: "left", color: paperMuted(), weight: 500, maxWidth: cw - 40  * u });
             ctx.restore();
         }
 
@@ -718,12 +719,12 @@ const draw = ({ ctx, t, W, k, safe }: Frame) => {
             ctx.shadowColor = "rgba(0,0,0,0.35)";
             ctx.shadowBlur = 14 * k;
             ctx.shadowOffsetY = 4 * k;
-            ctx.fillStyle = "#fff";
+            ctx.fillStyle = paper();
             ctx.beginPath();
             ctx.roundRect(-pw / 2, -ph / 2, pw, ph, 8 * k);
             ctx.fill();
             ctx.shadowColor = "transparent";
-            text(ctx, label, 0, 0.5 * k, 19 * k, { color: "#000" });
+            text(ctx, label, 0, 0.5 * k, 19 * k, { color: paperInk() });
             ELSA.forEach((e, j) => {
                 const d = easeOut(progress(done, j * 0.2, j * 0.2 + 0.5));
                 if (d <= 0) return;

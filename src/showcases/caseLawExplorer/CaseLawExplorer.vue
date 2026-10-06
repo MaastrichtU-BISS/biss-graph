@@ -15,6 +15,7 @@
 import { computed, ref } from "vue";
 import Icon from "../../components/Icon.vue";
 import ShowcaseStage from "../shared/ShowcaseStage.vue";
+import { paper, paperLine } from "../shared/paper";
 import { callout as label, clamp01, ease, easeOut, FONT, Frame, lerp, MONO, progress, useCanvasTimeline } from "../shared/anim";
 import { buildNetwork, COURTS, Decision, FIRST_YEAR, LAST_YEAR, SEARCH_TOPIC, TOPICS } from "./network";
 
@@ -247,13 +248,13 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
             ctx.save();
             ctx.globalAlpha = (1 - asDots) * clamp01(scale * 1.4);
             ctx.translate(p.x - cw / 2, p.y - ch / 2);
-            ctx.fillStyle = "#fff";
+            ctx.fillStyle = paper();
             ctx.beginPath();
             ctx.roundRect(0, 0, cw, ch, 6 * k);
             ctx.fill();
             ctx.fillStyle = courtColor[d.court];
             ctx.fillRect(0, 0, cw, ch * 0.08);
-            ctx.fillStyle = "#d1d5db";
+            ctx.fillStyle = paperLine();
             for (let i = 0; i < 6; i++) {
                 const lw = cw * (i === 5 ? 0.45 : 0.76);
                 ctx.fillRect(cw * 0.12, ch * (0.22 + i * 0.11), lw, Math.max(1, ch * 0.035));

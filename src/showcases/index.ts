@@ -26,7 +26,7 @@ const ENTRIES = [
   { id: "fair4ai", project: "fair4ai-making-ai-models-practically-usable", title: "FAIR4AI", file: "./fair4ai/Fair4ai.vue", duration: 46 },
   { id: "better", project: "better-responsible-data-analytics-in-healthcare", title: "BETTER", file: "./better/Better.vue", duration: 46 },
   // about BISS itself, not one project; plays now and then in the idle loop and from the dock
-  { id: "biss", project: "", title: "What is BISS?", file: "./biss/AboutBiss.vue", duration: 66.5 },
+  { id: "biss", project: "", title: "What is BISS?", file: "./biss/AboutBiss.vue", duration: 83.125 },
   { id: "flying-forward", project: "flying-forward", title: "Flying Forward", file: "./flyingForward/FlyingForward.vue", duration: 46 },
 ];
 

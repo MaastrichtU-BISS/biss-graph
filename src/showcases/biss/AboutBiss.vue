@@ -23,6 +23,8 @@ const CAMPUS_NAME = "Brightlands Data & AI Campus";
 const CAMPUS_SHORT = CAMPUS_NAME.replace(/^Brightlands\s+/, "");
 
 const T = { map: 3.5, team: 11.5, decade: 17.5, domains: 24, how: 30.5, partners: 37.5, funders: 55.2, outro: 60.5, end: 66.5 };
+// The map, team and partner logos need enough time to be read on a public screen.
+const PLAYBACK_SPEED = 0.8;
 
 type Scene = "intro" | "map" | "team" | "decade" | "domains" | "how" | "partners" | "funders" | "outro";
 const captions: Record<string, string> = {
@@ -1326,7 +1328,9 @@ const updateDom = (t: number) => {
     if (scene.value !== next) scene.value = next;
 };
 
-useCanvasTimeline(canvas, T.end, draw, { tick: updateDom, done: () => emit("done") });
+useCanvasTimeline(canvas, T.end / PLAYBACK_SPEED,
+    (frame) => draw({ ...frame, t: frame.t * PLAYBACK_SPEED }),
+    { tick: (t) => updateDom(t * PLAYBACK_SPEED), done: () => emit("done") });
 </script>
 <style scoped>
 /* the player behind is dark navy; this showcase paints its own white backdrop */

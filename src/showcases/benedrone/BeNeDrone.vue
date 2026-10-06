@@ -11,6 +11,7 @@
 import { computed, ref } from "vue";
 import { theme as screenTheme } from "../../i18n";
 import ShowcaseStage from "../shared/ShowcaseStage.vue";
+import { paper } from "../shared/paper";
 import { ease, easeOut, Frame, glow, lerp, mulberry32, progress, sceneAt, text, useCanvasTimeline, window01 } from "../shared/anim";
 
 defineProps<{ members: { photo?: string; title: string }[] }>();
@@ -133,7 +134,7 @@ const building = (ctx: CanvasRenderingContext2D, v: View, b: (typeof buildings)[
 };
 
 const world = (f: Frame, v: View, t: number, alpha: number) => {
-    const { ctx, W, safe } = f, { at, s, unit, mobile } = v;
+    const { ctx, W } = f, { at, s, unit, mobile } = v;
     faded(ctx, alpha, () => {
         // Isometric streets and buildings make the route feel like a real place.
         for (let sum = 0; sum <= 18; sum++) for (let u = 0; u < 10; u++) {
@@ -173,13 +174,11 @@ const world = (f: Frame, v: View, t: number, alpha: number) => {
             Math.max(11, 17 * unit), { color: "#dce9ff", weight: 700, alpha: appear, align: mobile ? "left" : "center" });
         text(ctx, "FLANDERS · BE", Math.min(W - 12, p.x), p.y - 47 * unit,
             Math.max(11, 17 * unit), { color: "#dce9ff", weight: 700, alpha: appear, align: mobile ? "right" : "center" });
-        text(ctx, "ONE REGION. TWO COUNTRIES.", W / 2, safe.top + 25 * unit,
-            Math.max(11, 19 * unit), { color: AMBER, weight: 800, alpha: appear });
     });
 };
 
 const road = (f: Frame, v: View, t: number, alpha: number) => {
-    const { ctx, W, safe } = f, { at, unit } = v;
+    const { ctx } = f, { at, unit } = v;
     const reveal = ease(progress(t, T.road, T.road + 2.4));
     faded(ctx, alpha * reveal, () => {
         ctx.lineCap = "round"; ctx.lineJoin = "round";
@@ -189,16 +188,14 @@ const road = (f: Frame, v: View, t: number, alpha: number) => {
         const q = along(ROAD, easeOut(progress(t, T.road + 0.7, T.drone + 4)) * 0.67);
         const car = at(q.u, q.v);
         glow(ctx, car.x, car.y, 42 * unit, AMBER, 0.55);
-        ctx.fillStyle = "#f7fbff"; ctx.beginPath();
+        ctx.fillStyle = paper(); ctx.beginPath();
         ctx.roundRect(car.x - 17 * unit, car.y - 9 * unit, 34 * unit, 18 * unit, 5 * unit); ctx.fill();
         ctx.fillStyle = RED; cross(ctx, car.x, car.y, 9 * unit);
-        text(ctx, "ROAD ROUTE", W / 2, safe.top + 54 * unit, Math.max(13, 24 * unit),
-            { color: AMBER, weight: 800, alpha: window01(t, T.road + 0.5, T.drone + 0.5, 0.5) });
     });
 };
 
 const flight = (f: Frame, v: View, t: number, alpha: number) => {
-    const { ctx, W, safe } = f, { at, unit } = v;
+    const { ctx } = f, { at, unit } = v;
     const reveal = ease(progress(t, T.drone + 0.2, T.drone + 3.6));
     faded(ctx, alpha * reveal, () => {
         drawRoute(ctx, v, FLIGHT, reveal); ctx.strokeStyle = "rgba(77,212,198,0.17)";
@@ -214,8 +211,6 @@ const flight = (f: Frame, v: View, t: number, alpha: number) => {
             ctx.strokeStyle = TEAL; ctx.lineWidth = 3 * unit;
             ctx.beginPath(); ctx.arc(p.x, p.y, 25 * unit + Math.sin(t * 4) * 3 * unit, 0, Math.PI * 2); ctx.stroke();
         }
-        text(ctx, "DIRECT FLIGHT", W / 2, safe.top + 54 * unit, Math.max(13, 24 * unit),
-            { color: TEAL, weight: 800, alpha: window01(t, T.drone + 0.4, T.cargo + 0.3, 0.5) });
     });
 };
 
@@ -288,9 +283,6 @@ const rules = (f: Frame, v: View, t: number, alpha: number) => {
                     Math.max(10, 13 * unit), { color: "#a9c4df", align: mobile ? "left" : "center" });
             });
         });
-        const ready = ease(progress(t, T.rules + 4.5, T.rules + 5.5));
-        text(ctx, "A SAFE CROSS-BORDER CORRIDOR", W / 2, safe.top + span * (mobile ? 0.9 : 0.77),
-            Math.max(11, 19 * unit), { color: MINT, weight: 800, alpha: ready });
     });
 };
 
@@ -322,9 +314,6 @@ const region = (f: Frame, v: View, t: number, alpha: number) => {
             ctx.strokeStyle = "rgba(220,240,255,0.7)"; ctx.lineWidth = 1.5 * unit;
             ctx.beginPath(); ctx.arc(q.x, q.y, 17 * unit * shown, 0, Math.PI * 2); ctx.stroke();
         });
-        text(ctx, "ONE CORRIDOR → A REGIONAL MODEL", W / 2, safe.top + span * 0.79,
-            Math.max(12, 23 * unit), { color: "#e7f4ff", weight: 800,
-                alpha: progress(t, T.scale + 3.1, T.scale + 4.1) });
     });
 };
 

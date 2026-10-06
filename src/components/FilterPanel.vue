@@ -1,5 +1,5 @@
 <template>
-    <section class="filter-panel surface" role="dialog" :aria-label="t.filter">
+    <section class="filter-panel night" role="dialog" :aria-label="t.filter">
         <div class="group">
             <h3>{{ t.status }}</h3>
             <div class="chips">
@@ -130,8 +130,8 @@ h3 {
 }
 
 .chip[aria-pressed="true"] {
-    background: #000;
-    border-color: #000;
-    color: #fff;
+    background: #fff;
+    border-color: #fff;
+    color: #000;
 }
 </style>

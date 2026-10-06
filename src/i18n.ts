@@ -69,6 +69,7 @@ const en = {
   partOfTeam: "Part of the BISS team.",
   peopleWorkOn: (n: number) => `${plural(n, "person", "people")} from BISS ${n === 1 ? "works" : "work"} on this.`,
   projectBy: (n: number) => `A project by ${plural(n, "person", "people")}`,
+  byAuthors: (n: number) => `By ${plural(n, "BISS author", "BISS authors")}.`,
   projectCount: (n: number) => plural(n, "project", "projects"),
   more: (n: number) => `+${n} more`,
   area: {
@@ -133,6 +134,7 @@ const nl: typeof en = {
   partOfTeam: "Onderdeel van het BISS-team.",
   peopleWorkOn: (n: number) => `${plural(n, "persoon", "mensen")} van BISS ${n === 1 ? "werkt" : "werken"} hieraan.`,
   projectBy: (n: number) => `Een project van ${plural(n, "persoon", "mensen")}`,
+  byAuthors: (n: number) => `Door ${plural(n, "BISS-auteur", "BISS-auteurs")}.`,
   projectCount: (n: number) => plural(n, "project", "projecten"),
   more: (n: number) => `+${n} meer`,
   area: {

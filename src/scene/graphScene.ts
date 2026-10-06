@@ -732,7 +732,7 @@ export class GraphScene {
     this.flyToClear(id, [...panel, ...overlays], ms, {
       baseOx: occludedRight,
       widthShare: 1 - occludedRight - 0.04,
-      minDistance: 90,
+      minDistance: 135,
     });
   }
 

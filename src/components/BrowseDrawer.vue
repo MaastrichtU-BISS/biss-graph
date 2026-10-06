@@ -1,6 +1,6 @@
 <template>
     <div class="backdrop" @click.self="emit('close')">
-        <section class="sheet surface" role="dialog" :aria-label="t.allProjects">
+        <section class="sheet night" role="dialog" :aria-label="t.allProjects">
             <header class="head">
                 <div class="tabs" role="tablist">
                     <button v-for="tb in tabs" :key="tb.key" role="tab" class="tab" :aria-selected="tab === tb.key"

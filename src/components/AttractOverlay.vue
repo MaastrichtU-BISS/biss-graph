@@ -1,7 +1,7 @@
 <template>
     <div class="attract">
         <Transition name="spot" mode="out-in">
-            <button v-if="spot" :key="spot.id" class="spotlight surface" @click="emit('select', spot.id)">
+            <button v-if="spot" :key="spot.id" class="spotlight night" @click="emit('select', spot.id)">
                 <span class="spot-head">
                     <span class="label">{{ t.inTheSpotlight }}</span>
                     <span class="tag" :class="tagClass">{{ kind }}</span>
@@ -26,7 +26,7 @@
                     <img v-for="m in related.slice(0, 7)" :key="m.id" :src="m.photo" alt="" class="avatar face" />
                 </span>
             </button>
-            <div v-else-if="highlight" :key="highlight.url" class="news surface">
+            <div v-else-if="highlight" :key="highlight.url" class="news night">
                 <span class="spot-head">
                     <span class="label">{{ t.latestNews }}</span>
                     <span class="tag tag-content">BISS</span>
@@ -89,7 +89,7 @@ const subtitle = computed(() => {
     const n = related.value.length;
     if (!spot.value) return "";
     if (isPerson.value) return roleOf(spot.value, lang.value) ?? (n ? t.value.worksOnCount(n) : t.value.partOfTeam);
-    return spot.value.group === NodeType.PROJECT ? t.value.projectBy(n) : t.value.peopleWorkOn(n);
+    return spot.value.group === NodeType.PROJECT ? t.value.projectBy(n) : t.value.byAuthors(n);
 });
 </script>
 <style scoped>
@@ -157,6 +157,9 @@ const subtitle = computed(() => {
 .qr-code {
     width: 7rem;
     height: 7rem;
+    padding: 0.35rem;
+    border-radius: 0.5rem;
+    background: #fff;
 }
 
 .spot-head {

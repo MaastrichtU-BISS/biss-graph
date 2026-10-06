@@ -1,5 +1,5 @@
 <template>
-    <aside class="panel surface" :style="{ '--tone': entity.color }">
+    <aside class="panel night" :style="{ '--tone': entity.color }">
         <div class="toolbar">
             <button v-if="canGoBack" class="icon-button" :aria-label="t.close" @click="emit('back')">
                 <Icon name="back" />
@@ -142,7 +142,7 @@ const summary = computed(() => {
         const n = projectsList.value.length;
         return n ? t.value.involvedIn(n) : t.value.partOfTeam;
     }
-    return t.value.peopleWorkOn(related.value.length);
+    return isProject.value ? t.value.peopleWorkOn(related.value.length) : t.value.byAuthors(related.value.length);
 });
 
 /** What the QR code opens: the publication itself if there is one, else the page on the website. */
@@ -152,6 +152,8 @@ const teammates = (project: Entity) => project.connections.slice(0, 6).map((id) 
 </script>
 <style scoped>
 .panel {
+    /* a soft glow in the colour of what's selected, so each panel feels like part of the graph */
+    background-image: radial-gradient(ellipse 120% 40% at 50% 0%, color-mix(in srgb, var(--tone) 22%, transparent), transparent 70%);
     position: absolute;
     top: var(--gap);
     right: var(--gap);

@@ -59,6 +59,8 @@ const PHOTO_SIZE = 13;
 const LABEL_LINE = 2.8;
 /** Project names longer than this many characters wrap onto more lines. */
 const LABEL_WRAP = 26;
+/** Resolution labels are first drawn at, before they're sized to the screen. */
+const LABEL_FONT_PX = 64;
 const PAGE_SIZE = 5;
 const CONTENT_WRAP = 30;
 const CONTENT_LABEL_LINE = 2.2;
@@ -195,13 +197,16 @@ const wrap = (text: string, width: number) =>
   }, []);
 
 /** Text label rendered to a sprite; returns the sprite and its world height. */
-const labelSprite = (text: string, accent?: string, wrapAt?: number, line = LABEL_LINE) => {
-  const fontPx = 64;
+/**
+ * Draws a label at `fontPx`. The texture skips mipmaps: shrinking text through mipmaps is
+ * what made it blurry, so instead each label is redrawn at the size it appears on screen.
+ */
+const labelTexture = (lines: string[], accent: string | undefined, fontPx: number) => {
+  const k = fontPx / 64;
   const lineHeight = fontPx * 1.22;
-  const padX = 34;
-  const padY = 20;
-  const bar = accent ? 14 : 0;
-  const lines = wrapAt && !text.includes("\n") ? wrap(text, wrapAt) : text.split("\n").map((l) => l.trim());
+  const padX = 34 * k;
+  const padY = 20 * k;
+  const bar = accent ? 14 * k : 0;
 
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d")!;
@@ -210,10 +215,9 @@ const labelSprite = (text: string, accent?: string, wrapAt?: number, line = LABE
   canvas.width = Math.ceil(textWidth + padX * 2 + bar);
   canvas.height = Math.ceil(lines.length * lineHeight + padY * 2);
 
-  const radius = 26;
   ctx.fillStyle = "rgba(6, 9, 22, 0.72)";
   ctx.beginPath();
-  ctx.roundRect(0, 0, canvas.width, canvas.height, radius);
+  ctx.roundRect(0, 0, canvas.width, canvas.height, 26 * k);
   ctx.fill();
   if (accent) {
     ctx.save();
@@ -227,12 +231,20 @@ const labelSprite = (text: string, accent?: string, wrapAt?: number, line = LABE
   ctx.fillStyle = "#f4f6ff";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  lines.forEach((l, i) =>
-    ctx.fillText(l, bar + padX + textWidth / 2, padY + lineHeight * (i + 0.5) + 2)
-  );
+  lines.forEach((l, i) => ctx.fillText(l, bar + padX + textWidth / 2, padY + lineHeight * (i + 0.5) + 2 * k));
 
+  const texture = canvasTexture(canvas);
+  texture.generateMipmaps = false;
+  texture.minFilter = THREE.LinearFilter;
+  return { texture, canvas, lineHeight };
+};
+
+/** Text label rendered to a sprite; returns the sprite and its world height. */
+const labelSprite = (text: string, accent?: string, wrapAt?: number, line = LABEL_LINE) => {
+  const lines = wrapAt && !text.includes("\n") ? wrap(text, wrapAt) : text.split("\n").map((l) => l.trim());
+  const { texture, canvas, lineHeight } = labelTexture(lines, accent, LABEL_FONT_PX);
   const material = new THREE.SpriteMaterial({
-    map: canvasTexture(canvas),
+    map: texture,
     transparent: true,
     depthWrite: false,
     depthTest: false,
@@ -241,7 +253,27 @@ const labelSprite = (text: string, accent?: string, wrapAt?: number, line = LABE
   const worldPerPx = line / lineHeight;
   sprite.scale.set(canvas.width * worldPerPx, canvas.height * worldPerPx, 1);
   sprite.renderOrder = NODE_ORDER;
+  // what's needed to redraw it at another resolution later
+  sprite.userData.label = { lines, accent, line, fontPx: LABEL_FONT_PX };
   return { sprite, height: canvas.height * worldPerPx };
+};
+
+/**
+ * Redraws a label so its texture matches its on-screen size (`screenLinePx`, the height of
+ * one line of text in device pixels). Sizes are bucketed so labels aren't redrawn every frame.
+ */
+const sharpenLabel = (sprite: THREE.Sprite, screenLinePx: number) => {
+  const info = sprite.userData.label as { lines: string[]; accent?: string; line: number; fontPx: number };
+  if (!info) return;
+  const wanted = THREE.MathUtils.clamp(screenLinePx / 1.22, 8, 160);
+  // buckets 25% apart
+  const bucket = Math.pow(1.25, Math.round(Math.log(wanted) / Math.log(1.25)));
+  if (Math.abs(bucket - info.fontPx) < 0.5) return;
+  const { texture } = labelTexture(info.lines, info.accent, bucket);
+  sprite.material.map?.dispose();
+  sprite.material.map = texture;
+  sprite.material.needsUpdate = true;
+  info.fontPx = bucket;
 };
 
 const mix = (a: string, b: string, t: number) =>
@@ -953,6 +985,12 @@ export class GraphScene {
     items.sort((a, b) => a.priority - b.priority || a.depth - b.depth);
 
     const placed: { box: Box; weight: number }[] = [];
+    const dpr = this.graph.renderer().getPixelRatio();
+    for (const item of items) {
+      // keep the label's texture at the size it's shown at, so text stays sharp at any zoom
+      const info = item.v.label.userData.label;
+      if (info && item.v.labelTarget > 0.5) sharpenLabel(item.v.label, info.line * item.k * dpr);
+    }
     for (const item of items) {
       const { v, x, y, k } = item;
       if (v.labelTarget < 0.5) continue; // hidden labels neither move nor block others

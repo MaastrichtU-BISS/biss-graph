@@ -41,7 +41,7 @@
             </div>
         </Transition>
 
-        <div class="cta surface">
+        <div class="cta">
             <span class="touch" aria-hidden="true">
                 <span class="ring"></span>
                 <span class="ring"></span>
@@ -240,20 +240,27 @@ const subtitle = computed(() => {
     box-shadow: 0 0 0 2px var(--surface);
 }
 
+/* quiet, like the other controls: a dark glass pill; only the hand icon has a soft ring */
 .cta {
     position: absolute;
     top: var(--gap);
     right: var(--gap);
     display: flex;
     align-items: center;
-    gap: 1.4rem;
-    padding: 1rem 2.2rem 1rem 1rem;
+    gap: 1.1rem;
+    padding: 0.7rem 1.8rem 0.7rem 0.7rem;
+    border-radius: 999px;
+    background: rgba(12, 17, 38, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    color: #fff;
 }
 
 .touch {
     position: relative;
-    width: 4.4rem;
-    height: 4.4rem;
+    width: 3.4rem;
+    height: 3.4rem;
     display: grid;
     place-items: center;
 }
@@ -262,70 +269,74 @@ const subtitle = computed(() => {
     position: relative;
     display: grid;
     place-items: center;
-    width: 4.4rem;
-    height: 4.4rem;
+    width: 3.4rem;
+    height: 3.4rem;
     border-radius: 999px;
-    background: #000;
+    background: rgba(255, 255, 255, 0.12);
     color: #fff;
-    font-size: 1.3rem;
-    animation: press 2.4s var(--ease-out) infinite;
+    font-size: 1.1rem;
+    animation: tap 3.2s ease-in-out infinite;
 }
 
 .ring {
     position: absolute;
     inset: 0;
     border-radius: 999px;
-    border: 2px solid #000;
+    border: 1.5px solid rgba(255, 255, 255, 0.55);
     opacity: 0;
-    animation: ripple 2.4s var(--ease-out) infinite;
+    animation: ripple 3.2s ease-out infinite;
 }
 
 .ring:nth-child(2) {
-    animation-delay: 0.4s;
+    display: none;
 }
 
 .cta-text {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: 0.2rem;
 }
 
 .cta-title {
-    font-size: 1.9rem;
+    font-size: 1.35rem;
     font-weight: 600;
-    line-height: 1.1;
+    line-height: 1.15;
 }
 
 .cta-sub {
-    font-size: 1.05rem;
-    color: var(--text-3);
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.6);
 }
 
+/* one slow ripple every few seconds, timed with a small tap of the icon */
 @keyframes ripple {
-    0% {
-        transform: scale(0.9);
-        opacity: 0.5;
+    0%,
+    10% {
+        transform: scale(1);
+        opacity: 0;
     }
 
-    70%,
+    12% {
+        opacity: 0.8;
+    }
+
+    55%,
     100% {
-        transform: scale(1.7);
+        transform: scale(1.6);
         opacity: 0;
     }
 }
 
-@keyframes press {
+@keyframes tap {
     0%,
+    6%,
+    16%,
     100% {
-        transform: scale(1);
+        transform: translateY(0);
     }
 
-    8% {
-        transform: scale(0.88);
-    }
-
-    22% {
-        transform: scale(1);
+    10% {
+        transform: translateY(2px) scale(0.94);
     }
 }
 

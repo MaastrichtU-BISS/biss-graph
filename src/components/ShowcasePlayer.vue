@@ -36,34 +36,15 @@ const emit = defineEmits<{ done: [] }>();
     display: flex;
     align-items: center;
     gap: 0.6rem;
-    padding: 0.8rem 1.4rem;
+    padding: 0.7rem 1.3rem;
     border-radius: 999px;
-    background: #fff;
-    color: #000;
-    font-size: 1.1rem;
-    font-weight: 600;
-    animation: hint-pulse 2.4s var(--ease-out) infinite;
-}
-
-/* a gentle breathing glow, so passers-by notice they can take over */
-@keyframes hint-pulse {
-    0%,
-    100% {
-        transform: scale(1);
-        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.55);
-    }
-
-    12% {
-        transform: scale(0.95);
-    }
-
-    30% {
-        transform: scale(1);
-    }
-
-    70% {
-        box-shadow: 0 0 0 1.2rem rgba(255, 255, 255, 0);
-    }
+    background: rgba(12, 17, 38, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    color: #fff;
+    font-size: 1.05rem;
+    font-weight: 500;
 }
 
 .progress {

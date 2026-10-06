@@ -20,12 +20,12 @@ const T = { map: 3.5, team: 11.5, decade: 17.5, domains: 24.5, how: 31.5, partne
 
 type Scene = "intro" | "map" | "team" | "decade" | "domains" | "how" | "partners" | "outro";
 const captions: Record<string, string> = {
-    map: "BISS is a Maastricht University institute on the Brightlands Smart Services Campus in Heerlen, one of four Brightlands campuses in Limburg.",
+    map: "BISS is a Maastricht University institute on the Brightlands Smart Services Campus in Heerlen, Limburg.",
     team: "Its team brings together ethics, law, privacy, consumer behaviour, neuroscience and data science.",
     decade: "Founded in 2016, BISS counts 24 projects and 35 partners after ten years.",
     domains: "Those projects reach into health, finance, law, public services, mobility and industry.",
-    how: "A real challenge, an interdisciplinary team, a prototype and impact: here, a clearer welfare application with Sittard-Geleen.",
-    partners: "Every project is done with partners from science, government and industry, and funders such as NWO and the European Union.",
+    how: "Challenge, team, prototype, impact: a clearer welfare application with Sittard-Geleen.",
+    partners: "Each project brings in partners and funders, such as NWO and the European Union.",
 };
 
 const stage = ref<InstanceType<typeof ShowcaseStage>>();
@@ -78,7 +78,7 @@ const CAPITALS = [
 ];
 const COUNTRY_LABELS = [
     { id: "NL", lon: 5.75, lat: 52.15 },
-    { id: "BE", lon: 4.75, lat: 50.45 },
+    { id: "BE", lon: 4.95, lat: 50.6 },
     { id: "DE", lon: 7.55, lat: 51.55 },
 ];
 
@@ -437,12 +437,12 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
     if (t >= T.map && t < T.team + 0.2) {
         const m = t - T.map;
         const COS = Math.cos((51 * Math.PI) / 180);
-        const s0 = Math.min((span * 0.47) / 0.95, (W * 0.44) / (1.45 * COS));
+        const s0 = Math.min((span * 0.45) / 0.95, (W * 0.44) / (1.45 * COS));
         const zoom = ease(progress(m, 4.3, 5.9));
         const dive = Math.pow(progress(t, T.team - 0.8, T.team + 0.2), 2);
         const cam = {
             lon: lerp(5.55, HEERLEN.lon, zoom),
-            lat: lerp(51.45, HEERLEN.lat, zoom),
+            lat: lerp(51.4, HEERLEN.lat, zoom),
             s: s0 * Math.exp(Math.log(3.3) * zoom + 2.2 * dive),
         };
         const P = (lon: number, lat: number) => ({ x: W / 2 + (lon - cam.lon) * COS * cam.s, y: cy + (cam.lat - lat) * cam.s });
@@ -673,7 +673,7 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
         // faces: phyllotaxis, flying in from all sides
         const random = mulberry32(5);
         people.forEach((p, i) => {
-            const from = random() * Math.PI * 2;
+            const from = (random() - 0.5) * 1.1 + (i % 2 ? Math.PI : 0);
             const arrive = 0.3 + i * 0.06;
             const f = back(progress(m, arrive, arrive + 0.75));
             const leave = ease(progress(t, T.decade - 0.9 + (i % 7) * 0.03, T.decade - 0.4));
@@ -733,7 +733,7 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
         y0: safe.top + span * 0.43,
         cols: 7,
         gap: 14 * k,
-        h: Math.min(span * 0.17, 110 * k),
+        h: Math.min(span * 0.19, 120 * k),
     };
     const cardW = (grid.w - (grid.cols - 1) * grid.gap) / grid.cols;
     const cardAt = (i: number) => ({
@@ -946,7 +946,7 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
             if (c <= 0) return;
             const cw = Math.min(W * 0.215, 400 * k);
             const top = y + R + 52 * k;
-            const ch = safe.bottom - top - 10 * k;
+            const ch = Math.min(safe.bottom - top - 16 * k, span * 0.58);
             scaled(ctx, xs[i], top, Math.max(0, c), () => {
                 ctx.save();
                 ctx.globalAlpha *= Math.min(1, c);
@@ -995,23 +995,32 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
                     }
                 }
                 if (i === 3) {
-                    const f = ease(progress(m, hop(3) + 0.4, hop(3) + 1.4));
-                    const bw = cw * 0.6;
-                    const by = vy + ch * 0.06;
-                    [0.85, 0.55].forEach((v, j) => {
-                        const bh = ch * 0.22 * (j === 0 ? 1 : lerp(1, v, f));
-                        ctx.fillStyle = j === 0 ? "#dfe3ea" : GREEN;
-                        ctx.fillRect(xs[i] - bw / 4 + j * bw * 0.3 - bw * 0.12, by - bh, bw * 0.22, bh);
+                    // the municipality's own words (biss-institute.com testimonial)
+                    ctx.font = `italic 600 ${18 * k}px ${FONT}`;
+                    const quote = wrap(ctx, "“We were able to truly take steps toward a simpler, clearer, and more accessible application process.”", cw - 40 * k);
+                    const qa = progress(m, hop(3) + 0.4, hop(3) + 0.9);
+                    ctx.save();
+                    ctx.globalAlpha *= qa;
+                    ctx.fillStyle = INK;
+                    ctx.textAlign = "left";
+                    ctx.textBaseline = "middle";
+                    quote.forEach((l, j) => ctx.fillText(l, xs[i] - cw / 2 + 20 * k, top + 34 * k + j * 24 * k));
+                    ctx.restore();
+                    text(ctx, "Municipality of Sittard-Geleen", xs[i] - cw / 2 + 20 * k, top + 40 * k + quote.length * 24 * k, 14 * k, {
+                        color: GREEN,
+                        weight: 700,
+                        align: "left",
+                        alpha: qa,
+                        maxWidth: cw - 40 * k,
                     });
-                    text(ctx, "effort before / after (illustrative)", xs[i], by + 14 * k, 12 * k, { color: GREY, weight: 600, maxWidth: cw - 20 * k });
                 }
                 // the step's text
-                ctx.font = `600 ${17 * k}px ${FONT}`;
+                ctx.font = `500 ${19 * k}px ${FONT}`;
                 const lines = wrap(ctx, s.body, cw - 36 * k);
-                const lh = 23 * k;
+                const lh = 25 * k;
                 const ty = top + ch * 0.5 + 6 * k;
                 lines.slice(0, Math.floor((top + ch - ty - 8 * k) / lh)).forEach((l, j) =>
-                    text(ctx, l, xs[i] - cw / 2 + 18 * k, ty + j * lh + lh / 2, 17 * k, { color: "#1f2937", weight: 500, align: "left" })
+                    text(ctx, l, xs[i] - cw / 2 + 18 * k, ty + j * lh + lh / 2, 19 * k, { color: "#1f2937", weight: 500, align: "left" })
                 );
                 ctx.restore();
             });
@@ -1051,12 +1060,12 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
         const cols = LINKED.length;
         const colW = (W * 0.94) / cols;
         const xOf = (i: number) => W * 0.03 + colW * (i + 0.5);
-        const py = safe.top + span * 0.56;
+        const py = safe.top + span * 0.5;
         const pw = colW - 18 * k;
         const ph = Math.min(span * 0.1, 64 * k);
-        const lh = Math.min(span * 0.085, 56 * k);
+        const lh = Math.min(span * 0.1, 66 * k);
         const lw = Math.min(lh * 2.1, (colW - 30 * k) / 2);
-        const fy = safe.top + span * 0.88;
+        const fy = safe.top + span * 0.83;
         const fh = lh;
         const fw = Math.min(lh * 2.2, colW * 0.8);
 
@@ -1135,7 +1144,7 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
             logoCard(ctx, id, funderX(id), y, fw, fh, k, Math.min(1, f * 1.5), MAGENTA);
         });
 
-        text(ctx, "PARTNERS", W * 0.03, safe.top + 8 * k, 15 * k, { color: GREY, weight: 800, align: "left", alpha: progress(m, 0.4, 0.8) });
+        text(ctx, "PARTNERS", W * 0.03, py - ph / 2 - 30 * k - 2 * (lh + 12 * k) - 4 * k, 15 * k, { color: GREY, weight: 800, align: "left", alpha: progress(m, 0.4, 0.8) });
         text(ctx, "FUNDED BY", W * 0.03, fy - fh / 2 - 18 * k, 15 * k, { color: GREY, weight: 800, align: "left", alpha: progress(m, 2.2, 2.6) });
     });
     //#endregion

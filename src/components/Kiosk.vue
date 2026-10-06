@@ -143,6 +143,8 @@ const IDLE_READING_MS = 150_000;
 const SPOTLIGHT_MS = [10_000, 15_000];
 /** A project's showcase plays at most this often in the idle loop. */
 const SHOWCASE_COOLDOWN_MS = 10 * 60 * 1000;
+/** "What is BISS?" opens every return to the loop, and comes back this often within it. */
+const ABOUT_EVERY_MS = 5 * 60 * 1000;
 /** Every this many spotlights, the idle loop shows a news post instead. */
 const HIGHLIGHT_EVERY = 4;
 /** `?showcase=<id>` plays that showcase right away, for trying one out. */
@@ -250,8 +252,6 @@ const showcase = ref<Showcase | null>(null);
 /** The project whose showcase is playing; a touch opens it. */
 const showcaseProject = ref<string | null>(null);
 const lastPlayed = new Map<string, number>();
-// the general BISS animation first plays after a cooldown, not as the very first thing
-if (about) lastPlayed.set(about.id, Date.now());
 
 const showcaseMembers = computed(() =>
     showcase.value?.id === about?.id
@@ -274,7 +274,7 @@ const playAbout = () => {
 const dueShowcase = (id: string | null) =>
     [...(id ? showcasesForProject(entities[id]?.infoUrl) : []), ...(about ? [about] : [])]
         .map((s) => ({ s, at: lastPlayed.get(s.id) ?? -Infinity }))
-        .filter(({ at }) => Date.now() - at > SHOWCASE_COOLDOWN_MS)
+        .filter(({ s, at }) => Date.now() - at > (s === about ? ABOUT_EVERY_MS : SHOWCASE_COOLDOWN_MS))
         .sort((a, b) => a.at - b.at)[0]?.s;
 
 const selectedShowcases = computed(() =>
@@ -345,7 +345,13 @@ const enterAttract = () => {
     // every return to the loop starts a fresh walk from a random node
     visitor.restart();
     spotlightId.value = null;
-    scheduleSpotlight(2400);
+    window.clearTimeout(spotlightTimer);
+    if (about) {
+        // open with "What is BISS?" once the camera has pulled back; the loop follows
+        spotlightTimer = window.setTimeout(() => mode.value === "attract" && playShowcase(about, null), 1800);
+    } else {
+        scheduleSpotlight(2400);
+    }
 };
 
 const enterExplore = () => {

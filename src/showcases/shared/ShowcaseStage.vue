@@ -143,6 +143,7 @@ defineExpose({ canvas });
 
 .light .chapters li.active {
     background: #0b1020;
+    box-shadow: 0 0 0 0.2rem rgba(11, 16, 32, 0.1);
 }
 
 .light .faces img {
@@ -210,9 +211,9 @@ canvas {
 .chapters li {
     width: 0.55rem;
     height: 0.55rem;
-    border-radius: 999px;
+    border-radius: 50%;
     background: rgba(255, 255, 255, 0.25);
-    transition: transform 400ms var(--ease-out), background-color 400ms ease;
+    transition: transform 400ms var(--ease-out), background-color 400ms ease, box-shadow 400ms ease;
 }
 
 .chapters li.done {
@@ -220,8 +221,9 @@ canvas {
 }
 
 .chapters li.active {
-    transform: scaleX(3.6);
+    transform: scale(1.35);
     background: #fff;
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.13);
 }
 
 .fade-enter-active,

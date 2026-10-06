@@ -378,8 +378,9 @@ export class GraphScene {
       .cooldownTicks(0);
 
     this.graph.d3Force("charge")?.strength(-200);
-    this.graph.d3Force("link")?.distance(52);
-    // keep room for a photo or orb and its label around every node, so none crowd each other
+    this.graph.d3Force("link")?.distance(64);
+    // Reserve the full label width in the settled layout. The old radius used only
+    // 85–90% of its half-width, which let a project name sit under a nearby face.
     this.graph.d3Force(
       "collide",
       forceCollide<SimNode>((n) => {
@@ -387,9 +388,7 @@ export class GraphScene {
         const labelHalf = v.labelSize.x / 2;
         const e = entities[n.id];
         if (isContent(e)) return PAGE_SIZE * 1.6; // their labels only show when in focus
-        return e.group === NodeType.TEAM_MEMBER
-          ? Math.max(PHOTO_SIZE * 0.9, labelHalf * 0.85)
-          : Math.max(PROJECT_CORE * 3.5, labelHalf * 0.9);
+        return Math.max(v.bodyRadius, labelHalf) + (e.group === NodeType.TEAM_MEMBER ? 5 : 7);
       })
         .strength(1)
         .iterations(3) as never
@@ -1026,13 +1025,17 @@ export class GraphScene {
     const width = this.container.clientWidth;
     const height = this.container.clientHeight;
     const pxPerUnitAt1 = height / (2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)));
+    const forward = camera.getWorldDirection(new THREE.Vector3());
     const related = new Set(this.focusId ? [this.focusId, ...entities[this.focusId].connections] : []);
 
     const items = Object.entries(this.visuals).flatMap(([id, v]) => {
       const world = v.root.getWorldPosition(new THREE.Vector3());
-      const depth = world.distanceTo(camera.position);
+      // Perspective size depends on distance along the viewing axis, not the
+      // straight-line distance to the camera. The latter shrinks collision boxes
+      // for nodes near the edge of the screen and lets their labels overlap.
+      const depth = world.clone().sub(camera.position).dot(forward);
       const ndc = world.clone().project(camera);
-      if (ndc.z > 1 || v.fade < 0.05) return [];
+      if (depth <= 0 || ndc.z > 1 || v.fade < 0.05) return [];
       const k = (pxPerUnitAt1 / depth) * v.root.scale.x; // px per local unit
       const x = ((ndc.x + 1) / 2) * width;
       const y = ((1 - ndc.y) / 2) * height;
@@ -1052,16 +1055,20 @@ export class GraphScene {
     for (const item of items) {
       const { v, x, y, k } = item;
       if (v.labelTarget < 0.5) continue; // hidden labels neither move nor block others
+      // Include breathing room in collision tests, while retaining the real box
+      // for clipping. A zero-overlap result should look separated to the eye.
       const w = (v.labelSize.x / 2) * k;
       const h = (v.labelSize.y / 2) * k;
+      const clearance = 8;
       let best = v.anchor;
       let bestCost = Infinity;
       v.anchors.forEach((a, i) => {
         const box = { x0: x + a.x * k - w, x1: x + a.x * k + w, y0: y - a.y * k - h, y1: y - a.y * k + h };
         const area = 4 * w * h;
         let cost = 0;
-        for (const other of items) if (other !== item) cost += boxOverlap(box, other.body) * other.weight;
-        for (const p of placed) cost += boxOverlap(box, p.box) * p.weight;
+        const padded = { x0: box.x0 - clearance, y0: box.y0 - clearance, x1: box.x1 + clearance, y1: box.y1 + clearance };
+        for (const other of items) if (other !== item) cost += boxOverlap(padded, other.body) * other.weight;
+        for (const p of placed) cost += boxOverlap(padded, p.box) * p.weight;
         const offscreen = area - boxOverlap(box, { x0: 0, y0: 0, x1: width, y1: height });
         cost = (cost + offscreen) / area + i * 0.02 + (i === v.anchor ? 0 : 0.12);
         if (cost < bestCost) {

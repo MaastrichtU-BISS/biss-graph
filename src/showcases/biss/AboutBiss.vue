@@ -23,7 +23,13 @@ const emit = defineEmits<{ done: [] }>();
 const CAMPUS_NAME = "Brightlands Data & AI Campus";
 const CAMPUS_SHORT = CAMPUS_NAME.replace(/^Brightlands\s+/, "");
 
-const T = { map: 3.5, team: 11.5, decade: 17.5, domains: 24, how: 30.5, partners: 37.5, funders: 55.2, outro: 60.5, end: 66.5 };
+const T = { map: 3.5, team: 11.5, decade: 17.5, domains: 24, how: 30.5, partners: 37.5, funders: 47.2, outro: 52.5, end: 58.5 };
+/**
+ * The European partners are hidden until the list is checked: the partners scene starts zoomed
+ * into the Netherlands. Turning this back on also needs the original timings in `T`
+ * (funders: 55.2, outro: 60.5, end: 66.5) and the "partners" caption.
+ */
+const SHOW_ABROAD = false;
 // The map, team and partner logos need enough time to be read on a public screen.
 const PLAYBACK_SPEED = 0.8;
 
@@ -31,10 +37,10 @@ type Scene = "intro" | "map" | "team" | "decade" | "domains" | "how" | "partners
 const captions: Record<string, string> = {
     map: `BISS is a Maastricht University institute on the ${CAMPUS_NAME} in Heerlen, Limburg.`,
     team: "Its team brings together ethics, law, privacy, consumer behaviour, neuroscience and data science.",
-    decade: "Founded in 2016, BISS counts 24 projects and 35 partners after ten years.",
+    decade: "Founded in 2016, BISS has worked on projects like these for ten years.",
     domains: "Those projects reach into health, finance, law, public services, mobility and industry.",
     how: "Challenge, team, prototype, impact: a clearer welfare application with Sittard-Geleen.",
-    partners: "BISS works with partners across Europe and the Netherlands.",
+    partners: "In the Netherlands, BISS works with partners such as these.",
     funders: "BISS projects are also backed by NWO and the European Union.",
 };
 
@@ -99,20 +105,21 @@ const COUNTRY_LABELS = [
 
 //#region Projects, domains and partners (biss-institute.com project pages)
 
-type Project = { id: string; title: string; status: "in progress" | "finished"; domains: string[] };
+/** `sub` is the plain-language subtitle shown next to project names that mean little on their own. */
+type Project = { id: string; title: string; sub?: string; status: "in progress" | "finished"; domains: string[] };
 const PROJECTS: Project[] = [
-    { id: "better", title: "BETTER", status: "in progress", domains: ["health"] },
+    { id: "better", title: "BETTER", sub: "Responsible data analytics in healthcare", status: "in progress", domains: ["health"] },
     { id: "sound", title: "Recognising sound", status: "in progress", domains: ["health"] },
-    { id: "fair4ai", title: "FAIR4AI", status: "finished", domains: ["health"] },
+    { id: "fair4ai", title: "FAIR4AI", sub: "Making AI models practically usable", status: "finished", domains: ["health"] },
     { id: "support", title: "AI customer support", status: "in progress", domains: ["industry"] },
     { id: "feed", title: "Livestock feed", status: "finished", domains: ["industry"] },
     { id: "advice", title: "Automated financial advice", status: "finished", domains: ["finance"] },
-    { id: "benedrone", title: "BeNeDrone", status: "in progress", domains: ["mobility"] },
+    { id: "benedrone", title: "BeNeDrone", sub: "Medical drones across the border", status: "in progress", domains: ["mobility"] },
     { id: "legal", title: "Legal research software", status: "in progress", domains: ["law"] },
-    { id: "digimach", title: "DigiMach", status: "in progress", domains: ["industry"] },
+    { id: "digimach", title: "DigiMach", sub: "Smart, sustainable, connected manufacturing", status: "in progress", domains: ["industry"] },
     { id: "welfare", title: "Clear welfare application", status: "finished", domains: ["public"] },
     { id: "vr", title: "VR: financial pressure", status: "in progress", domains: ["finance"] },
-    { id: "flying", title: "Flying Forward", status: "finished", domains: ["mobility"] },
+    { id: "flying", title: "Flying Forward", sub: "Drones that fly on their own", status: "finished", domains: ["mobility"] },
     { id: "shutdowns", title: "Prevent factory shutdowns", status: "finished", domains: ["industry"] },
     { id: "priceless", title: "Priceless Assets of Subversion", status: "in progress", domains: ["finance", "law"] },
 ];
@@ -164,7 +171,6 @@ const DUTCH: Org[] = [
     { id: "apg", name: "APG", lon: 5.98, lat: 50.88 },
     { id: "open-universiteit", name: "Open Universiteit", lon: 5.96, lat: 50.88 },
     { id: "zuyd", name: "Zuyd", lon: 5.96, lat: 50.87 },
-    { id: "maastricht-university", name: "Maastricht University", lon: 5.69, lat: 50.85 },
     { id: "maastro-clinic", name: "Maastro", lon: 5.7, lat: 50.83 },
 ];
 const FUNDERS = [
@@ -188,18 +194,6 @@ const QUOTE = "“We were able to truly take steps toward a simpler, clearer, an
 
 const DISCIPLINES = ["Data science & AI", "Ethics", "Law", "Privacy", "Consumer behaviour", "Neuroscience"];
 const DISCIPLINE_COLORS = [MAGENTA, PINK, ORANGE, GREEN, CYAN, YELLOW];
-
-const MILESTONES = [
-    { year: 2016, title: "BISS is founded", sub: "KennisAs grant, Province of Limburg", up: true, color: MAGENTA },
-    { year: 2017, title: "Rudolf Müller", sub: "Scientific Director 2016–2018", up: false, color: ORANGE },
-    { year: 2020, title: "Lisa Brüggen", sub: "Scientific Lead 2019–2021", up: true, color: GREEN },
-    { year: 2026, title: "10 years of BISS", sub: "An independent institute", up: false, color: PINK },
-];
-const STATS = [
-    { value: 24, label: "projects" },
-    { value: 35, label: "partners" },
-    { value: 17, label: "presentations" },
-];
 
 //#endregion
 
@@ -772,7 +766,7 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
     });
     //#endregion
 
-    //#region decade: the timeline sweeps, projects pop up as a constellation, the numbers land
+    //#region decade: ten years in one line, then the projects pop up as a constellation
     const orbR = Math.max(7, 13 * k);
     const starAt = (i: number) => ({
         x: W * 0.1 + (i % 7) * ((W * 0.8) / 6),
@@ -785,49 +779,15 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
         T.domains,
         () => {
             const m = t - T.decade;
-            ctx.save();
-            ctx.translate((1 - back(progress(m, 0, 0.8))) * W * 0.25, 0);
-            const x0 = W * 0.08;
-            const x1 = W * 0.92;
-            const y = safe.top + span * 0.15;
-            const xOf = (year: number) => lerp(x0, x1, (year - 2016) / 10);
-            const head = ease(progress(m, 0.3, 2.6));
-            const hx = lerp(x0, x1, head);
-            ctx.save();
-            ctx.strokeStyle = HAIR;
-            ctx.lineWidth = 4 * k;
-            line(ctx, x0, y, x1, y);
-            const g = ctx.createLinearGradient(x0, 0, x1, 0);
-            g.addColorStop(0, MAGENTA);
-            g.addColorStop(1, PINK);
-            ctx.strokeStyle = g;
-            line(ctx, x0, y, hx, y);
-            for (let year = 2016; year <= 2026; year++) dot(ctx, xOf(year), y, 4 * k, hx >= xOf(year) - 2 ? INK : HAIR);
-            if (head < 1) dot(ctx, hx, y, 9 * k, PINK);
-            ctx.restore();
-            text(ctx, "2016", x0 - 14 * k, y, 18 * k, { color: INK, weight: 800, align: "right" });
-            text(ctx, "2026", x1 + 14 * k, y, 18 * k, { color: INK, weight: 800, align: "left", alpha: progress(head, 0.95, 1) });
-            MILESTONES.forEach((ms) => {
-                const x = xOf(ms.year);
-                const a = pop(hx, x - 100 * k, 100 * k);
-                if (a <= 0) return;
-                const dir = ms.up ? -1 : 1;
-                ctx.save();
-                ctx.strokeStyle = ms.color;
-                ctx.lineWidth = 2 * k;
-                line(ctx, x, y + dir * 10 * k, x, y + dir * 26 * k, Math.min(1, a));
-                ctx.restore();
-                dot(ctx, x, y, 10 * k * Math.min(1.2, a), ms.color);
-                dot(ctx, x, y, 4 * k, "#fff");
-                const align: CanvasTextAlign = x > W * 0.75 ? "right" : "left";
-                const tx = x + (align === "left" ? -6 : 6) * k;
-                const ty = ms.up ? y - 64 * k : y + 44 * k;
-                scaled(ctx, tx, ty, 0.85 + 0.15 * a, () => {
-                    text(ctx, ms.title, tx, ty, 22 * k, { color: INK, weight: 800, align, alpha: Math.min(1, a) });
-                    text(ctx, ms.sub, tx, ty + 24 * k, 15 * k, { color: GREY, weight: 600, align, alpha: Math.min(1, a), maxWidth: W * 0.3 });
+            // no timeline of who led BISS when: just the span, sliding in
+            const y = safe.top + span * 0.17;
+            const head = pop(m, 0.1, 0.7);
+            if (head > 0) {
+                scaled(ctx, W / 2, y, Math.max(0, head), () => {
+                    text(ctx, "2016 – 2026", W / 2, y - 22 * k, 76 * k, { color: MAGENTA, weight: 900, alpha: Math.min(1, head) });
+                    text(ctx, "Ten years of BISS", W / 2, y + 38 * k, 24 * k, { color: INK, weight: 800, alpha: Math.min(1, head) });
                 });
-            });
-            ctx.restore();
+            }
 
             // pink constellation lines between neighbouring projects, under the orbs
             ctx.save();
@@ -842,19 +802,6 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
                 });
             });
             ctx.restore();
-
-            // BISS in numbers: big and bold
-            const sy = safe.top + span * 0.86;
-            STATS.forEach((s, i) => {
-                const x = W * (0.25 + i * 0.25);
-                const a = pop(m, 3.0 + i * 0.25, 0.7);
-                if (a <= 0) return;
-                const v = Math.round(s.value * ease(progress(m, 3.0 + i * 0.25, 4.4 + i * 0.25)));
-                scaled(ctx, x, sy, Math.max(0, a), () => {
-                    text(ctx, String(v), x, sy - 12 * k, 66 * k, { color: [MAGENTA, PINK, ORANGE][i], weight: 900 });
-                    text(ctx, s.label.toUpperCase(), x, sy + 34 * k, 17 * k, { color: INK, weight: 800 });
-                });
-            });
         },
         { zoomIn: 0, zoomOut: 0.02 }
     );
@@ -874,7 +821,6 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
             const a = pop(t, first + 0.35, 0.6);
             if (a <= 0) return;
             const c = ringAt(i);
-            const count = ORBS.filter((o) => o.domain === i).length;
             ctx.save();
             ctx.globalAlpha *= 1 - domainLeave;
             scaled(ctx, c.x, c.y, Math.max(0, a), () => {
@@ -887,7 +833,6 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
                 ctx.beginPath();
                 ctx.arc(c.x, c.y, ringR, 0, Math.PI * 2);
                 ctx.stroke();
-                text(ctx, String(count), c.x, c.y + 2 * k, ringR * 0.8, { color: d.color, weight: 900 });
             });
             text(ctx, d.label, cellX(i), cellY(i) + span * 0.08, 26 * k, {
                 color: INK,
@@ -925,13 +870,10 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
                     maxWidth: (W * 0.8) / 6 - 12 * k,
                 });
             const lx = to.x + orbR + 10 * k;
-            text(ctx, o.p.title, lx, to.y, 18 * k, {
-                color: INK,
-                weight: 700,
-                align: "left",
-                alpha: progress(fly, 0.85, 1) * (1 - domainLeave),
-                maxWidth: cellX(o.domain) + W * 0.3 - lx,
-            });
+            const labelAlpha = progress(fly, 0.85, 1) * (1 - domainLeave);
+            const room = cellX(o.domain) + W * 0.3 - lx;
+            text(ctx, o.p.title, lx, to.y - (o.p.sub ? 9 * k : 0), 18 * k, { color: INK, weight: 700, align: "left", alpha: labelAlpha, maxWidth: room });
+            if (o.p.sub) text(ctx, o.p.sub, lx, to.y + 11 * k, 14 * k, { color: GREY, weight: 600, align: "left", alpha: labelAlpha, maxWidth: room });
         });
     }
     //#endregion
@@ -1104,7 +1046,8 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
     //#region partners: a map of Europe, arcs out from BISS, then into the Netherlands; funders rise
     camera(T.partners, T.outro, () => {
         // Give the partner logos several seconds together before funding takes the stage.
-        const m = (t - T.partners) * 0.75;
+        // without the European partners, start where the camera has zoomed into the Netherlands
+        const m = (t - T.partners) * 0.75 + (SHOW_ABROAD ? 0 : 6.0);
         const COS = Math.cos((51 * Math.PI) / 180);
         const sEu = Math.min((span * 0.93) / 15.4, (W * 0.9) / (22 * COS));
         const sNl = Math.min((span * 0.92) / 2.75, (W * 0.5) / (3.6 * COS));
@@ -1213,7 +1156,7 @@ const draw = ({ ctx, t, W, H, k, safe }: Frame) => {
             ctx.restore();
         };
         const abroadAt = (j: number) => 0.9 + j * 0.55;
-        const abroadAlpha = 1 - progress(zoom, 0, 0.35);
+        const abroadAlpha = SHOW_ABROAD ? 1 - progress(zoom, 0, 0.35) : 0;
         ABROAD.forEach((o, j) => arc(P(o.lon, o.lat), abroadAt(j), abroadAlpha));
 
         // Dutch partners: two columns of logos either side of the country, with leaders to their pins

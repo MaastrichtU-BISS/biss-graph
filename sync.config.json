@@ -1,5 +1,5 @@
 {
-  "excludePeople": ["peter-de-kock"],
+  "excludePeople": [],
   "excludeProjects": [],
   "areas": {
     "legal-research-software": ["Law"],

@@ -30,6 +30,9 @@ The production build is a static site deployed on Vercel (team BISS-UM, project 
 `chrome --kiosk --noerrdialogs --disable-pinch --overscroll-history-navigation=0 https://graph.biss-institute.com`,
 so reboots and power cuts recover by themselves and updates arrive with each deploy.
 
+Search engines are asked not to index the site (`X-Robots-Tag: noindex` in `vercel.json` and a robots meta tag
+in `index.html`) while the content is still being checked. Remove both to allow indexing.
+
 ## Data
 
 The graph mirrors [biss-institute.com](https://www.biss-institute.com):

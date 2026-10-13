@@ -335,6 +335,8 @@ export class GraphScene {
   /** Whether the camera should drift on its own once no tween owns it. */
   private wantAutoRotate = false;
   private cleanup: (() => void)[] = [];
+  /** Called when the WebGL context is lost and the graph can no longer be drawn. */
+  onContextLost?: () => void;
 
   constructor(
     private container: HTMLElement,
@@ -404,6 +406,14 @@ export class GraphScene {
 
     const renderer = this.graph.renderer();
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    // the browser can drop the GPU context (driver reset, memory pressure); nothing redraws after that
+    const canvas = renderer.domElement;
+    const contextLost = (e: Event) => {
+      e.preventDefault();
+      this.onContextLost?.();
+    };
+    canvas.addEventListener("webglcontextlost", contextLost);
+    this.cleanup.push(() => canvas.removeEventListener("webglcontextlost", contextLost));
 
     const controls = this.controls();
     controls.enableDamping = true;

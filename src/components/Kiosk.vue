@@ -164,6 +164,10 @@ const SHOWCASE_PARAM = new URLSearchParams(location.search).get("showcase");
 /** How often to check biss-institute.com for changes; `?sync=0` turns it off. */
 const SYNC_EVERY_MS = 6 * 60 * 60 * 1000;
 const SYNC_ENABLED = new URLSearchParams(location.search).get("sync") !== "0";
+/** Start afresh after running this long, once nobody is using the screen, so the browser never piles up memory. */
+const FRESH_START_MS = 3 * 60 * 60 * 1000;
+/** The idle loop moves on every ~15 s (a showcase at most ~75 s); this long without a step means it stalled. */
+const STALL_MS = 3 * 60 * 1000;
 
 const stage = ref<HTMLElement>();
 const ready = ref(false);
@@ -189,6 +193,9 @@ let spotlightTimer: number | undefined;
 /** Set when the website sync delivered new data; applied by reloading once nobody is using the screen. */
 let dataUpdated = false;
 let syncTimer: number | undefined;
+const loadedAt = Date.now();
+/** When the idle loop last moved on to a new spotlight, news post or showcase. */
+let lastProgress = Date.now();
 const visitor = new RandomVisitor(graphData);
 
 /** Fraction of the screen width the detail panel covers. */
@@ -245,6 +252,7 @@ let spotlightCount = 0;
 let highlightIndex = Math.floor(Math.random() * Math.max(1, highlights.length));
 
 const nextSpotlight = () => {
+    lastProgress = Date.now();
     spotlightCount++;
     if (highlights.length && spotlightCount % HIGHLIGHT_EVERY === 0) {
         // a news post, with the whole graph turning slowly behind it
@@ -312,6 +320,7 @@ const playFromDirectory = (showcaseId: string, projectId: string) => {
 };
 
 const playShowcase = (s: Showcase, project: string | null) => {
+    lastProgress = Date.now();
     showcaseProject.value = project;
     showcase.value = s;
 };
@@ -349,7 +358,9 @@ const scheduleSpotlight = (delay: number) => {
 };
 
 const enterAttract = () => {
-    if (dataUpdated) return location.reload();
+    // carries on as normal if the reload can't happen right now; the loop tries again
+    if (freshStartDue()) void reload();
+    lastProgress = Date.now();
     stopShowcase();
     mode.value = "attract";
     selectedId.value = null;
@@ -399,7 +410,8 @@ const markInteraction = (e: Event) => {
 };
 
 const checkIdle = () => {
-    if (mode.value !== "explore" || showcase.value) return;
+    if (mode.value === "attract") return checkLoop();
+    if (showcase.value) return;
     const limit = infoUrl.value ? IDLE_READING_MS : IDLE_MS;
     if (Date.now() - lastInteraction > limit) enterAttract();
 };
@@ -474,6 +486,38 @@ const openInfo = (url: string) => {
 
 //#endregion
 
+//#region Recovery
+
+/** New website data, or long enough running, to be worth a reload between visitors. */
+const freshStartDue = () => dataUpdated || Date.now() - loadedAt > FRESH_START_MS;
+
+let lastReloadTry = 0;
+/**
+ * Reloads the page, but only once the site answers: reloading while the network is down
+ * would leave the screen on the browser's error page, which is worse than a stuck loop.
+ */
+const reload = async () => {
+    if (Date.now() - lastReloadTry < 30_000) return;
+    lastReloadTry = Date.now();
+    try {
+        const response = await fetch(location.href, { method: "HEAD", cache: "no-store" });
+        if (response.ok) location.reload();
+    } catch {
+        // offline; try again on a later check
+    }
+};
+
+/** Runs every second while idle: restarts a stalled loop, and starts afresh now and then. */
+const checkLoop = () => {
+    if (Date.now() - lastProgress > STALL_MS) {
+        console.warn("Idle loop stalled, reloading");
+        return reload();
+    }
+    if (!showcase.value && freshStartDue()) reload();
+};
+
+//#endregion
+
 const preventContextMenu = (e: Event) => e.preventDefault();
 let disableMouseDragScroll: (() => void) | undefined;
 
@@ -481,7 +525,7 @@ const sync = async () => {
     try {
         if (!(await syncWithWebsite())) return;
         dataUpdated = true;
-        if (mode.value === "attract") location.reload();
+        if (mode.value === "attract") reload();
     } catch (e) {
         console.warn("Website sync skipped, keeping current data:", e);
     }
@@ -497,6 +541,10 @@ onMounted(async () => {
     document.addEventListener("contextmenu", preventContextMenu);
 
     scene = new GraphScene(stage.value!, onSceneTap);
+    scene.onContextLost = () => {
+        console.warn("WebGL context lost, reloading");
+        reload();
+    };
     await scene.init();
     if (lang.value !== "en") scene.setLanguage(lang.value);
     if (theme.value !== "dark") scene.setTheme(theme.value);

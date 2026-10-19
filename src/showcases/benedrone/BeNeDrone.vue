@@ -22,7 +22,7 @@ const T = { emergency: 3.5, road: 9, drone: 15.5, cargo: 22, rules: 28.5, scale:
 type Scene = "intro" | "emergency" | "road" | "drone" | "cargo" | "rules" | "scale" | "outro" | "credits";
 const captions: Record<string, string> = {
     emergency: "An emergency, just across the border.",
-    road: "By road, help has to wind its way there. Every minute counts.",
+    road: "By road, help has to find its way there. Every minute counts.",
     drone: "A medical drone can take a direct route across the border.",
     cargo: "Carrying what saves lives: defibrillators, blood, even organs.",
     rules: "A flight needs more than a route: legal, logistical and societal checks matter too.",

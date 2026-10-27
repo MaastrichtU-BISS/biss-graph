@@ -351,6 +351,17 @@ img {
     linear-gradient(to top, rgba(244, 246, 251, 0.7), transparent 20%);
 }
 
+/*
+ * The kiosk's laptop redraws every blurred panel on each frame of the graph behind it, which
+ * its GPU can't keep up with. Without the blur the panels' dark tint carries them.
+ */
+:root.kiosk-lite *,
+:root.kiosk-lite *::before,
+:root.kiosk-lite *::after {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
 @media (max-width: 700px) {
   :root { font-size: 16px; --gap: 0.75rem; }
   :root.large-text { font-size: 19px; }

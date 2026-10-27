@@ -170,9 +170,9 @@ const SYNC_EVERY_MS = 6 * 60 * 60 * 1000;
 const SYNC_ENABLED = new URLSearchParams(location.search).get("sync") !== "0";
 /**
  * Start afresh after running this long, once nobody is using the screen, so the browser never
- * piles up memory. The kiosk's laptop has little to spare, so it does so every hour.
+ * piles up memory. The kiosk's laptop has little to spare, so it does so every half hour.
  */
-const FRESH_START_MS = (KIOSK ? 1 : 3) * 60 * 60 * 1000;
+const FRESH_START_MS = (KIOSK ? 30 : 180) * 60 * 1000;
 /** The idle loop moves on every ~15 s (a showcase at most ~75 s); this long without a step means it stalled. */
 const STALL_MS = 3 * 60 * 1000;
 

@@ -2,12 +2,15 @@ import { KIOSK } from "./screenMode";
 
 /**
  * Usage events for Umami at analytics.biss-institute.com. Nothing is sent unless the build
- * has a website ID (`VITE_UMAMI_WEBSITE_ID`), so local runs and previews stay out of the
- * numbers. Every event is tagged `kiosk` or `web`, so the big screen can be told apart from
+ * has a website ID (`VITE_UMAMI_WEBSITE_ID`) and the page is served from one of `DOMAINS`, so
+ * local runs, previews and the production image run on localhost stay out of the numbers. Every event is tagged `kiosk` or `web`, so the big screen can be told apart from
  * people opening the site on their own device.
  */
 const WEBSITE_ID = import.meta.env.VITE_UMAMI_WEBSITE_ID as string | undefined;
 const HOST = (import.meta.env.VITE_UMAMI_HOST as string | undefined) ?? "https://analytics.biss-institute.com";
+/** Hostnames whose visits count, comma-separated; Umami's script ignores every other host too. */
+const DOMAINS = (import.meta.env.VITE_UMAMI_DOMAINS as string | undefined) ?? "graph.biss-institute.com";
+const ENABLED = !!WEBSITE_ID && DOMAINS.split(",").some((d) => d.trim() === location.hostname);
 
 type EventData = Record<string, string | number | boolean>;
 type Umami = { track: (event: string, data?: EventData) => Promise<unknown> };
@@ -21,17 +24,18 @@ declare global {
 const queue: [string, EventData?][] = [];
 
 export function track(event: string, data?: EventData) {
-  if (!WEBSITE_ID) return;
+  if (!ENABLED) return;
   if (window.umami) void window.umami.track(event, data).catch(() => undefined);
   else if (queue.length < 50) queue.push([event, data]);
 }
 
 export function startAnalytics() {
-  if (!WEBSITE_ID) return;
+  if (!ENABLED || !WEBSITE_ID) return;
   const script = document.createElement("script");
   script.defer = true;
   script.src = `${HOST}/script.js`;
   script.dataset.websiteId = WEBSITE_ID;
+  script.dataset.domains = DOMAINS;
   script.dataset.tag = KIOSK ? "kiosk" : "web";
   script.onload = () => queue.splice(0).forEach(([event, data]) => track(event, data));
   document.head.append(script);

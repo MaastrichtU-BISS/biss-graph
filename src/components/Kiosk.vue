@@ -20,7 +20,7 @@
 
         <Transition name="fade">
             <AttractOverlay v-if="ready && mode === 'attract'" :spotlight-id="spotlightId" :highlight="highlight"
-                @select="select" />
+                @select="(id: string) => select(id, 'spotlight')" />
         </Transition>
 
         <Transition name="fade">
@@ -43,9 +43,9 @@
                 </div>
 
                 <div v-if="!selectedId && !browseOpen" class="zoom-controls" role="group" :aria-label="t.zoomControls">
-                    <button :aria-label="t.zoomIn" @click="scene?.zoom(0.75)"><Icon name="zoomIn" /></button>
+                    <button :aria-label="t.zoomIn" @click="zoom('in')"><Icon name="zoomIn" /></button>
                     <span aria-hidden="true"></span>
-                    <button :aria-label="t.zoomOut" @click="scene?.zoom(1.33)"><Icon name="zoomOut" /></button>
+                    <button :aria-label="t.zoomOut" @click="zoom('out')"><Icon name="zoomOut" /></button>
                 </div>
 
                 <Transition name="pop">
@@ -67,7 +67,7 @@
                 </Transition>
 
                 <div class="top-right">
-                    <button class="ghost" @click="enterAttract">
+                    <button class="ghost" @click="enterAttract('button')">
                         <Icon name="overview" /> {{ t.overview }}
                     </button>
                     <span class="divider" aria-hidden="true"></span>
@@ -78,11 +78,11 @@
                             <span :class="{ on: lang === 'nl' }">NL</span>
                         </button>
                         <button class="ghost setting" :aria-label="theme === 'dark' ? t.lightTheme : t.darkTheme"
-                            @click="theme = theme === 'dark' ? 'light' : 'dark'">
+                            @click="toggleTheme">
                             <Icon :name="theme === 'dark' ? 'sun' : 'moon'" />
                         </button>
                         <button class="ghost setting" :class="{ active: largeText }" :aria-pressed="largeText"
-                            :aria-label="t.largerText" @click="largeText = !largeText">
+                            :aria-label="t.largerText" @click="toggleLargeText">
                             <span class="aa">A<small>A</small></span>
                         </button>
                     </div>
@@ -102,12 +102,14 @@
 
         <Transition name="panel">
             <DetailPanel v-if="selectedId" :id="selectedId" :can-go-back="history.length > 0"
-                :showcases="selectedShowcases" @select="select" @back="back" @close="resetView" @open="openInfo"
+                :showcases="selectedShowcases" @select="(id: string) => select(id, 'panel')" @back="back"
+                @close="resetView" @open="openInfo"
                 @play="playFromPanel" />
         </Transition>
 
         <Transition name="sheet">
-            <BrowseDrawer v-if="browseOpen" v-model:tab="browseTab" @select="select" @play="playFromDirectory"
+            <BrowseDrawer v-if="browseOpen" v-model:tab="browseTab" @select="(id: string) => select(id, 'list')"
+                @play="playFromDirectory"
                 @close="browseOpen = false" />
         </Transition>
 
@@ -136,8 +138,10 @@ import { GraphScene, type ScreenRect } from "../scene/graphScene";
 import { entities, graphData, highlights, people, titleOf, websiteUrlOf } from "../data/graph";
 import { syncWithWebsite } from "../data/sync";
 import { RandomVisitor } from "../utils/visitor";
+import { noteRestart, track, type RestartReason } from "../analytics";
+import { KIOSK } from "../screenMode";
 import { enableMouseDragScroll } from "../utils/dragScroll";
-import type { BrowseTab, Highlight } from "../types/graph";
+import { NodeType, type BrowseTab, type Highlight } from "../types/graph";
 import logo from "../assets/images/biss_um_logo.png";
 import qr from "../assets/images/biss_qr_code.png";
 
@@ -164,8 +168,11 @@ const SHOWCASE_PARAM = new URLSearchParams(location.search).get("showcase");
 /** How often to check biss-institute.com for changes; `?sync=0` turns it off. */
 const SYNC_EVERY_MS = 6 * 60 * 60 * 1000;
 const SYNC_ENABLED = new URLSearchParams(location.search).get("sync") !== "0";
-/** Start afresh after running this long, once nobody is using the screen, so the browser never piles up memory. */
-const FRESH_START_MS = 3 * 60 * 60 * 1000;
+/**
+ * Start afresh after running this long, once nobody is using the screen, so the browser never
+ * piles up memory. The kiosk's laptop has little to spare, so it does so every hour.
+ */
+const FRESH_START_MS = (KIOSK ? 1 : 3) * 60 * 60 * 1000;
 /** The idle loop moves on every ~15 s (a showcase at most ~75 s); this long without a step means it stalled. */
 const STALL_MS = 3 * 60 * 1000;
 
@@ -275,6 +282,9 @@ const showcase = shallowRef<Showcase | null>(null);
 /** The project whose showcase is playing; a touch opens it. */
 const showcaseProject = ref<string | null>(null);
 const lastPlayed = new Map<string, number>();
+/** What started the showcase that's playing, and when; for the analytics. */
+type PlayTrigger = "loop" | "button" | "panel" | "list" | "link";
+let playing: { trigger: PlayTrigger; at: number } | null = null;
 
 const showcaseMembers = computed(() =>
     showcase.value?.id === about?.id
@@ -287,7 +297,7 @@ const showcaseMembers = computed(() =>
 const playAbout = () => {
     if (!about) return;
     sound.open();
-    playShowcase(about, null);
+    playShowcase(about, null, "button");
 };
 
 /**
@@ -304,11 +314,11 @@ const selectedShowcases = computed(() =>
     selectedId.value ? showcasesForProject(entities[selectedId.value]?.infoUrl) : []
 );
 
-const playFromPanel = (id: string) => {
+const playFromPanel = (id: string, trigger: PlayTrigger = "panel") => {
     const s = showcaseById(id);
     if (!s) return;
     sound.open();
-    playShowcase(s, selectedId.value);
+    playShowcase(s, selectedId.value, trigger);
 };
 
 const playFromDirectory = (showcaseId: string, projectId: string) => {
@@ -316,17 +326,25 @@ const playFromDirectory = (showcaseId: string, projectId: string) => {
     browseOpen.value = false;
     filterOpen.value = false;
     scene?.focus(projectId);
-    playFromPanel(showcaseId);
+    playFromPanel(showcaseId, "list");
 };
 
-const playShowcase = (s: Showcase, project: string | null) => {
+const playShowcase = (s: Showcase, project: string | null, trigger: PlayTrigger) => {
     lastProgress = Date.now();
+    if (showcase.value) stopShowcase();
     showcaseProject.value = project;
     showcase.value = s;
+    playing = { trigger, at: Date.now() };
+    track("play-animation", { animation: s.title, trigger });
 };
 
-const stopShowcase = () => {
+const stopShowcase = (finished = false) => {
     if (!showcase.value) return;
+    if (playing) {
+        const seconds = Math.round((Date.now() - playing.at) / 1000);
+        track("animation-end", { animation: showcase.value.title, trigger: playing.trigger, finished, seconds });
+        playing = null;
+    }
     lastPlayed.set(showcase.value.id, Date.now());
     showcase.value = null;
     // the idle timeout counts from the end of the animation
@@ -334,7 +352,7 @@ const stopShowcase = () => {
 };
 
 const onShowcaseDone = () => {
-    stopShowcase();
+    stopShowcase(true);
     if (mode.value === "attract") scheduleSpotlight(1500);
 };
 
@@ -349,7 +367,7 @@ const scheduleSpotlight = (delay: number) => {
         if (due) {
             // let the camera arrive at the project first; the loop resumes when it ends
             const project = due === about ? null : spotlightId.value;
-            spotlightTimer = window.setTimeout(() => mode.value === "attract" && playShowcase(due, project), 3500);
+            spotlightTimer = window.setTimeout(() => mode.value === "attract" && playShowcase(due, project, "loop"), 3500);
             return;
         }
         const [min, max] = SPOTLIGHT_MS;
@@ -357,9 +375,16 @@ const scheduleSpotlight = (delay: number) => {
     }, delay);
 };
 
-const enterAttract = () => {
+/** The visit in progress: someone touched the screen and hasn't left it idle since. */
+let visit: { at: number; opened: number } | null = null;
+
+const enterAttract = (how?: "idle" | "button") => {
+    if (visit && how) {
+        track("visit-end", { how, seconds: Math.round((Date.now() - visit.at) / 1000), opened: visit.opened });
+    }
+    visit = null;
     // carries on as normal if the reload can't happen right now; the loop tries again
-    if (freshStartDue()) void reload();
+    if (freshStartDue()) void reload(dataUpdated ? "new-data" : "fresh-start");
     lastProgress = Date.now();
     stopShowcase();
     mode.value = "attract";
@@ -381,13 +406,17 @@ const enterAttract = () => {
     window.clearTimeout(spotlightTimer);
     if (about) {
         // open with "What is BISS?" once the camera has pulled back; the loop follows
-        spotlightTimer = window.setTimeout(() => mode.value === "attract" && playShowcase(about, null), 1800);
+        spotlightTimer = window.setTimeout(() => mode.value === "attract" && playShowcase(about, null, "loop"), 1800);
     } else {
         scheduleSpotlight(2400);
     }
 };
 
 const enterExplore = () => {
+    if (mode.value === "attract") {
+        visit = { at: Date.now(), opened: 0 };
+        track("visit-start", showcase.value ? { during: showcase.value.title } : {});
+    }
     mode.value = "explore";
     stopShowcase();
     window.clearTimeout(spotlightTimer);
@@ -406,22 +435,34 @@ const markInteraction = (e: Event) => {
     const project = showcase.value ? showcaseProject.value : null;
     if (mode.value === "attract" && ready.value) enterExplore();
     else stopShowcase();
-    if (project && project !== selectedId.value) select(project);
+    if (project && project !== selectedId.value) select(project, "animation");
 };
 
 const checkIdle = () => {
     if (mode.value === "attract") return checkLoop();
     if (showcase.value) return;
     const limit = infoUrl.value ? IDLE_READING_MS : IDLE_MS;
-    if (Date.now() - lastInteraction > limit) enterAttract();
+    if (Date.now() - lastInteraction > limit) enterAttract("idle");
 };
 
 //#endregion
 
 //#region Selection
 
-const select = (id: string, remember = true) => {
+/** Where a node was opened from. */
+type OpenVia = "graph" | "spotlight" | "panel" | "list" | "animation" | "back";
+const KIND: Record<NodeType, string> = {
+    [NodeType.TEAM_MEMBER]: "member",
+    [NodeType.PROJECT]: "project",
+    [NodeType.PUBLICATION]: "publication",
+    [NodeType.EDUCATION]: "teaching",
+};
+
+const select = (id: string, via: OpenVia, remember = true) => {
     if (mode.value === "attract") enterExplore();
+    const e = entities[id];
+    if (e) track(`open-${KIND[e.group] ?? "node"}`, { name: e.title, via });
+    if (visit) visit.opened++;
     if (remember && selectedId.value && selectedId.value !== id) {
         history.value.push(selectedId.value);
     }
@@ -435,7 +476,7 @@ const select = (id: string, remember = true) => {
 
 const back = () => {
     const previous = history.value.pop();
-    if (previous) select(previous, false);
+    if (previous) select(previous, "back", false);
 };
 
 /** Nothing in focus means the overview, orbiting the centre of the graph. */
@@ -448,7 +489,7 @@ const resetView = () => {
 };
 
 const onSceneTap = (id: string | null) => {
-    if (id) select(id);
+    if (id) select(id, "graph");
     else resetView();
 };
 
@@ -460,6 +501,7 @@ const openBrowse = (tab: BrowseTab) => {
         scene?.focus(null);
     }
     sound.open();
+    track("browse", { tab });
     browseTab.value = tab;
     browseOpen.value = true;
     filterOpen.value = false;
@@ -467,6 +509,22 @@ const openBrowse = (tab: BrowseTab) => {
 
 const toggleLanguage = () => {
     lang.value = lang.value === "en" ? "nl" : "en";
+    track("language", { to: lang.value });
+};
+
+const toggleTheme = () => {
+    theme.value = theme.value === "dark" ? "light" : "dark";
+    track("theme", { to: theme.value });
+};
+
+const toggleLargeText = () => {
+    largeText.value = !largeText.value;
+    track("large-text", { on: largeText.value });
+};
+
+const zoom = (direction: "in" | "out") => {
+    scene?.zoom(direction === "in" ? 0.75 : 1.33);
+    track("zoom", { direction });
 };
 
 watch(lang, (l) => scene?.setLanguage(l));
@@ -478,9 +536,20 @@ watch(showcase, (s) => {
     if (s) pauseTimer = window.setTimeout(() => scene?.setPaused(true), 1000);
     else scene?.setPaused(false);
 });
-watch(filters, (f) => scene?.setFilter(filterMatches(f)), { deep: true });
+watch(
+    filters,
+    (f) => {
+        scene?.setFilter(filterMatches(f));
+        // the idle loop clears the filters too; only count what visitors pick
+        if (mode.value === "explore") {
+            track("filter", { status: f.status, areas: f.areas.join(", ") || "all", publications: f.publications });
+        }
+    },
+    { deep: true }
+);
 
 const openInfo = (url: string) => {
+    if (selectedId.value) track("open-website", { name: entities[selectedId.value]?.title ?? url });
     infoUrl.value = websiteUrlOf(url, lang.value);
 };
 
@@ -496,12 +565,14 @@ let lastReloadTry = 0;
  * Reloads the page, but only once the site answers: reloading while the network is down
  * would leave the screen on the browser's error page, which is worse than a stuck loop.
  */
-const reload = async () => {
+const reload = async (reason: RestartReason) => {
     if (Date.now() - lastReloadTry < 30_000) return;
     lastReloadTry = Date.now();
     try {
         const response = await fetch(location.href, { method: "HEAD", cache: "no-store" });
-        if (response.ok) location.reload();
+        if (!response.ok) return;
+        noteRestart(reason);
+        location.reload();
     } catch {
         // offline; try again on a later check
     }
@@ -511,9 +582,9 @@ const reload = async () => {
 const checkLoop = () => {
     if (Date.now() - lastProgress > STALL_MS) {
         console.warn("Idle loop stalled, reloading");
-        return reload();
+        return reload("stalled");
     }
-    if (!showcase.value && freshStartDue()) reload();
+    if (!showcase.value && freshStartDue()) reload(dataUpdated ? "new-data" : "fresh-start");
 };
 
 //#endregion
@@ -525,7 +596,7 @@ const sync = async () => {
     try {
         if (!(await syncWithWebsite())) return;
         dataUpdated = true;
-        if (mode.value === "attract") reload();
+        if (mode.value === "attract") reload("new-data");
     } catch (e) {
         console.warn("Website sync skipped, keeping current data:", e);
     }
@@ -543,7 +614,7 @@ onMounted(async () => {
     scene = new GraphScene(stage.value!, onSceneTap);
     scene.onContextLost = () => {
         console.warn("WebGL context lost, reloading");
-        reload();
+        reload("gpu-lost");
     };
     await scene.init();
     if (lang.value !== "en") scene.setLanguage(lang.value);
@@ -558,7 +629,7 @@ onMounted(async () => {
     if (requested) {
         window.clearTimeout(spotlightTimer);
         const project = Object.values(entities).find((e) => showcasesForProject(e.infoUrl).includes(requested))?.id ?? null;
-        playShowcase(requested, project);
+        playShowcase(requested, project, "link");
     }
     if (SYNC_ENABLED) {
         sync();

@@ -673,6 +673,7 @@ export class GraphScene {
 
   private applyLinkStyle() {
     const focused = !!this.focusId;
+    const before = this.linkResources();
     this.graph
       .linkColor((l: SimLink) => {
         const c = this.linkColorOf(l);
@@ -685,6 +686,28 @@ export class GraphScene {
       .linkDirectionalParticleColor((l: SimLink) =>
         this.isActive(l) ? palette.active : mix(this.linkColorOf(l), palette.active, 0.4)
       );
+    // the graph rebuilds every link on its next update; free what only the old links used
+    window.setTimeout(() => {
+      const now = this.linkResources();
+      before.forEach((r) => now.has(r) || r.dispose());
+    }, 1000);
+  }
+
+  /**
+   * The geometries and materials the links draw with. three-forcegraph rebuilds all links
+   * when their width changes and frees the old links' children but not their own geometry
+   * and material, so without freeing them here every focus change left a few cylinders
+   * behind on the GPU, and the kiosk ran out of memory after an hour or two.
+   */
+  private linkResources() {
+    const resources = new Set<{ dispose(): void }>();
+    this.graph.scene().traverse((o) => {
+      if ((o as { __graphObjType?: string }).__graphObjType !== "link") return;
+      const { geometry, material } = o as THREE.Mesh;
+      if (geometry) resources.add(geometry);
+      [material].flat().forEach((m) => m && resources.add(m));
+    });
+    return resources;
   }
 
   //#endregion

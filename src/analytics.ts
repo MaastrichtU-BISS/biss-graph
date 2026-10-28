@@ -57,6 +57,7 @@ export type RestartReason = "stalled" | "gpu-lost" | "fresh-start" | "new-data";
 
 /** Call right before reloading the page. */
 export function noteRestart(reason: RestartReason) {
+  if (reason === "stalled" || reason === "gpu-lost") track("trouble", { reason, uptimeMinutes: minutesSince(startedAt), ...memoryReport() });
   try {
     sessionStorage.setItem(RESTART_KEY, reason);
   } catch {
@@ -82,8 +83,47 @@ function reportStart() {
   if (previousStart) data.previousUptimeMinutes = minutesSince(Number(previousStart));
   track("screen-start", data);
 
-  // a steady pulse from the big screen; a gap in it shows when and how long it was down
-  if (KIOSK) window.setInterval(() => track("heartbeat", { uptimeMinutes: minutesSince(startedAt) }), 30 * 60_000);
+  // a steady pulse from the big screen with its memory use; a gap in it shows when and how
+  // long it was down, and the readings before the gap whether the page was growing
+  if (KIOSK) window.setInterval(() => track("heartbeat", { uptimeMinutes: minutesSince(startedAt), ...memoryReport() }), 5 * 60_000);
+}
+
+//#endregion
+
+//#region Memory
+
+type ChromeMemory = { usedJSHeapSize: number; jsHeapSizeLimit: number };
+let sceneMemory: (() => EventData) | undefined;
+
+/** Lets the 3D scene add its own counts (geometries, textures) to the memory readings. */
+export function reportSceneMemory(read: () => EventData) {
+  sceneMemory = read;
+}
+
+const mb = (bytes: number) => Math.round(bytes / 1_048_576);
+
+/**
+ * What the page holds: the JavaScript heap (Chrome and Edge only), how many elements and
+ * canvases are on the page, and the scene's GPU objects. The GPU memory itself can't be read
+ * from a page, but its geometry and texture counts climbing would show a leak there.
+ */
+export function memoryReport(): EventData {
+  const data: EventData = {
+    domNodes: document.getElementsByTagName("*").length,
+    canvases: document.getElementsByTagName("canvas").length,
+    iframes: document.getElementsByTagName("iframe").length,
+  };
+  const heap = (performance as Performance & { memory?: ChromeMemory }).memory;
+  if (heap) {
+    data.heapMB = mb(heap.usedJSHeapSize);
+    data.heapLimitMB = mb(heap.jsHeapSizeLimit);
+  }
+  try {
+    Object.assign(data, sceneMemory?.());
+  } catch {
+    // scene gone or not ready; report the rest
+  }
+  return data;
 }
 
 //#endregion

@@ -138,7 +138,7 @@ import { GraphScene, type ScreenRect } from "../scene/graphScene";
 import { entities, graphData, highlights, people, titleOf, websiteUrlOf } from "../data/graph";
 import { syncWithWebsite } from "../data/sync";
 import { RandomVisitor } from "../utils/visitor";
-import { noteRestart, track, type RestartReason } from "../analytics";
+import { noteRestart, reportSceneMemory, track, type RestartReason } from "../analytics";
 import { KIOSK } from "../screenMode";
 import { enableMouseDragScroll } from "../utils/dragScroll";
 import { NodeType, type BrowseTab, type Highlight } from "../types/graph";
@@ -617,6 +617,7 @@ onMounted(async () => {
         reload("gpu-lost");
     };
     await scene.init();
+    reportSceneMemory(() => scene!.memoryCounts());
     if (lang.value !== "en") scene.setLanguage(lang.value);
     if (theme.value !== "dark") scene.setTheme(theme.value);
     if (import.meta.env.DEV) Object.assign(window, { __scene: scene });

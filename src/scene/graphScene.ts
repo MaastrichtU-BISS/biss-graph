@@ -451,6 +451,12 @@ export class GraphScene {
     this.animate();
   }
 
+  /** The renderer's live GPU objects, for the memory readings sent with analytics. */
+  memoryCounts() {
+    const info = this.graph.renderer().info;
+    return { geometries: info.memory.geometries, textures: info.memory.textures, programs: info.programs?.length ?? 0 };
+  }
+
   destroy() {
     cancelAnimationFrame(this.frame);
     this.cleanup.forEach((fn) => fn());

@@ -139,7 +139,6 @@ import { entities, graphData, highlights, people, titleOf, websiteUrlOf } from "
 import { syncWithWebsite } from "../data/sync";
 import { RandomVisitor } from "../utils/visitor";
 import { noteRestart, reportSceneMemory, track, type RestartReason } from "../analytics";
-import { KIOSK } from "../screenMode";
 import { enableMouseDragScroll } from "../utils/dragScroll";
 import { NodeType, type BrowseTab, type Highlight } from "../types/graph";
 import logo from "../assets/images/biss_um_logo.png";
@@ -170,9 +169,10 @@ const SYNC_EVERY_MS = 6 * 60 * 60 * 1000;
 const SYNC_ENABLED = new URLSearchParams(location.search).get("sync") !== "0";
 /**
  * Start afresh after running this long, once nobody is using the screen, so the browser never
- * piles up memory. The kiosk's laptop has little to spare, so it does so every half hour.
+ * piles up memory. Every half hour on any screen, since the big screen isn't always opened
+ * with `?kiosk`; nobody notices a reload between visitors.
  */
-const FRESH_START_MS = (KIOSK ? 30 : 180) * 60 * 1000;
+const FRESH_START_MS = 30 * 60 * 1000;
 /** The idle loop moves on every ~15 s (a showcase at most ~75 s); this long without a step means it stalled. */
 const STALL_MS = 3 * 60 * 1000;
 
@@ -580,6 +580,11 @@ const reload = async (reason: RestartReason) => {
 
 /** Runs every second while idle: restarts a stalled loop, and starts afresh now and then. */
 const checkLoop = () => {
+    // a background tab gets no animation frames, so its loop pauses without being stuck
+    if (document.hidden) {
+        lastProgress = Date.now();
+        return;
+    }
     if (Date.now() - lastProgress > STALL_MS) {
         console.warn("Idle loop stalled, reloading");
         return reload("stalled");

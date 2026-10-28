@@ -5,6 +5,7 @@ import type { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js
 import { entities, graphData, isContent, titleOf } from "../data/graph";
 import { Entity, NodeType } from "../types/graph";
 import type { Lang } from "../i18n";
+import { KIOSK } from "../screenMode";
 
 export const BACKGROUND = "#060914";
 
@@ -71,6 +72,10 @@ const LABEL_LINE = 2.8;
 const LABEL_WRAP = 26;
 /** Resolution labels are first drawn at, before they're sized to the screen. */
 const LABEL_FONT_PX = 64;
+/** Labels are never redrawn larger than this; up close a long name would take megabytes. */
+const LABEL_FONT_MAX_PX = 112;
+/** Photos are 400 px; on screen they rarely show above 200 px, even in focus. */
+const PHOTO_TEXTURE_PX = 256;
 const PAGE_SIZE = 5;
 const CONTENT_WRAP = 30;
 const CONTENT_LABEL_LINE = 2.2;
@@ -138,8 +143,8 @@ const initials = (title: string) =>
     .join("");
 
 const photoTexture = (img: HTMLImageElement | null, title: string) => {
-  const size = 512;
-  const ring = 16;
+  const size = PHOTO_TEXTURE_PX;
+  const ring = size / 32;
   const canvas = document.createElement("canvas");
   canvas.width = canvas.height = size;
   const ctx = canvas.getContext("2d")!;
@@ -159,10 +164,10 @@ const photoTexture = (img: HTMLImageElement | null, title: string) => {
     ctx.fillStyle = "#1b2347";
     ctx.fillRect(0, 0, size, size);
     ctx.fillStyle = "#dfe6ff";
-    ctx.font = `600 170px ${FONT}`;
+    ctx.font = `600 ${size / 3}px ${FONT}`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText(initials(title), r, r + 8);
+    ctx.fillText(initials(title), r, r + size / 64);
   }
   ctx.restore();
 
@@ -211,14 +216,18 @@ const wrap = (text: string, width: number) =>
  * Draws a label at `fontPx`. The texture skips mipmaps: shrinking text through mipmaps is
  * what made it blurry, so instead each label is redrawn at the size it appears on screen.
  */
-const labelTexture = (lines: string[], accent: string | undefined, fontPx: number) => {
+const labelTexture = (
+  lines: string[],
+  accent: string | undefined,
+  fontPx: number,
+  canvas = document.createElement("canvas")
+) => {
   const k = fontPx / 64;
   const lineHeight = fontPx * 1.22;
   const padX = 34 * k;
   const padY = 20 * k;
   const bar = accent ? 14 * k : 0;
 
-  const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d")!;
   ctx.font = `600 ${fontPx}px ${FONT}`;
   const textWidth = Math.max(...lines.map((l) => ctx.measureText(l).width));
@@ -275,12 +284,14 @@ const labelSprite = (text: string, accent?: string, wrapAt?: number, line = LABE
 const sharpenLabel = (sprite: THREE.Sprite, screenLinePx: number) => {
   const info = sprite.userData.label as { lines: string[]; accent?: string; line: number; fontPx: number };
   if (!info) return;
-  const wanted = THREE.MathUtils.clamp(screenLinePx / 1.22, 8, 160);
+  const wanted = THREE.MathUtils.clamp(screenLinePx / 1.22, 8, LABEL_FONT_MAX_PX);
   // buckets 25% apart
   const bucket = Math.pow(1.25, Math.round(Math.log(wanted) / Math.log(1.25)));
   if (Math.abs(bucket - info.fontPx) < 0.5) return;
-  const { texture } = labelTexture(info.lines, info.accent, bucket);
-  sprite.material.map?.dispose();
+  // redraw into the same canvas: a new one per zoom step piles up until garbage collection
+  const old = sprite.material.map;
+  const { texture } = labelTexture(info.lines, info.accent, bucket, old?.image as HTMLCanvasElement | undefined);
+  old?.dispose();
   sprite.material.map = texture;
   sprite.material.needsUpdate = true;
   info.fontPx = bucket;
@@ -319,6 +330,9 @@ const starfield = () => {
   });
   return new THREE.Points(geometry, material);
 };
+
+/** One sphere shared by every project orb. */
+let coreGeometry: THREE.SphereGeometry | undefined;
 
 export class GraphScene {
   private graph!: ForceGraph3DInstance<SimNode, SimLink>;
@@ -361,7 +375,11 @@ export class GraphScene {
       links: graphData.links.map((l) => ({ source: l.source, target: l.target })),
     };
 
-    const graph = new ForceGraph3D(this.container, { controlType: "orbit" }) as unknown as ForceGraph3DInstance<
+    const graph = new ForceGraph3D(this.container, {
+      controlType: "orbit",
+      // multisampling a full-screen canvas costs tens of megabytes the kiosk can't spare
+      rendererConfig: { antialias: !KIOSK, alpha: true, powerPreference: KIOSK ? "low-power" : "default" },
+    }) as unknown as ForceGraph3DInstance<
       SimNode,
       SimLink
     >;
@@ -405,7 +423,7 @@ export class GraphScene {
     scene.fog = new THREE.FogExp2(BACKGROUND, 0.0011);
 
     const renderer = this.graph.renderer();
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(KIOSK ? 1 : Math.min(window.devicePixelRatio, 2));
     // the browser can drop the GPU context (driver reset, memory pressure); nothing redraws after that
     const canvas = renderer.domElement;
     const contextLost = (e: Event) => {
@@ -431,6 +449,12 @@ export class GraphScene {
     this.bindPointer();
     this.bindResize();
     this.animate();
+  }
+
+  /** The renderer's live GPU objects, for the memory readings sent with analytics. */
+  memoryCounts() {
+    const info = this.graph.renderer().info;
+    return { geometries: info.memory.geometries, textures: info.memory.textures, programs: info.programs?.length ?? 0 };
   }
 
   destroy() {
@@ -516,7 +540,7 @@ export class GraphScene {
         hitRadius = PAGE_SIZE * 0.9;
       } else {
         body = new THREE.Mesh(
-          new THREE.SphereGeometry(PROJECT_CORE, 32, 16),
+          (coreGeometry ??= new THREE.SphereGeometry(PROJECT_CORE, 24, 12)),
           new THREE.MeshBasicMaterial({
             color: mix(e.color, "#ffffff", 0.25),
             transparent: true,
@@ -649,6 +673,7 @@ export class GraphScene {
 
   private applyLinkStyle() {
     const focused = !!this.focusId;
+    const before = this.linkResources();
     this.graph
       .linkColor((l: SimLink) => {
         const c = this.linkColorOf(l);
@@ -661,6 +686,28 @@ export class GraphScene {
       .linkDirectionalParticleColor((l: SimLink) =>
         this.isActive(l) ? palette.active : mix(this.linkColorOf(l), palette.active, 0.4)
       );
+    // the graph rebuilds every link on its next update; free what only the old links used
+    window.setTimeout(() => {
+      const now = this.linkResources();
+      before.forEach((r) => now.has(r) || r.dispose());
+    }, 1000);
+  }
+
+  /**
+   * The geometries and materials the links draw with. three-forcegraph rebuilds all links
+   * when their width changes and frees the old links' children but not their own geometry
+   * and material, so without freeing them here every focus change left a few cylinders
+   * behind on the GPU, and the kiosk ran out of memory after an hour or two.
+   */
+  private linkResources() {
+    const resources = new Set<{ dispose(): void }>();
+    this.graph.scene().traverse((o) => {
+      if ((o as { __graphObjType?: string }).__graphObjType !== "link") return;
+      const { geometry, material } = o as THREE.Mesh;
+      if (geometry) resources.add(geometry);
+      [material].flat().forEach((m) => m && resources.add(m));
+    });
+    return resources;
   }
 
   //#endregion
